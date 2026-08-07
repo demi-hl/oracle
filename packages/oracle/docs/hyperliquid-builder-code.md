@@ -1,50 +1,26 @@
 # Hyperliquid builder code
 
-Oracle's Hyperliquid order preparer discloses and attaches this builder code to eligible perp orders:
+Oracle can attach an operator-configured builder code to eligible Hyperliquid orders. The builder address comes from `ORACLE_HL_BUILDER_ADDRESS` and is not published in source, documentation, metadata, or website copy.
 
-- Builder address: `0x4d47B6757aFd42c3dbd9691b71B43d74Afa4b6b2`
-- Oracle perps fee: **5 basis points** (`0.05%`)
-- Hyperliquid order wire value: `builder: { "b": "0x4d47B6757aFd42c3dbd9691b71B43d74Afa4b6b2", "f": 50 }`
+## Oracle fee tiers
 
-Hyperliquid expresses `f` in tenths of a basis point, so `f: 50` means 5 basis points. This is separate from the 10 basis point same-chain swap tier and from Hyperliquid's own trading fees.
+- Core perpetuals: **2 basis points** (`0.02%`)
+- HIP-3: **1 basis point** (`0.01%`)
+- HIP-4 outcomes: **1 basis point** (`0.01%`)
+- Spot policy: **1 basis point** (`0.01%`), currently inactive because Oracle does not ship a spot-order preparation path
 
-## Locals Only
+Category environment overrides may lower these values but cannot raise them. Hyperliquid expresses order `f` values in tenths of a basis point, so the canonical wire values are `20` for core perpetuals and `10` for HIP-3/HIP-4.
 
-Locals Only ownership only changes Oracle's integrator-fee rate. It does not waive the Hyperliquid builder fee, which is a separate venue mechanism. Eligible holder and non-holder perp orders carry the same disclosed builder parameter. This is not an access gate. Holders and non-holders use the same public package, markets, order preparation, and wallet handoff.
+These builder fees are separate from Hyperliquid's native trading fees and from Oracle's routed-swap fee. Hyperliquid perpetual routes carry **0 routed-integrator bps**, preventing fee stacking.
+
+A verified Locals Only holder receives a 0% Oracle fee rate, including the Oracle builder fee. Ownership never changes product access, execution arming, package access, or wallet custody.
 
 ## One-time approval
 
-Before Hyperliquid accepts an order carrying this builder code, the user must approve a maximum fee for the builder address with an `ApproveBuilderFee` action:
+Before Oracle attaches builder data, it reads Hyperliquid's `maxBuilderFee` information endpoint for the user's main wallet and the configured builder. The returned integer is measured in tenths of a basis point. Missing, invalid, unavailable, or insufficient approval prevents builder data from being attached.
 
-```json
-{
-  "type": "approveBuilderFee",
-  "builder": "0x4d47B6757aFd42c3dbd9691b71B43d74Afa4b6b2",
-  "maxFeeRate": "0.05%",
-  "nonce": 0
-}
-```
+`prepareBuilderApproval` returns an unsigned `approveBuilderFee` action containing `hyperliquidChain`, `signatureChainId`, `maxFeeRate`, `builder`, and `nonce`. Hyperliquid requires the user's **main wallet**, not an agent or API wallet, to review and sign this approval. Oracle never signs or submits it.
 
-The nonce is replaced at preparation time. Hyperliquid requires the **main wallet**, not an agent or API wallet, to sign this approval. The approval is revocable. Oracle prepares the action but never signs or submits it.
-
-The approved maximum can be checked with Hyperliquid's read-only info request:
-
-```json
-{
-  "type": "maxBuilderFee",
-  "user": "0xUSER",
-  "builder": "0x4d47B6757aFd42c3dbd9691b71B43d74Afa4b6b2"
-}
-```
-
-## Builder-account requirements
-
-Hyperliquid requires the builder address to:
-
-1. Use Manual / Standard account mode.
-2. Maintain at least 100 USDC in perps account value.
-3. Use standard account abstraction for builder-fee accrual.
-
-The public preparer does not inject a signature, approval, API-wallet credential, or broadcast call. `hlPrepareBuilderFeeApproval()` returns the unsigned approval envelope, while `hlPreparePerpOrder()` and `hlPrepareBracketOrder()` disclose the builder address and fee before wallet review.
+The approval is revocable. Prepared orders remain non-signing-ready and non-broadcast-ready until the wallet reviews and signs them.
 
 Official specification: [Hyperliquid builder codes](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/builder-codes).

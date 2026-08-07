@@ -296,6 +296,7 @@ const OPS = {
     prepareLeverage: (o, a = {}) => hlperps.hlPrepareUpdateLeverage(a, o),
     prepareIsolatedMargin: (o, a = {}) => hlperps.hlPrepareUpdateIsolatedMargin(a, o),
     prepareBracket: (o, a = {}) => hlperps.hlPrepareBracketOrder(a, o),
+    prepareBuilderApproval: (o, a = {}) => hlperps.hlPrepareBuilderApproval(a, o),
   },
   "hl-markets": {
     health: (o) => hlmarkets.hlMarketsHealth(o),
@@ -560,6 +561,7 @@ const OPS = {
  * marketplace, and a prepared EIP-712 action is one signature from settlement.
  */
 const STATE_CREATING_OPS = new Set([
+  "prepareBuilderApproval",
   "prepareBracket",
   "prepareIsolatedMargin",
   "prepareLeverage",

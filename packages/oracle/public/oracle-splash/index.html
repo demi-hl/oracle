@@ -6,9 +6,21 @@
 <title>ORACLE</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="shortcut icon" href="/favicon.ico">
-<meta name="description" content="ORACLE is a self-custodial agent control plane for wallets, markets, and protocol routes.">
+<meta name="description" content="Self-custody trading agent. Prepare every trade — Hyperliquid, EVM, Solana, Bitcoin. You sign.">
 <meta name="theme-color" content="#0B1018" />
 <meta name="robots" content="index,follow" />
+<meta property="og:title" content="ORACLE — Self-custody trading agent">
+<meta property="og:description" content="Prepare every trade — Hyperliquid, EVM, Solana, Bitcoin. You sign.">
+<meta property="og:image" content="https://oracle.demi.la/assets/hero/orb-poster.jpg">
+<meta property="og:image:width" content="900">
+<meta property="og:image:height" content="900">
+<meta property="og:url" content="https://oracle.demi.la/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ORACLE — Self-custody trading agent">
+<meta name="twitter:description" content="Prepare every trade — Hyperliquid, EVM, Solana, Bitcoin. You sign.">
+<meta name="twitter:image" content="https://oracle.demi.la/assets/hero/orb-poster.jpg">
+<meta name="robots" content="noindex,nofollow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
@@ -1128,7 +1140,7 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" id="progress" aria-hidden="true"></div>
 
-<div class="loader" id="loader" aria-hidden="true">
+<div class="loader out" id="loader" aria-hidden="true" style="display:none">
  <div class="loader-inner">
   <div class="loader-mark orbital" aria-hidden="true">
    <svg viewBox="0 0 100 100">
@@ -1176,7 +1188,7 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
      <a class="enter-cta primary" href="/downloads/">Download</a>
      <a class="enter-cta ghost" href="#cli">See the CLI</a>
     </div>
-    <p class="hero-note-line">macOS · Windows · Linux &nbsp;/&nbsp; public CLI and desktop beta</p>
+    <p class="hero-note-line">macOS · Windows · Linux &nbsp;/&nbsp; desktop app or public CLI</p>
    </div>
 
    <figure class="hero-product">
@@ -1469,8 +1481,8 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
   </article>
   <article class="moat-card">
    <div class="n">evidence</div>
-   <h3>Decoded before you sign, receipted after</h3>
-   <p>minOut, impact, spender, and decoded calldata before approval; tx hash, receipt status, balance delta, and allowance state after. Unsigned artifacts export to hardware wallets. No “looks filled.”</p>
+   <h3>See it before you approve. Prove it after.</h3>
+   <p>Before you approve, Oracle shows what you will receive, the expected cost, and which app gets permission to move your tokens. Afterward, it shows whether the transaction succeeded, what changed in your wallet, and whether any permission is still active. You can review unsigned transactions on a hardware wallet. Nothing is marked complete without proof.</p>
   </article>
   <article class="moat-card">
    <div class="n">fail closed</div>
@@ -1536,7 +1548,8 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
    <noscript><p class="agent-ask">move 5k usdc into weth, cheapest route</p></noscript>
   </figure>
  </div>
- <p class="agent-caption rv">Same tool from the terminal, the desktop app, or any MCP client. Prepare-only everywhere: Oracle never holds your keys.</p>
+<p class="agent-caption rv">Same tool from the terminal, the desktop app, any MCP client, or your agent on Telegram, Discord, WhatsApp and Signal. Buzz integration shipped. Prepare-only everywhere: Oracle never holds your keys.</p>
+<div class="agent-icons rv" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px"><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:10px;color:var(--cool);letter-spacing:.08em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.41-.87.03-.24.36-.49.99-.74 3.87-1.69 6.45-2.8 7.74-3.34 3.69-1.53 4.45-1.8 4.95-1.81.11 0 .36.03.52.17.14.12.18.28.2.4.02.11.04.37.01.56z" fill="#229ED9"/></svg>Telegram</span><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:10px;color:var(--cool);letter-spacing:.08em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19.27 5.33C17.94 4.71 14.48 3.26 10.68 4.77a27.98 27.98 0 0 0-6.02 3.13c-.87.51-1.3.9-1.23 1.44.07.46.57.73 1.42 1.12l.33.15c.85.38 1.28.57 1.43 1.01.08.23.07.6-.08 1.1-.15.51-.5 1.15-1.02 2.02-.34.57-.5.85-.37.99.14.15.48.11 1.09-.26 1.76-1.07 3.18-1.93 4.23-2.59 3.22-2.06 5.08-2.82 5.55-2.28.18.21.06.84-.34 1.85-.39 1.01-1.05 2.32-1.51 3.13-.24.43-.37.64-.45.74-.11.14-.2.16-.3.15-.3-.03-.73-.45-1.41-1.3-.5-.62-.94-1.08-1.26-1.25-.64-.34-1.08-.13-1.14.26-.05.29.14.61.56 1.02.43.41 1.15 1.06 1.56 1.5.53.58.82.98.85 1.28.02.24-.04.47-.46.75-.42.27-.86.41-1.34.41-.41 0-.86-.1-1.35-.29-1.7-.68-3.25-1.94-4.64-3.79a18.7 18.7 0 0 1-3.13-5.08c-.38-.79-.16-1.31.41-1.63.47-.27 1.12-.22 1.96.14a10.26 10.26 0 0 1 3.74 2.28c.36.35.68.52.96.52.21 0 .44-.07.69-.22.37-.22.65-.6.86-1.13.21-.53.34-1.14.34-1.57 0-.5-.15-.88-.45-1.12-.52-.42-1.44-.52-2.76-.3-1.71.28-3.62 1.03-5.72 2.24l-.86.49a6.72 6.72 0 0 1-1.02.51c-.37.14-.64.17-.81.09-.18-.1-.24-.29-.2-.58.04-.3.16-.56.36-.76z" fill="#5865F2"/></svg>Discord</span><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:10px;color:var(--cool);letter-spacing:.08em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403-.008-.005h.008l.005-.002h-.005V19.5c0-.248.009-.498.005-.746l.003-.003c.009 0 .018.001.027.002h-.02l-.011.008-.004.024zm-.006-.225h-.003l-.008.003.003.011.003-.005a.018.018 0 0 1 .005-.009zm-.004.17h.003l-.005-.002.002.001v.001zm.02-.003.003.003-.002-.002-.001-.001zM12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z" fill="#25D366"/></svg>WhatsApp</span><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:10px;color:var(--cool);letter-spacing:.08em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM7.64 15.52c-.38-.66-.6-1.41-.6-2.2 0-2.63 2.14-4.77 4.77-4.77 1.27 0 2.47.5 3.37 1.4.9.9 1.4 2.1 1.4 3.37 0 2.63-2.14 4.77-4.77 4.77-.79 0-1.54-.22-2.2-.6L7.5 18l.14-2.48z" fill="#3B82F6"/></svg>Signal</span><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:10px;color:var(--cool);letter-spacing:.08em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#7C4DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Buzz</span></div>
  <div class="venues rv">
   <div class="venues-head"><span>models // harnesses</span><span><b>bring your own model</b> · oracle is the control plane</span></div>
   <div class="marquee"><div class="track" id="llm-track"></div></div>
@@ -1627,7 +1640,9 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
  <figure class="route-proof rv" style="margin-top:18px">
   <svg viewBox="0 0 868 456" preserveAspectRatio="xMidYMid meet" class="route-tree" aria-label="Oracle routing tree">
    <style>
-    .route-tree line { stroke-dasharray: 20 8; animation: flow-down 3s linear infinite; opacity:1; }
+    .route-tree text { fill:#f4f8fc; font-size:15px; font-weight:600; letter-spacing:.02em; paint-order:stroke; stroke:#080d15; stroke-width:2px; stroke-linejoin:round; }
+    .route-tree rect { fill:#111d2b; stroke:rgba(124,196,255,.72); }
+    .route-tree line { stroke:#8bd2ff; stroke-dasharray:20 8; animation:flow-down 3s linear infinite; opacity:.92; }
     @keyframes flow-down { to { stroke-dashoffset: -56; } }
    </style>
    <defs>
@@ -1724,11 +1739,15 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
     <h4>Custom alerts + shadow trading</h4>
     <p>Follow favorite chains, wallets, funds and deployer addresses, then get notified when one opens, rotates or exits. Run the playbook in shadow mode against live prices before you arm it for live execution.</p>
    </article>
+   <article class="strategy-card">
+    <div class="mode">shadow · simulate · execute</div>
+    <h4>Paper-trade until you go live</h4>
+    <p>Simulate every strategy against live venue data without committing capital. Track P&L, slippage, and fill quality in shadow mode — then arm it with one flag when you're ready. No gas, no exposure, no regret trades.</p>
+   </article>
    
   </div>
   <div class="strategy-posture"><b>Public posture:</b> research, simulation and unsigned preparation. MEV and flash-loan broadcast stays off; supported staking, LP, yield and farming actions require the user wallet to sign. Farm discovery reads live third-party yield data. Custom alerts and shadow loops notify or simulate first; live execution still requires arming and a user signature.</div>
 
-  </div>
   </div>
 
  <section class="section" id="chains">
@@ -1752,8 +1771,7 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
  <p class="section-label rv">Oracle CLI</p>
  <h2 class="section-title rv">One surface. <em>Every chain.</em></h2>
  <div class="cli-install rv">
-  <div class="cli-install-cmd"><code>npm i -g @oracle-agent/oracle</code> <span class="cli-install-hint">public npm package · Node 20.19+</span></div>
-  <p class="cli-install-gate"><b>Locals Only</b> holders get 0% Oracle integrator fees. Everyone gets the same public CLI, desktop, source, and prepare-only product access.</p>
+  <div class="cli-install-cmd"><code>oracle</code> <span class="cli-install-hint">npm install -g @oracle-agent/oracle</span></div>
  </div>
  <p class="section-lede rv">The real Oracle shell, isolated from desktop chrome. No accounts, no servers. The CLI runs on your machine and reads straight from public RPCs.</p>
  <p class="section-lede rv">Pin the active surface with <code style="color:var(--blue2)">/chain hyperliquid</code>, switch models, ask naturally. Oracle reads, prices, and prepares — you sign.</p>
@@ -1771,7 +1789,7 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
     <span>multichain routing</span>
     <span>self-custody</span>
    </div>
-    <h2 class="section-title app-shot-title">Oracle Desktop App</h2>
+    <h2 class="section-title app-shot-title">Oracle Desktop App <sup style="font-size:14px;color:var(--blue);font-weight:400">beta</sup></h2>
     <figure class="app-shot">
      <img src="assets/desktop-app.jpg" width="1736" height="959" loading="lazy" decoding="async" alt="Oracle desktop app showing the specialist mesh, with Portfolio, Approvals, Prepare, CLI, Farming Methods, Agent Connect, Receipts, Campaigns and Routes panes.">
      <figcaption>Portfolio, approvals, prepare, farming, receipts and routes in one pane.</figcaption>
@@ -1781,19 +1799,34 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
  </div>
 </section>
 
-<section class="section" id="custody" style="padding-top:clamp(48px,8vh,80px)">
-  <div class="strip-inner rv" style="border:1px solid var(--line);border-radius:16px;padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;justify-content:space-between;background:linear-gradient(180deg, rgba(124,196,255,.05), transparent)">
-   <div class="strip-left">
-    <strong style="font-family:var(--display);font-weight:400;font-size:26px;display:block;margin-bottom:6px">You keep custody.</strong>
-    <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)">oracle never holds your keys</span>
-   </div>
-   <div class="strip-right" style="display:flex;flex-wrap:wrap;gap:10px">
-    <span class="pill on" style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;border:1px solid rgba(124,196,255,.35);border-radius:999px;padding:9px 12px;color:var(--blue)">Multi-wallet</span>
-    <span class="pill on" style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;border:1px solid rgba(124,196,255,.35);border-radius:999px;padding:9px 12px;color:var(--blue)">Per-wallet limits</span>
-    <span class="pill" style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:9px 12px;color:var(--cool)">Revoke anytime</span>
-   </div>
-   </div>
-   </section>
+<section class="section" id="fees">
+ <p class="section-label rv">Fees</p>
+ <h2 class="section-title rv">5 bps. <em>Holders zero.</em></h2>
+ <p class="section-lede rv">Oracle charges 5 basis points (0.05%) on swaps it routes. Eligible Hyperliquid orders can separately include a 1–2 bps builder fee after wallet approval. Both are shown before you sign.</p>
+ <div class="moat-grid rv" style="margin-top:28px">
+  <article class="moat-card">
+   <div class="n">swap fee</div>
+   <h3>5 bps per routed swap</h3>
+   <p>Calculated on the output amount, deducted from the route before the quote reaches you. Oracle never touches your input — it prices the net you receive after the fee.</p>
+  </article>
+  <article class="moat-card">
+   <div class="n">locals only</div>
+   <h3>0% for NFT holders</h3>
+   <p>Hold a Locals Only NFT in the wallet Oracle reads and eligible routed swaps and Hyperliquid builder orders carry zero Oracle fees. No claim, dashboard, or manual toggle.</p>
+  </article>
+  <article class="moat-card">
+   <div class="n">operator seat</div>
+   <h3>Run your own instance</h3>
+   <p>The public package is free to install. Every read, route, and prepare runs on your machine. The routing fee only applies when your agent uses Oracle's aggregation.</p>
+  </article>
+  <article class="moat-card">
+   <div class="n">builder codes</div>
+   <h3>Hyperliquid builder fees</h3>
+   <p>Core perps use 2 bps. HIP-3 and HIP-4 use 1 bps. Spot is set to 1 bps but remains inactive until Oracle ships spot-order preparation. Your wallet approves a 2 bps maximum before Oracle can include any builder fee. This is separate from the 5 bps routed-swap fee.</p>
+  </article>
+
+ </div>
+</section>
 
 <div class="mega-oracle rv" aria-hidden="true">oracle</div>
 <footer>
@@ -1813,16 +1846,38 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
  </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
 <script>
+// Load optional animation libraries in background — page works without them
+(function loadExtras(){
+  var s1 = document.createElement("script");
+  s1.src = "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js";
+  var s2 = document.createElement("script");
+  s2.src = "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js";
+  var s3 = document.createElement("script");
+  s3.src = "https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js";
+  var loaded = 0;
+  function onLoad(){
+    loaded++;
+    if (loaded === 3) {
+      window.__oracleMotionReady = true;
+      window.dispatchEvent(new Event("oracle:motion-ready"));
+    }
+  }
+  s1.onload = onLoad; s1.onerror = function(){ loaded++; };
+  s2.onload = onLoad; s2.onerror = function(){ loaded++; };
+  s3.onload = onLoad; s3.onerror = function(){ loaded++; };
+  document.head.appendChild(s1);
+  document.head.appendChild(s2);
+  document.head.appendChild(s3);
+})();
+
 (function () {
  "use strict";
  document.documentElement.classList.add("js");
 
  var ICON = "https://icons.llamao.fi/icons/";
  var CHAINS = [
+  { name: "Hyperliquid", id: "999", logo: "chains/rsz_hyperliquid", note: "hyperliquid agent",  badge: "route" },
   { name: "Ethereum",  id: "1",     logo: "chains/rsz_ethereum",    note: "evm / bridge agent", badge: "route" },
   { name: "Base",      id: "8453",  logo: "chains/rsz_base",        note: "evm / bridge agent", badge: "route" },
   { name: "Arbitrum",  id: "42161", logo: "chains/rsz_arbitrum",    note: "evm / bridge agent", badge: "route" },
@@ -1831,7 +1886,6 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
   { name: "Avalanche", id: "43114", logo: "chains/rsz_avalanche",   note: "evm / bridge agent", badge: "route" },
   { name: "Polygon",   id: "137",   logo: "chains/rsz_polygon",     note: "evm / bridge agent", badge: "route" },
   { name: "Robinhood", id: "4663",  logo: "chains/rsz_robinhood",   note: "robinhood agent",    badge: "route" },
-  { name: "Hyperliquid", id: "999", logo: "chains/rsz_hyperliquid", note: "hyperliquid agent",  badge: "route" },
   { name: "Abstract",  id: "2741",  logo: "chains/rsz_abstract",    note: "open / add agent",   badge: "route" },
   { name: "Stable",    id: "988",   logo: "chains/rsz_stable",      note: "stable agent",       badge: "route" },
   { name: "Solana",    id: "SOL",   logo: "chains/rsz_solana",      note: "solana agent",       badge: "route" },
@@ -1874,9 +1928,14 @@ var BRAND = "brand/";
  { n: "Derive V2", img: "derive", cap: "read", u: "https://app.derive.xyz" },
  { n: "PancakeSwap AMM", img: "pancakeswap", cap: "read + quote", u: "https://pancakeswap.finance/" },
  { n: "Lista Lending", img: "lista", cap: "read + quote", u: "https://lista.org/lending" },
+ { n: "Silhouette", cap: "read", u: "https://silhouette.exchange/" },
+ { n: "Nest Exchange", cap: "read", u: "https://nestdex.org/" },
  { n: "Lista CDP", img: "lista", cap: "read", u: "https://lista.org/" },
  { n: "Benqi Lending", img: "benqi", cap: "read", u: "https://benqi.fi" },
  { n: "Pharaoh V3", img: "pharaoh", cap: "read + quote", u: "https://www.phar.gg/" },
+ { n: "Trade XYZ", cap: "read", u: "https://trade.xyz/" },
+ { n: "Markets by Kinetiq", cap: "read", u: "https://markets.xyz/" },
+ { n: "Outcome", cap: "read", u: "https://outcome.xyz/" },
  { n: "Polymarket", wm: "polymarket.png", cap: "read", u: "https://polymarket.com/" },
  { n: "XSY", img: "xsy", cap: "read", u: "https://xsy.fi" },
  { n: "Balancer V2", wm: "balancer.svg", cap: "read + quote", u: "https://balancer.fi/" },
@@ -1902,7 +1961,9 @@ var BRAND = "brand/";
  { n: "Relay", wm: "relay.svg", cap: "route source", u: "https://relay.link/" },
  { n: "Odos", wm: "odos.svg", cap: "read + route source", u: "https://app.odos.xyz" },
  { n: "Jupiter", wm: "jupiter.svg", cap: "solana route source", u: "https://jup.ag/" },
- { n: "Stargate", wm: "stargate.svg", cap: "read + bridge route", u: "https://stargate.finance/" }
+ { n: "Stargate", wm: "stargate.svg", cap: "read + bridge route", u: "https://stargate.finance/" },
+ { n: "Motion", cap: "read", u: "https://opensea.io/token/hyperevm/0xb94bbecf4050383a9f1ecd71ac8114ac930d2446" },
+ { n: "LiquidLaunch", cap: "read", u: "https://liquidlaunch.app/" },
 ];
 var PROTOS_B = [
  { n: "Uniswap V3 LP", img: "uniswap", cap: "preview + mint/collect prepare", u: "https://app.uniswap.org/" },
@@ -1998,6 +2059,11 @@ var PROTOS_B = [
  function protocolName(name) {
   var label = name.replace(/\s+(?:DEX\s+)?V\d+(?:\s+LP)?\b/gi, "").trim();
   var aliases = [
+   [/^Outcome\b/i, "Outcome"],
+   [/^Markets by Kinetiq\b/i, "Markets by Kinetiq"],
+   [/^Trade XYZ\b/i, "Trade XYZ"],
+   [/^Nest Exchange\b/i, "Nest Exchange"],
+   [/^Silhouette\b/i, "Silhouette"],
    [/^Aerodrome\b/i, "Aerodrome"],
    [/^Pancake(?:Swap)?\b/i, "PancakeSwap"],
    [/^LFJ\b/i, "LFJ"],
@@ -2023,6 +2089,9 @@ var PROTOS_B = [
    [/^Sky\b/i, "Sky"],
    [/^Binance\b/i, "Binance"],
    [/^Avant\b/i, "Avant"],
+   [/^Motion\b/i, "Motion"],
+   [/^LiquidLaunch\b/i, "LiquidLaunch"],
+   [/^Felix\b/i, "Felix"],
    [/^Aster\b/i, "Aster"],
    [/^Lighter\b/i, "Lighter"],
    [/^stHYPE \+ wstHYPE$/i, "Valantis"]
@@ -2142,10 +2211,19 @@ renderProtocolAtlas();
   marqueeResizeTimer = setTimeout(syncMarqueeVelocity, 120);
  });
 
- var loader = document.getElementById("loader");
- window.addEventListener("load", function () {
-  setTimeout(function () { loader.classList.add("out"); }, 650);
- });
+ // Dismiss loader on DOM ready — doesn't wait for external scripts
+ if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function () {
+   setTimeout(function () { document.getElementById("loader").classList.add("out"); }, 650);
+  });
+ } else {
+  setTimeout(function () { document.getElementById("loader").classList.add("out"); }, 50);
+ }
+ // Belt-and-suspenders: if all else fails, dismiss after 4s
+ setTimeout(function () {
+  var l = document.getElementById("loader");
+  if (l && !l.classList.contains("out")) l.classList.add("out");
+ }, 4000);
 
  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
  var coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -2262,7 +2340,9 @@ var activeLenis = null;
   }
   document.documentElement.classList.add("premium-motion");
  }
- initPremiumMotion();
+ window.addEventListener("oracle:motion-ready", initPremiumMotion);
+ if (window.__oracleMotionReady) initPremiumMotion();
+
 
  function scrollToHash(hash) {
   var target = document.getElementById(hash.slice(1));

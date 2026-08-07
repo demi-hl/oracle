@@ -62,12 +62,20 @@ const ALLOWED_VALUES = [
   "0x0000000000000000000000000000000000000000",
 ];
 
-const PUBLIC_EMAIL_RE = /^(?:[0-9]+\+)?[a-z0-9_.-]+\[?bot\]?@users\.noreply\.github\.com$|^oracle@users\.noreply\.github\.com$|^noreply@github\.com$/i;
+const PUBLIC_EMAIL_RE = /^(?:[0-9]+\+)?[a-z0-9_.-]+(?:\[bot\])?@users\.noreply\.github\.com$|^noreply@github\.com$/i;
 const PRIVATE_EMAIL_RE = /@(gmail|icloud|me|yahoo|outlook|hotmail|protonmail)\.com$|@(local|gmk)$|^fleet@|^agent@/i;
 const HISTORY_SCOPE = process.env.ORACLE_SCAN_ALL_REFS === "1" ? "--all" : "HEAD";
+const IDENTITY_BASE = String(process.env.ORACLE_IDENTITY_BASE || "").trim();
 
 function sh(cmd, args) {
   return execFileSync(cmd, args, { cwd: ROOT, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+}
+
+function identityScope() {
+  if (HISTORY_SCOPE === "--all" || !IDENTITY_BASE) return HISTORY_SCOPE;
+  if (!/^[0-9a-f]{40}$/i.test(IDENTITY_BASE)) throw new Error("ORACLE_IDENTITY_BASE must be a full commit SHA");
+  sh("git", ["rev-parse", "--verify", `${IDENTITY_BASE}^{commit}`]);
+  return `${IDENTITY_BASE}..HEAD`;
 }
 
 function redactSample(kind) {
@@ -100,7 +108,7 @@ function parseEmail(identity) {
 }
 
 function scanIdentities(findings) {
-  const identities = new Set(sh("git", ["log", HISTORY_SCOPE, "--format=%an <%ae>|%cn <%ce>"]).split(/[\n|]/).filter(Boolean));
+  const identities = new Set(sh("git", ["log", identityScope(), "--format=%an <%ae>|%cn <%ce>"]).split(/[\n|]/).filter(Boolean));
   for (const identity of identities) {
     const email = parseEmail(identity);
     if (!email) continue;

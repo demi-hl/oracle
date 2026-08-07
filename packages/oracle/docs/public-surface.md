@@ -89,9 +89,14 @@ policy and custody wall still apply.
 
 | Name | Default | Meaning |
 |---|---|---|
-| `ORACLE_INTEGRATOR_FEE_BPS` | unset (no fee) | Integrator fee in basis points on routed swaps, clamped to 100 (1%). Unset, zero, negative or malformed means **no fee**. Locals Only holders receive a 0% Oracle integrator-fee rate regardless of this value; ownership never changes product access |
+| `ORACLE_INTEGRATOR_FEE_BPS` | unset (5 bps when recipient is set) | Integrator fee in basis points on routed swaps, clamped to 100 (1%). A valid recipient opts in and an unset value defaults to 5 bps. Without a recipient, or when explicitly zero, negative, or malformed, no fee applies. A verified Locals Only holder receives a 0% Oracle rate; ownership never changes product access |
 | `ORACLE_INTEGRATOR_FEE_RECIPIENT` | unset | EVM address that receives the fee. **Required**: a fee configured without a valid recipient fails closed to no fee, because otherwise the basis points are charged and silently kept by the aggregator |
 | `ORACLE_INTEGRATOR_ID` | `oracle` | Integrator/partner string sent to route providers. ParaSwap accepts any value with no registration; LI.FI requires the id to be registered at portal.li.fi or the quote 400s |
+| `ORACLE_HL_BUILDER_ADDRESS` | unset | Operator-configured Hyperliquid builder address. It is never published by Oracle |
+| `ORACLE_HL_BUILDER_FEE_BPS` | category default | Core perpetual builder fee. Defaults to 2 bps and may only be lowered |
+| `ORACLE_HL_BUILDER_SPOT_FEE_BPS` | category default | Spot builder-fee policy. Defaults to 1 bps and may only be lowered; spot order preparation is not active |
+| `ORACLE_HL_BUILDER_HIP3_FEE_BPS` | category default | HIP-3 builder fee. Defaults to 1 bps and may only be lowered |
+| `ORACLE_HL_BUILDER_HIP4_FEE_BPS` | category default | HIP-4 builder fee. Defaults to 1 bps and may only be lowered |
 | `ORACLE_DATA_HOST` | `127.0.0.1` | read-plane bind host (loopback enforced) |
 | `ORACLE_DATA_PORT` | `8787` | read-plane port |
 | `ORACLE_DATA_URL` | `http://127.0.0.1:8787` | where the CLI looks for the data server |

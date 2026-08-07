@@ -227,7 +227,7 @@ registerProvider({
   venue: "hyperliquid",
   chainIds: [],
   auth: "none",
-  ops: ["health", "assetInfo", "prepareOrder", "prepareCancel", "prepareLeverage", "prepareIsolatedMargin", "prepareBracket"],
+  ops: ["health", "assetInfo", "prepareOrder", "prepareCancel", "prepareLeverage", "prepareIsolatedMargin", "prepareBracket", "prepareBuilderApproval"],
   notes: "Hyperliquid perp orders/leverage. PREPARE-ONLY: returns signable actions, never submits.",
 });
 

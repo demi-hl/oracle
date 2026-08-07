@@ -5,7 +5,7 @@ import { attachAutoSlippage, bindAutoSlippageGuardToCall, resolveAutoSlippage } 
 import { QUOTE_PLACEHOLDER_ADDRESS, quoteAddress } from "../quote-placeholder.mjs";
 import { stampPrepared } from "../../prepare-envelope.mjs";
 
-import { resolveFee, lifiFeeParams } from "../../router/integrator-fee.mjs";
+import { resolveVerifiedFee, lifiFeeParams } from "../../router/integrator-fee.mjs";
 
 export const LIFI_API = "https://li.quest/v1";
 
@@ -77,10 +77,12 @@ export async function lifiQuote(q = {}, opts = {}) {
   }
   // LI.FI expects a decimal fraction: 0.005 = 50 bps.
   params.set("slippage", String(selected.selectedBps / 10_000));
-  // Integrator fee. Off unless configured, and always zero for Locals Only
-  // holders — see router/integrator-fee.mjs for why the policy lives in one
-  // place instead of per-provider.
-  const fee = resolveFee({ isHolder: q.isHolder, action: q.feeAction || "swap" });
+  const fee = await resolveVerifiedFee({
+    wallet: q.fromAddress,
+    env: opts.env,
+    action: q.feeAction || "swap",
+    holderCheck: opts.holderCheck,
+  });
   for (const [k, v] of Object.entries(lifiFeeParams(fee))) params.set(k, v);
   const result = await httpJson(`${base(opts)}/quote?${params}`, {
     fetchImpl: opts.fetchImpl,

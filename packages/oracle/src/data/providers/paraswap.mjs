@@ -2,7 +2,7 @@
 import { httpJson } from "../http.mjs";
 import { attachAutoSlippage, bindAutoSlippageGuardToCall } from "../../auto-slippage.mjs";
 import { stampPrepared } from "../../prepare-envelope.mjs";
-import { resolveFee, paraswapFeeParams } from "../../router/integrator-fee.mjs";
+import { resolveVerifiedFee, paraswapFeeParams } from "../../router/integrator-fee.mjs";
 
 export const PARASWAP_API = "https://api.paraswap.io";
 const base = (o = {}) => (o.baseUrl || process.env.PARASWAP_API_URL || PARASWAP_API).replace(/\/$/, "");
@@ -32,10 +32,12 @@ export async function paraswapPrice(args = {}, opts = {}) {
   });
   if (args.includeDEXS) params.set("includeDEXS", String(args.includeDEXS));
   if (args.excludeDEXS) params.set("excludeDEXS", String(args.excludeDEXS));
-  // Integrator fee. Unlike LI.FI, ParaSwap needs no prior registration: a live
-  // quote echoes back partner/partnerFee as sent. Still off unless configured,
-  // and always zero for Locals Only holders.
-  const fee = resolveFee({ isHolder: args.isHolder });
+  const fee = await resolveVerifiedFee({
+    wallet: args.userAddress || args.fromAddress,
+    env: opts.env,
+    action: args.feeAction || "swap",
+    holderCheck: opts.holderCheck,
+  });
   for (const [k, v] of Object.entries(paraswapFeeParams(fee))) params.set(k, v);
   const result = await httpJson(`${base(opts)}/prices?${params}`, {
     fetchImpl: opts.fetchImpl,

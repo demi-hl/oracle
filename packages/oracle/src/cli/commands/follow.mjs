@@ -8,7 +8,7 @@ const USAGE = `oracle follow <name-or-address> [--chain <name>] [--blocks <n>] [
 
   oracle follow vitalik.eth
   oracle follow demi.hl --chain base
-  oracle follow 0x4d47b6757afd42c3dbd9691b71b43d74afa4b6b2 --blocks 20000 --json
+  oracle follow 0x1111111111111111111111111111111111111111 --blocks 20000 --json
 
 Reads ERC20 transfer activity for a wallet. Read-only: this calls
 eth_getLogs and eth_blockNumber and nothing else, so it can never move funds.
