@@ -127,3 +127,49 @@ test("public desktop mode ignores host operator installations", () => {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("bare operator binaries on PATH are ignored", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "oracle-op-path-"));
+  const marker = path.join(dir, "executed");
+  const signer = path.join(dir, "oracle-signer");
+  fs.writeFileSync(signer, `#!/usr/bin/env node\nrequire("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");\n`, { mode: 0o755 });
+  const prevDir = process.env.ORACLE_OPERATOR_BIN_DIR;
+  const prevPath = process.env.PATH;
+  delete process.env.ORACLE_OPERATOR_BIN_DIR;
+  process.env.PATH = `${dir}${path.delimiter}${prevPath || ""}`;
+  try {
+    assert.equal(resolveOperator().ok, false);
+    assert.equal(fs.existsSync(marker), false);
+  } finally {
+    if (prevDir === undefined) delete process.env.ORACLE_OPERATOR_BIN_DIR;
+    else process.env.ORACLE_OPERATOR_BIN_DIR = prevDir;
+    if (prevPath === undefined) delete process.env.PATH;
+    else process.env.PATH = prevPath;
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("operator capability probes on PATH are ignored", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "oracle-op-caps-path-"));
+  const marker = path.join(dir, "executed");
+  const caps = path.join(dir, "oracle-operator-caps");
+  fs.writeFileSync(
+    caps,
+    `#!/usr/bin/env node\nrequire("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran");\nprocess.stdout.write(JSON.stringify({bins:{"oracle-signer":${JSON.stringify(path.join(dir, "oracle-signer"))}}}));\n`,
+    { mode: 0o755 },
+  );
+  const prevDir = process.env.ORACLE_OPERATOR_BIN_DIR;
+  const prevPath = process.env.PATH;
+  delete process.env.ORACLE_OPERATOR_BIN_DIR;
+  process.env.PATH = `${dir}${path.delimiter}${prevPath || ""}`;
+  try {
+    assert.equal(resolveOperator().ok, false);
+    assert.equal(fs.existsSync(marker), false);
+  } finally {
+    if (prevDir === undefined) delete process.env.ORACLE_OPERATOR_BIN_DIR;
+    else process.env.ORACLE_OPERATOR_BIN_DIR = prevDir;
+    if (prevPath === undefined) delete process.env.PATH;
+    else process.env.PATH = prevPath;
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});

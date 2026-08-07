@@ -38,25 +38,6 @@ export const OPERATOR_NOT_INSTALLED_MESSAGE = `oracle: signing is unavailable in
 export const SIGN_HINT =
   "hint: run 'oracle sign init' to provision keys, or 'oracle sign doctor --json' for detail.";
 
-function whichOnPath(binName) {
-  const pathEnv = process.env.PATH || "";
-  const parts = pathEnv.split(path.delimiter).filter(Boolean);
-  const exts = process.platform === "win32" ? ["", ".cmd", ".exe", ".bat"] : [""];
-  for (const dir of parts) {
-    for (const ext of exts) {
-      const candidate = path.join(dir, binName + ext);
-      try {
-        if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
-          return candidate;
-        }
-      } catch {
-        // ignore
-      }
-    }
-  }
-  return null;
-}
-
 function binsFromDir(binDir) {
   const bins = {};
   for (const name of OPERATOR_BIN_NAMES) {
@@ -132,47 +113,6 @@ function tryResolvePackage(fromPaths) {
   return null;
 }
 
-function tryCapsOnPath() {
-  const capsBin = whichOnPath("oracle-operator-caps");
-  if (!capsBin) return null;
-  const r = spawnSync(capsBin, [], {
-    encoding: "utf8",
-    timeout: 5000,
-    env: process.env,
-  });
-  if (r.status !== 0 || !r.stdout) return null;
-  try {
-    const report = JSON.parse(r.stdout);
-    if (!report || typeof report !== "object" || !report.bins) return null;
-    return {
-      ok: true,
-      binDir: path.dirname(Object.values(report.bins)[0] || capsBin),
-      version: report.version || "unknown",
-      bins: report.bins,
-      source: "caps-path",
-      controlMcp: report.controlMcp,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function tryPathProbe() {
-  const bins = {};
-  for (const name of OPERATOR_BIN_NAMES) {
-    const hit = whichOnPath(name);
-    if (hit) bins[name] = hit;
-  }
-  if (!Object.keys(bins).length) return null;
-  return {
-    ok: true,
-    binDir: path.dirname(Object.values(bins)[0]),
-    version: "unknown",
-    bins,
-    source: "path-probe",
-  };
-}
-
 export function resolveOperator() {
   if (process.env.ORACLE_PUBLIC_DESKTOP === "1") return { ok: false, source: "public-desktop" };
   const envDir = process.env.ORACLE_OPERATOR_BIN_DIR;
@@ -193,10 +133,7 @@ export function resolveOperator() {
     return { ok: true, binDir: abs, version, bins, source: "env:ORACLE_OPERATOR_BIN_DIR" };
   }
 
-  const fromPkg =
-    tryResolvePackage([process.cwd(), PACKAGE_ROOT]) ||
-    tryCapsOnPath() ||
-    tryPathProbe();
+  const fromPkg = tryResolvePackage([process.cwd(), PACKAGE_ROOT]);
   return fromPkg || { ok: false };
 }
 

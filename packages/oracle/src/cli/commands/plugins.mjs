@@ -20,6 +20,8 @@ import { spawnSync } from "node:child_process";
 import { oracleConfigDir } from "../paths.mjs";
 import { loadPlugin, scanInstalledPlugins, SCHEMA_ID } from "../../plugins/agent-plugin-loader.mjs";
 
+const INSTALLED_PLUGIN_NAME_RE = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
+
 function pluginsDir() {
   const dir = path.join(oracleConfigDir(), "plugins");
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -124,9 +126,41 @@ function cmdRemove(name) {
     return 1;
   }
 
-  const dest = path.join(pluginsDir(), name);
+  if (!INSTALLED_PLUGIN_NAME_RE.test(name) || path.basename(name) !== name || path.isAbsolute(name)) {
+    process.stderr.write(`invalid plugin name "${name}"\n`);
+    return 1;
+  }
+
+  const root = pluginsDir();
+  const rootStat = fs.lstatSync(root);
+  if (rootStat.isSymbolicLink() || !rootStat.isDirectory()) {
+    process.stderr.write("refusing to remove plugin: plugin root is not a regular directory\n");
+    return 1;
+  }
+
+  const dest = path.resolve(root, name);
+  const relative = path.relative(root, dest);
+  if (!relative || relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    process.stderr.write(`invalid plugin name "${name}"\n`);
+    return 1;
+  }
+
   if (!fs.existsSync(dest)) {
     process.stderr.write(`plugin "${name}" not found\n`);
+    return 1;
+  }
+
+  const stat = fs.lstatSync(dest);
+  if (stat.isSymbolicLink() || !stat.isDirectory()) {
+    process.stderr.write(`refusing to remove plugin "${name}": path is not a regular plugin directory\n`);
+    return 1;
+  }
+
+  const rootReal = fs.realpathSync(root);
+  const destReal = fs.realpathSync(dest);
+  const realRelative = path.relative(rootReal, destReal);
+  if (!realRelative || realRelative === ".." || realRelative.startsWith(`..${path.sep}`) || path.isAbsolute(realRelative)) {
+    process.stderr.write(`refusing to remove plugin "${name}": path escapes the plugin directory\n`);
     return 1;
   }
 
