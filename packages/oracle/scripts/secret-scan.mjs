@@ -74,7 +74,11 @@ function sh(cmd, args) {
 function identityScope() {
   if (HISTORY_SCOPE === "--all" || !IDENTITY_BASE) return HISTORY_SCOPE;
   if (!/^[0-9a-f]{40}$/i.test(IDENTITY_BASE)) throw new Error("ORACLE_IDENTITY_BASE must be a full commit SHA");
-  sh("git", ["rev-parse", "--verify", `${IDENTITY_BASE}^{commit}`]);
+  try {
+    sh("git", ["rev-parse", "--verify", `${IDENTITY_BASE}^{commit}`]);
+  } catch {
+    return "HEAD";
+  }
   return `${IDENTITY_BASE}..HEAD`;
 }
 

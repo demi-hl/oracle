@@ -136,3 +136,25 @@ test("identity scan can exclude base ancestry while still rejecting new private 
   assert.equal(privateResult.status, 1);
   assert.match(`${privateResult.stdout}\n${privateResult.stderr}`, /non-public git identity/);
 });
+
+test("an unavailable force-push base falls back to scanning all reachable identities", () => {
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), "oracle-secret-missing-base-"));
+  initRepo(repo, "founder@example.gmail.com");
+  fs.writeFileSync(path.join(repo, "private-base.txt"), "safe\n");
+  git(repo, ["add", "private-base.txt"]);
+  git(repo, ["commit", "-qm", "private base"]);
+
+  git(repo, ["config", "user.email", "oracle@users.noreply.github.com"]);
+  fs.writeFileSync(path.join(repo, "public-head.txt"), "safe\n");
+  git(repo, ["add", "public-head.txt"]);
+  git(repo, ["commit", "-qm", "public head"]);
+
+  const result = spawnSync(process.execPath, [scanner], {
+    cwd: repo,
+    encoding: "utf8",
+    env: { ...process.env, ORACLE_IDENTITY_BASE: "f".repeat(40) },
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.equal(result.status, 1);
+  assert.match(output, /non-public git identity/);
+});
