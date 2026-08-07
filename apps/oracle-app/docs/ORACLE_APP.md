@@ -17,14 +17,13 @@ Oracle app is the public product shell for read and prepare flows.
 - Policy grants, custody caps, or wallet executor internals.
 - Private infrastructure dashboards or local machine control surfaces.
 - Hardcoded personal hostnames or local filesystem paths.
-- A Locals-holder access claim without a server-side wallet challenge,
-  ownership proof, and per-user session isolation.
+- Any claim that Locals Only ownership gates product access. It only waives
+  Oracle's integrator fee.
 
 ## Deployment status
 
-The source app is not itself holder-gated. It must remain local or behind the
-separate admission gateway described in
-[`packages/oracle/docs/holder-beta.md`](../../../packages/oracle/docs/holder-beta.md).
+The source app is public-access. A hosted deployment with private user state
+still needs ordinary authentication and per-user isolation.
 The static website, app build, and loopback API are separate artifacts; one
 being live does not prove the others are live.
 

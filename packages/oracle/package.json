@@ -1,6 +1,6 @@
 {
   "name": "@oracle-agent/oracle",
-  "version": "0.12.1",
+  "version": "0.14.0",
   "description": "Oracle: standalone prepare-only multichain agent control plane with optional Hermes integration. Policy-bounded intents for a user-signed wallet; the public package never takes your key.",
   "license": "BUSL-1.1",
   "type": "module",
@@ -58,7 +58,7 @@
     "./agent-grants": "./src/public-api/agent-grants.mjs"
   },
   "scripts": {
-    "test": "ORACLE_TEST_ISOLATE_SECRETS=1 ORACLE_ROUTE_ATTESTATION_SECRET=oracle-unit-test-secret ORACLE_GATE_BYPASS=1 node --test test/*.test.mjs",
+    "test": "ORACLE_TEST_ISOLATE_SECRETS=1 ORACLE_ROUTE_ATTESTATION_SECRET=oracle-unit-test-secret node --test test/*.test.mjs",
     "test:boundary": "ORACLE_TEST_ISOLATE_SECRETS=1 ORACLE_ROUTE_ATTESTATION_SECRET=oracle-unit-test-secret node --test test/custody-boundary.test.mjs",
     "e2e:solana-bitcoin": "node scripts/e2e-solana-bitcoin.mjs",
     "e2e:hypercore-staking": "node scripts/e2e-hypercore-staking.mjs",

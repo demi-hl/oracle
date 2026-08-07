@@ -89,20 +89,9 @@ policy and custody wall still apply.
 
 | Name | Default | Meaning |
 |---|---|---|
-| `ORACLE_GATE_HOST` | `127.0.0.1` | Locals Only distribution gate bind host. This is the one surface meant to be exposed publicly (behind TLS) — a gate that runs on the visitor's machine is not a gate |
-| `ORACLE_GATE_PORT` | `8810` | distribution gate port |
-| `ORACLE_GATE_DOMAIN` | host:port | domain named in the message holders sign; binds the signature to this service |
-| `ORACLE_INTEGRATOR_FEE_BPS` | unset (no fee) | Integrator fee in basis points on routed swaps, clamped to 100 (1%). Unset, zero, negative or malformed means **no fee**. Locals Only holders are exempt regardless of this value — the NFT is the license, so charging holders per swap would sell the same access twice |
+| `ORACLE_INTEGRATOR_FEE_BPS` | unset (no fee) | Integrator fee in basis points on routed swaps, clamped to 100 (1%). Unset, zero, negative or malformed means **no fee**. Locals Only holders receive a 0% Oracle integrator-fee rate regardless of this value; ownership never changes product access |
 | `ORACLE_INTEGRATOR_FEE_RECIPIENT` | unset | EVM address that receives the fee. **Required**: a fee configured without a valid recipient fails closed to no fee, because otherwise the basis points are charged and silently kept by the aggregator |
 | `ORACLE_INTEGRATOR_ID` | `oracle` | Integrator/partner string sent to route providers. ParaSwap accepts any value with no registration; LI.FI requires the id to be registered at portal.li.fi or the quote 400s |
-| `ORACLE_GATE_SECRET` | random per process | HMAC secret for gate session tokens. Unset means sessions do not survive a restart; there is deliberately no hardcoded fallback |
-| `ORACLE_GATE_TARBALL` | unset | Path to the packed `.tgz` the gate serves to proven holders. **Unset means the gate hands out a public-registry `npm install` line, which is discovery, not enforcement** — anyone can run that command without ever contacting the gate. Set this to make holder-gating real, since a check running on the visitor's machine can always be patched out |
-| `ORACLE_GATE_DOWNLOAD_TTL_MS` | `300000` | Lifetime of a signed download link. The link is HMAC-bound to one address and one deadline, so a leaked URL is useless after it expires and cannot be edited to name another wallet |
-| `ORACLE_INSTALL_COMMAND` | `npm install -g @oracle-agent/oracle` | install line handed to a verified holder |
-| `ORACLE_GATE_APPIMAGE` | unset | Path to the Linux `.AppImage` the gate serves to proven holders. Same posture as `ORACLE_GATE_TARBALL`: unset means that build simply is not offered, and the download route 503s for it rather than falling back to something ungated |
-| `ORACLE_GATE_DMG` | unset | Path to the macOS `.dmg`. Unset means not offered |
-| `ORACLE_GATE_EXE` | unset | Path to the Windows installer. Unset means not offered |
-| `ORACLE_GATE_BYPASS` | off | Skips the CLI holder check outright. Operator/CI tool. Set in `ci.yml` and `desktop.yml`, which have no wallet. Its existence is why the CLI-side gate is friction and signalling, not a security boundary: it runs on the user's machine, so it can always be set or patched. Real enforcement is `ORACLE_GATE_TARBALL` on a server you control |
 | `ORACLE_DATA_HOST` | `127.0.0.1` | read-plane bind host (loopback enforced) |
 | `ORACLE_DATA_PORT` | `8787` | read-plane port |
 | `ORACLE_DATA_URL` | `http://127.0.0.1:8787` | where the CLI looks for the data server |
@@ -154,12 +143,10 @@ A throttled caller gets `429` with `Retry-After` before any request body is
 parsed. `chainIds` is additionally capped at 12 per request so one call cannot
 cost as much as many.
 
-This limiter is an abuse brake, not authentication. The server does not prove
-Locals ownership or isolate hosted users. Keep it on loopback; a hosted beta
-requires the server-side admission gateway in [holder-beta.md](holder-beta.md).
+This limiter is an abuse brake, not authentication. Keep the server on loopback;
+a hosted service requires server-side authentication and per-user isolation.
 Buzz discovery, capability verification, and audit routes are documented in
-[buzz-integration.md](buzz-integration.md); Buzz capability verification is not
-a substitute for the NFT-holder gate.
+[buzz-integration.md](buzz-integration.md).
 
 Counters are in memory and reset on restart. That is sufficient for accidental
 hammering and casual abuse; a distributed flood still needs an edge/WAF in

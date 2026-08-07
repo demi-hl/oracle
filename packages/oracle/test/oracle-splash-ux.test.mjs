@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(join(root, "public/oracle-splash/index.html"), "utf8");
+const downloads = readFileSync(join(root, "public/oracle-splash/downloads/index.html"), "utf8");
 const cliImage = join(root, "public/oracle-splash/assets/cli-chain-hyperliquid.jpg");
 
 test("hero leads with the product shot and the CLI section keeps its full treatment", () => {
@@ -74,9 +75,9 @@ test("hero leads with the product shot and the CLI section keeps its full treatm
   // The invariant is unchanged in spirit: copy must match what can actually be
   // delivered, so all three platform artifacts must be linked.
   assert.match(html, /Oracle Desktop App/);
-  assert.match(html, /Oracle-0\.2\.0-arm64\.dmg/);
-  assert.match(html, /Oracle-0\.2\.0\.AppImage/);
-  assert.match(html, /Oracle-Setup-0\.2\.0\.exe/);
+  assert.match(downloads, /Oracle-0\.2\.0-arm64\.dmg/);
+  assert.match(downloads, /Oracle-0\.2\.0\.AppImage/);
+  assert.match(downloads, /Oracle-Setup-0\.2\.0\.exe/);
   assert.doesNotMatch(html, /not yet downloadable/);
   assert.ok(statSync(cliImage).size > 50_000);
 });
@@ -191,10 +192,9 @@ test("the desktop screenshot is a real captured asset with correct intrinsics", 
 
 test("holder copy stays fee/rate scoped and does not claim custody enforcement", () => {
   assert.doesNotMatch(html, /Oracle unlocks when/);
-  assert.match(html, /Holders get 0% Oracle fees/);
-  assert.match(html, /The CLI recognises your agent wallet and applies the holder rate automatically/);
-  assert.match(html, /The public package never touches keys/);
-  assert.doesNotMatch(html, /security boundary/i);
+  assert.match(html, /Locals Only<\/b> holders get 0% Oracle integrator fees/i);
+  assert.match(html, /Everyone gets the same public CLI, desktop, source, and prepare-only product access/i);
+  assert.doesNotMatch(html, /holder-gated|Locals Only access|verify .*wallet/i);
 });
 
 test("the agent section shows prompts, not a CLI recording", () => {
@@ -227,8 +227,8 @@ test("the agent section shows prompts, not a CLI recording", () => {
   assert.match(heading, /oracle mcp install claude-code/);
   assert.match(heading, /oracle mcp install chatgpt/);
   assert.match(heading, /oracle mcp install cursor/);
-  assert.match(heading, /oracle mcp install vscode/);
-  assert.match(heading, /oracle mcp install copilot/);
+  assert.match(heading, /oracle mcp install claude-desktop/);
+  assert.match(heading, /oracle mcp install codex/);
   assert.equal((html.match(/class="agent-panel /g) || []).length, 2);
 });
 

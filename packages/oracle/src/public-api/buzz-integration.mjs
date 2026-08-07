@@ -63,8 +63,7 @@ export function buildBuzzCatalog({ baseUrl = null, plans = null } = {}) {
     },
     // Access tiers are published in the discovery document so an integrator
     // can see the ceiling before writing code against it. Anonymous access
-    // keeps working; a key raises the limit. Locals Only holders get the paid
-    // tier at no cost — the NFT is the license.
+    // keeps working; a key raises the limit. NFT status never changes access.
     access: plans
       ? Object.freeze({
           anonymous: true,

@@ -20,7 +20,7 @@
     "start": "electron ."
   },
   "dependencies": {
-    "@oracle-agent/oracle": "0.12.1",
+    "@oracle-agent/oracle": "0.14.0",
     "electron-store": "^10.1.0"
   },
   "devDependencies": {

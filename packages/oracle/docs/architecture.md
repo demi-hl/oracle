@@ -49,7 +49,7 @@ fails on:
 
 ## Data plane
 
-`src/data/` — 42 provider modules covering 219 unique protocols/venues, each
+`src/data/` — 70 provider modules covering 219 unique protocols/venues, each
 declaring an honest tier. One module can cover many protocols: the Jupiter
 module alone routes 98 Solana venues.
 

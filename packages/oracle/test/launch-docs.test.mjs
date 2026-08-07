@@ -9,7 +9,8 @@ const DOCS = join(ROOT, "docs");
 const README = readFileSync(join(ROOT, "README.md"), "utf8");
 const SETUP = readFileSync(join(ROOT, "SETUP.md"), "utf8");
 const CLI = readFileSync(join(DOCS, "cli.md"), "utf8");
-const HOLDER = readFileSync(join(DOCS, "holder-beta.md"), "utf8");
+const FEE_WAIVER = readFileSync(join(DOCS, "locals-only-fee-waiver.md"), "utf8");
+const HL_BUILDER = readFileSync(join(DOCS, "hyperliquid-builder-code.md"), "utf8");
 const BUZZ = readFileSync(join(DOCS, "buzz-integration.md"), "utf8");
 const BUZZ_SOURCE = readFileSync(join(ROOT, "src/public-api/buzz-integration.mjs"), "utf8");
 
@@ -22,22 +23,34 @@ test("public onboarding contains no private operator install or key-provisioning
   );
   assert.match(publicOnboarding, /not published on npm/i);
   assert.match(publicOnboarding, /user(?:'s|-controlled) wallet/i);
+  assert.doesNotMatch(
+    publicOnboarding,
+    /verify a Locals Only wallet|short-lived install command|pointer, not the product/i,
+  );
 });
 
-test("holder-beta doc remains fail-closed until server-side ownership gate exists", () => {
-  assert.match(HOLDER, /HOLD for a shared, holder-gated hosted launch/);
-  assert.match(HOLDER, /does \*\*not\*\* currently contain an\s+integrated Locals ownership gate/);
-  for (const required of [
-    "single-use nonce",
-    "server recovers the signer",
-    "currently owns at least one token",
-    "HttpOnly",
-    "per-user session",
-    "challenge replay denied",
-    "ports `8787`, `8799`",
-  ]) {
-    assert.ok(HOLDER.includes(required), `holder launch gate missing: ${required}`);
-  }
+test("Locals Only documentation is fee-waiver only", () => {
+  assert.match(FEE_WAIVER, /Oracle is public to everyone/i);
+  assert.match(FEE_WAIVER, /0% Oracle integrator fee/i);
+  assert.match(FEE_WAIVER, /does not gate/i);
+  assert.doesNotMatch(FEE_WAIVER, /holder-gated|challenge|session token|download link/i);
+});
+
+test("Hyperliquid builder-code documentation pins the fee identity and wire units", () => {
+  assert.match(HL_BUILDER, /0x4d47B6757aFd42c3dbd9691b71B43d74Afa4b6b2/);
+  assert.match(HL_BUILDER, /5 basis points/i);
+  assert.match(HL_BUILDER, /[`"]f[`"]\s*[:=]\s*50/i);
+  assert.match(HL_BUILDER, /ApproveBuilderFee/i);
+  assert.match(HL_BUILDER, /main wallet/i);
+  assert.match(HL_BUILDER, /maxBuilderFee/i);
+  assert.match(HL_BUILDER, /does not gate|not an access gate/i);
+  assert.match(HL_BUILDER, /does not waive (?:the )?Hyperliquid builder fee/i);
+  assert.match(FEE_WAIVER, /Hyperliquid builder fee.*not waived/i);
+  assert.match(HL_BUILDER, /does not inject|not inject/i);
+  assert.match(README, /hyperliquid-builder-code\.md/);
+  assert.match(SETUP, /hyperliquid-builder-code\.md/);
+  assert.match(SETUP, /waiver does not waive the Hyperliquid builder fee/i);
+  assert.doesNotMatch(SETUP, /holder.{0,80}omit|omit.{0,80}builder/i);
 });
 
 test("Buzz documentation covers every public endpoint advertised by integration source", () => {

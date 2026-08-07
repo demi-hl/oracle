@@ -85,9 +85,9 @@ Oracle's loopback public server. Use TLS, strict origin and audience binding,
 short-lived sessions, rate limits, request-size caps, redacted logs, and a
 controlled proxy that overwrites forwarded-IP headers.
 
-A Locals-only Buzz beta additionally requires the server-side ownership gate and
-isolation tests in [holder-beta.md](holder-beta.md). The Buzz capability verifier
-is not an NFT-holder gate by itself.
+A hosted Buzz service requires server-side authentication and per-user isolation.
+Locals Only ownership only changes Oracle's integrator fee and does not grant or
+restrict Buzz access.
 
 ## Conversational Oracle in Buzz
 

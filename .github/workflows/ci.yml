@@ -11,12 +11,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    # The CLI is gated to Locals Only holders. CI has no wallet and must never
-    # hold one, so tests that spawn real CLI binaries need the operator bypass.
-    # This does not weaken the gate: holder-access.test.mjs asserts the bypass is
-    # env-only and off by default, and the enforcement path is mutation-tested.
-    env:
-      ORACLE_GATE_BYPASS: "1"
     steps:
       - uses: actions/checkout@v7
 

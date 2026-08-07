@@ -10,8 +10,9 @@
 // Runs separately from the build because notarization uploads the whole app to
 // Apple and takes minutes. Belongs in a release, not in every CI run.
 
-import { execFileSync, execSync } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
+import { execFileSync, execSync, spawnSync } from "node:child_process";
+import { existsSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -101,14 +102,30 @@ try {
 
 execFileSync("xcrun", ["stapler", "staple", dmgPath], { stdio: "inherit" });
 
-// Gatekeeper's own verdict is the only proof that matters. A stapled ticket that
-// still fails assessment means the artifact would be blocked on a user's Mac.
-const assess = execSync(`spctl --assess --type open --context context:primary-signature -vv "${dmgPath}" 2>&1 || true`, {
-  encoding: "utf8",
-});
-if (!/accepted/i.test(assess)) {
-  console.error(`  FAIL gatekeeper rejected the stapled dmg:\n${assess.trim()}`);
-  process.exit(1);
+const mountPoint = mkdtempSync(join(tmpdir(), "oracle-notary-"));
+let assessmentError = null;
+try {
+  execFileSync("hdiutil", ["attach", "-nobrowse", "-readonly", "-mountpoint", mountPoint, dmgPath], {
+    stdio: "pipe",
+  });
+  const mountedApp = readdirSync(mountPoint).find((file) => file.endsWith(".app"));
+  if (!mountedApp) throw new Error("notarized DMG does not contain an app bundle");
+  const result = spawnSync("spctl", ["--assess", "--type", "execute", "-vv", join(mountPoint, mountedApp)], {
+    encoding: "utf8",
+  });
+  const assess = `${result.stdout || ""}${result.stderr || ""}`;
+  if (result.status !== 0 || !/accepted/i.test(assess) || !/Notarized Developer ID/i.test(assess)) {
+    throw new Error(`gatekeeper rejected the mounted app:\n${assess.trim()}`);
+  }
+} catch (error) {
+  assessmentError = error;
+} finally {
+  spawnSync("hdiutil", ["detach", mountPoint], { stdio: "pipe" });
+  rmSync(mountPoint, { recursive: true, force: true });
 }
 
+if (assessmentError) {
+  console.error(`  FAIL ${assessmentError.message}`);
+  process.exit(1);
+}
 console.log(`  OK   notarized, stapled, and accepted by Gatekeeper: ${dmg}`);

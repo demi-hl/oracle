@@ -159,13 +159,13 @@ test("README states the custody invariant", () => {
   );
   assert.match(
     README,
-    /holder-beta\.md/,
-    "README should link the Locals-holder launch gate",
+    /locals-only-fee-waiver\.md/,
+    "README should link the Locals Only fee-waiver policy",
   );
   assert.match(
     README,
-    /not published on npm[^\n]*[\s\S]{0,100}not part of holder onboarding/i,
-    "README must keep private operator infrastructure out of holder onboarding",
+    /not published on npm[^\n]*[\s\S]{0,100}not part of public onboarding/i,
+    "README must keep private operator infrastructure out of public onboarding",
   );
   assert.doesNotMatch(
     README,
@@ -175,7 +175,7 @@ test("README states the custody invariant", () => {
   assert.doesNotMatch(
     README,
     /(?:oracle-vault|HL_PRIVATE_KEY|POLYMARKET_PRIVATE_KEY|ORACLE_VAULT_PASSPHRASE)/,
-    "public README must not teach holder users to provision operator key material",
+    "public README must not teach users to provision operator key material",
   );
   assert.match(
     README,

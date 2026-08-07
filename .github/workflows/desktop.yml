@@ -39,9 +39,6 @@ jobs:
             artifact: "*.exe"
 
     env:
-      # The CLI is gated to Locals Only holders and CI has no wallet. Same
-      # rationale as the ci workflow: the bypass is env-only and mutation-tested.
-      ORACLE_GATE_BYPASS: "1"
       # electron-builder tries to sign by default and fails the build when it
       # cannot. Signing is a separate, deliberate step; unsigned beta artifacts
       # are the honest current state.

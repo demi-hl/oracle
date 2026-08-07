@@ -19,10 +19,9 @@ artifacts for a user-controlled wallet. It exposes no sign or broadcast route.
 
 Sensitive custody code stays outside this public package.
 
-The app does not currently implement Locals-holder authentication. Do not expose
-it as a holder-gated hosted product until
-[`packages/oracle/docs/holder-beta.md`](../../packages/oracle/docs/holder-beta.md)
-passes against the deployed environment.
+The app is public to everyone. Locals Only ownership only waives Oracle's
+integrator fee. Any hosted deployment still needs ordinary authentication and
+per-user isolation for private user state.
 
 ## Development
 

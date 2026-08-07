@@ -11,8 +11,12 @@ import {
   formatPerpPrice,
   formatPerpSize,
   hlPreparePerpOrder,
+  hlPrepareBuilderFeeApproval,
   hlPrepareUpdateLeverage,
   hlPrepareBracketOrder,
+  ORACLE_HL_BUILDER_ADDRESS,
+  ORACLE_HL_BUILDER_FEE_BPS,
+  ORACLE_HL_BUILDER_FEE_TENTHS_BPS,
   ORDER_TYPES,
   TIF,
 } from "../src/data/providers/hl-perps.mjs";
@@ -88,6 +92,43 @@ test("a market order is an IOC limit priced within the slippage cap", async () =
   assert.equal(Number(o.price) <= 60300, true, "but no further than the cap");
 });
 
+test("prepared Hyperliquid orders disclose the separate builder fee", async () => {
+  const o = await hlPreparePerpOrder(
+    { coin: "BTC", side: "buy", type: ORDER_TYPES.LIMIT, price: "60000", size: "0.01" },
+    stub,
+  );
+  assert.equal(ORACLE_HL_BUILDER_ADDRESS, "0x4d47B6757aFd42c3dbd9691b71B43d74Afa4b6b2");
+  assert.equal(ORACLE_HL_BUILDER_FEE_BPS, 5);
+  assert.equal(ORACLE_HL_BUILDER_FEE_TENTHS_BPS, 50);
+  assert.deepEqual(o.action.builder, { b: ORACLE_HL_BUILDER_ADDRESS, f: 50 });
+  assert.equal(o.builderFeeBps, 5);
+  assert.equal(o.integratorFeeBps, undefined);
+});
+
+test("Locals Only does not waive Hyperliquid's separate builder fee", async () => {
+  const o = await hlPreparePerpOrder(
+    { coin: "BTC", side: "buy", type: ORDER_TYPES.LIMIT, price: "60000", size: "0.01", isHolder: true },
+    stub,
+  );
+  assert.deepEqual(o.action.builder, { b: ORACLE_HL_BUILDER_ADDRESS, f: 50 });
+  assert.equal(o.builderFeeBps, 5);
+  assert.equal(o.integratorFeeBps, undefined);
+});
+
+test("builder approval is prepared for the main wallet and never signed or submitted", () => {
+  const prepared = hlPrepareBuilderFeeApproval({ nonce: 1_786_081_000_000 });
+  assert.deepEqual(prepared.action, {
+    type: "approveBuilderFee",
+    builder: ORACLE_HL_BUILDER_ADDRESS,
+    maxFeeRate: "0.05%",
+    nonce: 1_786_081_000_000,
+  });
+  assert.match(prepared.note, /main wallet/i);
+  assert.equal(prepared.signingReady, false);
+  assert.equal(prepared.broadcastReady, false);
+  assert.equal(prepared.requiresUserSignature, true);
+});
+
 test("slippage above 100 bps is refused", async () => {
   await assert.rejects(
     () => hlPreparePerpOrder({ coin: "BTC", side: "buy", type: ORDER_TYPES.MARKET, size: "0.01", maxSlippageBps: 101 }, stub),
@@ -117,11 +158,13 @@ test("high leverage carries a liquidation warning", async () => {
 
 test("a bracket attaches reduce-only TP and SL on the opposite side", async () => {
   const b = await hlPrepareBracketOrder(
-    { coin: "BTC", side: "buy", type: ORDER_TYPES.LIMIT, price: "60000", size: "0.01", takeProfitPx: "72000", stopLossPx: "57000" },
+    { coin: "BTC", side: "buy", type: ORDER_TYPES.LIMIT, price: "60000", size: "0.01", takeProfitPx: "72000", stopLossPx: "57000", isHolder: true },
     stub
   );
   assert.equal(b.legs, 3);
   assert.equal(b.action.grouping, "normalTpsl");
+  assert.deepEqual(b.action.builder, { b: ORACLE_HL_BUILDER_ADDRESS, f: 50 });
+  assert.equal(b.builderFeeBps, 5);
   for (const leg of b.action.orders.slice(1)) {
     assert.equal(leg.r, true, "protection legs must be reduce-only");
     assert.equal(leg.b, false, "protection on a long must be a sell");

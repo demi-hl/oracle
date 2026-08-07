@@ -140,7 +140,6 @@ function packagedCliMatrix() {
     ORACLE_REMOTE_COMPUTE_DISABLE: "1",
     // Deliberately point at a host operator to prove the desktop wall ignores it.
     ORACLE_OPERATOR_BIN_DIR: "/usr/local/bin",
-    ORACLE_GATE_BYPASS: "0",
     ORACLE_EXECUTE_ENABLED: "0",
     MAD_EXECUTE_ENABLED: "0",
     ORACLE_FAKE_HOME: home,

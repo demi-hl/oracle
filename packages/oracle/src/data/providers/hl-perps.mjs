@@ -20,6 +20,9 @@ import { stampPrepared } from "../../prepare-envelope.mjs";
 export const HL_PERP_MAX_SIG_FIGS = 5;
 export const HL_PERP_PRICE_DECIMALS = 6; // 6 - szDecimals for perps
 export const HL_SIGNATURE_CHAIN_ID = "0x66eee";
+export const ORACLE_HL_BUILDER_ADDRESS = "0x4d47B6757aFd42c3dbd9691b71B43d74Afa4b6b2";
+export const ORACLE_HL_BUILDER_FEE_BPS = 5;
+export const ORACLE_HL_BUILDER_FEE_TENTHS_BPS = ORACLE_HL_BUILDER_FEE_BPS * 10;
 
 export const ORDER_TYPES = Object.freeze({
   LIMIT: "limit",
@@ -164,6 +167,25 @@ function stamped(result) {
   return stampPrepared(result, { provider: result.provider || "hl-perps", kind: result.kind });
 }
 
+export function hlPrepareBuilderFeeApproval(args = {}) {
+  const nonce = Number(args.nonce ?? Date.now());
+  const action = {
+    type: "approveBuilderFee",
+    builder: ORACLE_HL_BUILDER_ADDRESS,
+    maxFeeRate: `${ORACLE_HL_BUILDER_FEE_BPS / 100}%`,
+    nonce,
+  };
+  return stamped({
+    provider: "hl-perps",
+    venue: "hyperliquid",
+    kind: "hl-builder-fee-approval",
+    builderAddress: ORACLE_HL_BUILDER_ADDRESS,
+    builderFeeBps: ORACLE_HL_BUILDER_FEE_BPS,
+    ...envelope(action, nonce),
+    note: "Hyperliquid requires the main wallet to review and sign this builder-fee approval. Oracle does not sign or submit it.",
+  });
+}
+
 /**
  * Prepare a perp order.
  *
@@ -230,6 +252,7 @@ export async function hlPreparePerpOrder(args = {}, opts = {}) {
     type: "order",
     orders: [order],
     grouping: args.grouping || "na",
+    builder: { b: ORACLE_HL_BUILDER_ADDRESS, f: ORACLE_HL_BUILDER_FEE_TENTHS_BPS },
   };
 
   const nonce = Number(args.nonce ?? Date.now());
@@ -253,6 +276,8 @@ export async function hlPreparePerpOrder(args = {}, opts = {}) {
     notionalUsd: Number.isFinite(notional) ? notional : null,
     maxLeverage: info.maxLeverage,
     markPx: info.markPx,
+    builderAddress: ORACLE_HL_BUILDER_ADDRESS,
+    builderFeeBps: ORACLE_HL_BUILDER_FEE_BPS,
     ...envelope(action, nonce),
   });
 }
@@ -372,7 +397,12 @@ export async function hlPrepareBracketOrder(args = {}, opts = {}) {
   }
   if (orders.length === 1) throw new Error("hl-perps: a bracket needs takeProfitPx and/or stopLossPx");
 
-  const action = { type: "order", orders, grouping: "normalTpsl" };
+  const action = {
+    type: "order",
+    orders,
+    grouping: "normalTpsl",
+    builder: { b: ORACLE_HL_BUILDER_ADDRESS, f: ORACLE_HL_BUILDER_FEE_TENTHS_BPS },
+  };
   return stamped({
     provider: "hl-perps",
     venue: "hyperliquid",
@@ -382,6 +412,8 @@ export async function hlPrepareBracketOrder(args = {}, opts = {}) {
     entry: { side: entry.side, price: entry.price, size: entry.size },
     takeProfitPx: args.takeProfitPx == null ? null : formatPerpPrice(args.takeProfitPx, info.szDecimals),
     stopLossPx: args.stopLossPx == null ? null : formatPerpPrice(args.stopLossPx, info.szDecimals),
+    builderAddress: ORACLE_HL_BUILDER_ADDRESS,
+    builderFeeBps: ORACLE_HL_BUILDER_FEE_BPS,
     ...envelope(action, Number(args.nonce ?? Date.now())),
   });
 }

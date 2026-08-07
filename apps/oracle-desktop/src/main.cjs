@@ -87,7 +87,6 @@ function configurePublicDesktopRuntime() {
     MAD_CONFIG_DIR: configDir,
     HERMES_HOME: path.join(home, ".hermes"),
     ORACLE_OPERATOR_BIN_DIR: "",
-    ORACLE_GATE_BYPASS: "0",
     ORACLE_EXECUTE_ENABLED: "0",
     MAD_EXECUTE_ENABLED: "0",
     MAD_VALUE_CAPS_ENABLED: "1",

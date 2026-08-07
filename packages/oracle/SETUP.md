@@ -5,7 +5,7 @@ research, quote, simulate, and build unsigned artifacts. It does not need Hermes
 it does not accept wallet private keys, and it does not broadcast transactions.
 
 The owner-operated signer/executor is private infrastructure. It is not published
-on npm and is not part of public or holder onboarding.
+on npm and is not part of public onboarding.
 
 ## Requirements
 
@@ -19,21 +19,18 @@ Linux, Windows, and macOS apps are in beta.
 ## 1. Install the standalone CLI
 
 ```bash
-npm view @oracle-agent/oracle version
-# Oracle is distributed to Locals Only holders. Prove ownership at the gate,
-# then install the artifact it returns:
-oracle gate status                                  # if you already have a build
-curl -fL -o oracle.tgz "$ORACLE_GATE_LINK" && npm i -g ./oracle.tgz
+npm i -g @oracle-agent/oracle
 oracle --version
 ```
 
-The npm `latest` tag is the install source of truth. The repository can contain
-an unreleased next version, so do not infer the published version from a branch.
+npm `latest` is the public CLI installation source of truth. Locals Only
+ownership is not required to install or use Oracle; holders receive a 0% Oracle
+integrator fee.
 
 For a project-local library install instead:
 
 ```bash
-npm i @oracle-agent/oracle@latest
+npm i @oracle-agent/oracle
 ```
 
 The package declares this floor through `engines`; `oracle doctor` treats an
@@ -146,11 +143,9 @@ The public plane binds to `127.0.0.1` and exposes read, connect, grant,
 portfolio, approval, prepare, Buzz-auth, and audit contracts. It has no signer,
 key, send, execute, or broadcast route.
 
-The service is rate limited but unauthenticated. It is **not** a Locals-holder
-gate and must not be exposed directly to the internet, LAN, or tailnet. A hosted
-deployment needs a controlled reverse proxy, TLS, edge limits, and the
-server-side holder gate described in
-[holder-beta.md](docs/holder-beta.md).
+The service is rate limited but unauthenticated and must not be exposed directly
+to the internet, LAN, or tailnet. A hosted deployment needs a controlled reverse
+proxy, TLS, edge limits, authentication, and per-user isolation.
 
 Verify liveness only after starting it:
 
@@ -171,9 +166,8 @@ oracle setup gateway start
 ```
 
 Interactive bot-token entry is hidden. Do not use `--token` in a normal shell;
-arguments can be retained in history or visible to other local processes. For a
-holder beta, do not run one shared messaging bot without a separate holder
-admission layer and per-user session isolation.
+arguments can be retained in history or visible to other local processes. Do not
+run one shared messaging bot without authentication and per-user session isolation.
 
 ## Public wallet addresses and portfolio reads
 
@@ -211,15 +205,19 @@ expiry, approvals, and fees in the user's wallet. Oracle's public package stops
 before signing. Report success only after a real transaction hash, successful
 receipt, and expected balance or state change.
 
-## Locals-only holder beta
+## Locals Only fee waiver
 
-Current release status is **HOLD for a holder-gated hosted launch**. The package
-is safe to distribute for local read/research/prepare use, but this repository
-does not contain an integrated Locals ownership gate. UI hiding, a wallet text
-field, or possession of a URL is not access control.
+Oracle access is public. A Locals Only NFT only waives Oracle's integrator fee.
+Use `oracle fees status` to check the configured wallet. See
+[locals-only-fee-waiver.md](docs/locals-only-fee-waiver.md).
 
-Do not invite holders to a hosted surface until every required gate in
-[holder-beta.md](docs/holder-beta.md) passes.
+## Hyperliquid builder code
+
+Eligible Hyperliquid perp orders disclose the separate 5 bps builder code before
+wallet review, including orders prepared for Locals Only holders. The Locals Only
+waiver does not waive the Hyperliquid builder fee. The main wallet must separately
+sign the revocable maximum-fee approval; Oracle only prepares that action. See
+[hyperliquid-builder-code.md](docs/hyperliquid-builder-code.md).
 
 ## Buzz integration
 
@@ -241,12 +239,12 @@ A clean standalone install can legitimately show warnings for:
 - `hermes_lanes` before optional `oracle init --apply`.
 
 A Node-version failure is blocking. Signing warnings are irrelevant to the
-public holder path because signing is not installed there.
+public package because signing is not installed there.
 
 ## Upgrade
 
 ```bash
-curl -fL -o oracle.tgz "$ORACLE_GATE_LINK" && npm i -g ./oracle.tgz
+npm i -g @oracle-agent/oracle@latest
 oracle --version
 oracle doctor
 ```
@@ -313,7 +311,7 @@ as a workaround.
 
 - [CLI reference](docs/cli.md)
 - [Public API and environment surface](docs/public-surface.md)
-- [Locals-holder beta launch gate](docs/holder-beta.md)
+- [Locals Only 0% fee waiver](docs/locals-only-fee-waiver.md)
 - [Buzz integration](docs/buzz-integration.md)
 - [Architecture](docs/architecture.md)
 - [Security policy](SECURITY.md)

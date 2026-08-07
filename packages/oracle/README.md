@@ -3,11 +3,7 @@
 ## Quickstart (standalone CLI)
 
 ```bash
-# Oracle is distributed to Locals Only holders. Prove ownership at the gate,
-# then install the artifact it returns:
-oracle gate status                                  # if you already have a build
-curl -fL -o oracle.tgz "$ORACLE_GATE_LINK" && npm i -g ./oracle.tgz
-# Node >= 20.19
+npm i -g @oracle-agent/oracle            # Node >= 20.19
 oracle --version
 oracle auth login claude               # or codex / grok
 oracle                                  # native Oracle chat
@@ -17,6 +13,13 @@ oracle doctor                           # verify local posture
 Prefer an API key instead? `oracle auth api-key openrouter` accepts hidden
 interactive input. `oracle auth status` reports providers without printing
 credentials. Linux, Windows, and macOS apps are in beta.
+
+The CLI, source, and desktop beta are public to everyone. Locals Only holders
+receive a 0% Oracle integrator fee; the NFT does not gate product access.
+
+Hyperliquid perp orders disclose Oracle's 5 bps builder code. The exact address,
+approval flow, wire units, and separation from the Locals Only waiver are documented in
+[Hyperliquid builder code](docs/hyperliquid-builder-code.md).
 
 
 **Prepare-only multichain agent control plane.** Policy-bounded intents; your wallet signs.
@@ -37,7 +40,7 @@ private `0600` local fallback when keychain storage is unavailable.
 
 This package is **prepare-only**: it never takes a private key and never
 broadcasts. The owner-operated signer/executor is private infrastructure, is
-not published on npm, and is not part of holder onboarding. Never paste a seed,
+not published on npm, and is not part of public onboarding. Never paste a seed,
 private key, vault passphrase, or signer token into Oracle chat.
 
 ---
@@ -71,7 +74,7 @@ const prepared = await data.call("hl-perps", "prepareOrder", {
 ```
 
 See [SETUP.md](SETUP.md) for clean installation and troubleshooting,
-[docs/holder-beta.md](docs/holder-beta.md) for the Locals-only launch gate, and
+[docs/locals-only-fee-waiver.md](docs/locals-only-fee-waiver.md) for the 0% holder fee, and
 [docs/buzz-integration.md](docs/buzz-integration.md) for the Buzz HTTP contract.
 
 ---
@@ -181,12 +184,11 @@ oracle-scan risk  base 0x8335...2913  # structural checks + sell simulation
 oracle-scan sell  base 0x8335...2913  # round trip: can you actually exit?
 ```
 
-**8 of 11 chains ship verified venues**: Ethereum, Optimism, BNB, Polygon, Base,
-Arbitrum, Avalanche, and Robinhood Chain. They have all 10 capabilities including
-live quotes, round-trip sell simulation, and unsigned swap preparation. The remaining
-three (Stable, HyperEVM, Abstract) are at 7 and **fail-closed for routing value** until
-someone verifies a venue: read and research work, moving money does not. That is a safe
-default, not a gap.
+All 11 built-in EVM chains currently report the full 10-capability scanner
+matrix, including live quote, sell simulation, and unsigned preparation where
+the selected provider supports that operation. Capability coverage is not a
+claim that every protocol supports every action; unsupported paths still fail
+closed.
 
 Every venue address was verified **functionally, not by codesize** — a re-runnable
 prober (`scripts/verify-v3-venues.mjs`) asks each candidate to price a pair with a
@@ -262,8 +264,12 @@ capability-labeled per chain; unconfigured venues stay unavailable instead of fa
 
 ## Install
 
+Install the full public package from npm, or use the public desktop downloads at
+https://oracle.demi.la/downloads/. No wallet or NFT is required. Node `20.19.0`
+or newer is required for the CLI.
+
 ```bash
-npm install @oracle-agent/oracle    # Node >= 20.19.0
+npm i -g @oracle-agent/oracle
 ```
 
 Or from source, if you want to run the suite:

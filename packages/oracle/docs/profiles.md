@@ -125,7 +125,7 @@ npx oracle-data
 hermes -p polymarket-agent mcp add oracle-data --command oracle-data-mcp
 ```
 
-Now that lane can read 42 provider modules covering 219 protocols/venues across
+Now that lane can read 70 provider modules covering 219 protocols/venues across
 EVM, Solana, and Bitcoin, quote real routes, and
 prepare unsigned transactions — and it still cannot sign anything.
 

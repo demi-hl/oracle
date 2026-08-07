@@ -57,20 +57,17 @@ test("an expired key is refused", () => {
   assert.equal(resolveAccess({ key, secret: SECRET, now: 500 }).ok, true);
 });
 
-test("Locals Only holders get the paid tier without buying a key", () => {
+test("Locals Only status never changes API access tiers", () => {
   const r = resolveAccess({ key: "", isHolder: true, secret: SECRET });
   assert.equal(r.ok, true);
-  assert.equal(r.tier.name, "holder");
-  assert.ok(r.tier.rpm > TIERS.free.rpm, "a holder must beat the free tier");
+  assert.equal(r.tier.name, "free");
+  assert.equal(r.tier.rpm, TIERS.free.rpm);
 });
 
-test("holder status never downgrades a paid key", () => {
-  // Someone who bought scale and also holds the NFT must not be dropped to the
-  // holder tier's lower ceiling.
+test("Locals Only status never changes a paid key tier", () => {
   const key = issueKey({ subject: "acme", tier: "scale", secret: SECRET });
   const r = resolveAccess({ key, isHolder: true, secret: SECRET });
   assert.equal(r.tier.name, "scale");
-  assert.ok(r.tier.rpm >= TIERS.holder.rpm);
 });
 
 test("the meter enforces the per-minute ceiling", () => {
@@ -104,7 +101,7 @@ test("published plans leak no secrets", () => {
   for (const banned of ["secret", "sub", "hmac", "key"]) {
     assert.ok(!serialized.toLowerCase().includes(banned), `plans must not expose ${banned}`);
   }
-  assert.ok(plans.some((p) => p.tier === "holder" && p.price === 0));
+  assert.equal(plans.some((p) => p.tier === "holder"), false);
 });
 
 test("the Buzz catalog publishes tiers without breaking existing consumers", async () => {
@@ -119,7 +116,7 @@ test("the Buzz catalog publishes tiers without breaking existing consumers", asy
   const after = buildBuzzCatalog({ baseUrl: "https://x", plans: describePlans() });
   assert.equal(after.ok, true);
   assert.equal(after.access.anonymous, true, "anonymous access must survive monetisation");
-  assert.ok(after.access.plans.some((p) => p.tier === "holder" && p.price === 0));
+  assert.equal(after.access.plans.some((p) => p.tier === "holder"), false);
   assert.deepEqual(after.endpoints, before.endpoints, "endpoints must not change");
 });
 

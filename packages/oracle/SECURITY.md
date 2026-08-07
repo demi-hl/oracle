@@ -27,8 +27,7 @@ In scope:
 - grant forgery, replay, or scope escalation
 - route/vault/order attestation forgery
 - secret leakage through an API response or log
-- holder-gate bypass, challenge replay, or cross-user data access in an official
-  hosted beta
+- fee-waiver misclassification or cross-user data access in an official hosted service
 - Buzz capability forgery or audit-chain tampering
 
 Out of scope:
@@ -56,9 +55,8 @@ Consequences of that assumption, which are the invariants worth attacking:
    targets require an attestation minted inside the trusted boundary.
 5. **Guards are recomputed at sign and broadcast time**, not just at quote time,
    because a stale minimum is not a minimum.
-6. **The shipped public HTTP server is not a holder-authentication service.** It
-   is loopback-only and rate limited, but unauthenticated. A hosted Locals beta
-   needs a separate server-side ownership gate and per-user isolation.
+6. **The shipped public HTTP server is unauthenticated.** It is loopback-only and
+   rate limited. A hosted service needs ordinary authentication and per-user isolation.
 
 If you find a path where model-authored text becomes an authorized on-chain
 action without an owner signature and a policy check, that is the bug we most
@@ -109,6 +107,6 @@ still apply after the public boundary hardening:
    secret scanning depend on repository visibility and account tier. Verify the
    live settings; do not infer them from this document. The local CI boundary,
    packed-artifact, and secret-scan gates remain mandatory.
-8. **Holder admission is deployment code.** The npm package does not prove
-   Locals ownership or isolate hosted tenants. See
-   [docs/holder-beta.md](docs/holder-beta.md) before exposing any shared surface.
+8. **Locals Only is fee policy, not admission.** Oracle access is public. The NFT
+   only waives Oracle's integrator fee; hosted user isolation remains a separate
+   deployment responsibility.

@@ -12,8 +12,9 @@ npm install
 npm test
 ```
 
-391 tests, all green. If they aren't green on a clean checkout, that's a bug —
-please report it.
+`packages/oracle/test-baseline.json` records the current suite count and
+`npm run test:count` prevents silent test loss. A failure on a clean checkout is
+a bug; report it with the exact command output.
 
 ## The one rule that matters
 

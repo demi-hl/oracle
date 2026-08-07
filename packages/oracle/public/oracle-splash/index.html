@@ -8,7 +8,7 @@
 <link rel="shortcut icon" href="/favicon.ico">
 <meta name="description" content="ORACLE is a self-custodial agent control plane for wallets, markets, and protocol routes.">
 <meta name="theme-color" content="#0B1018" />
-<meta name="robots" content="noindex,nofollow" />
+<meta name="robots" content="index,follow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet" />
@@ -1173,10 +1173,10 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
     <h1 class="home-title rv">Trade every chain<br>from <em>one</em> agent</h1>
     <p class="hero-sub rv">Hyperliquid, EVM, Bitcoin, Solana, Stable and Robinhood Chain in a single control plane. Oracle reads state, prices routes and prepares the transaction. Your wallet signs it.</p>
     <div class="home-actions">
-     <a class="enter-cta primary" href="#cli">Download</a>
+     <a class="enter-cta primary" href="/downloads/">Download</a>
      <a class="enter-cta ghost" href="#cli">See the CLI</a>
     </div>
-    <p class="hero-note-line">macOS · Windows · Linux &nbsp;/&nbsp; desktop app or holder-gated CLI</p>
+    <p class="hero-note-line">macOS · Windows · Linux &nbsp;/&nbsp; public CLI and desktop beta</p>
    </div>
 
    <figure class="hero-product">
@@ -1489,8 +1489,8 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
    <button class="btn btn-claude" onclick="navigator.clipboard.writeText('oracle mcp install claude-code');var b=this;b.textContent='Copied ✓';setTimeout(function(){b.textContent='Claude'},1500)">Claude</button>
    <button class="btn btn-chatgpt" onclick="navigator.clipboard.writeText('oracle mcp install chatgpt');var b=this;b.textContent='Copied ✓';setTimeout(function(){b.textContent='ChatGPT'},1500)">ChatGPT</button>
    <button class="btn btn-cursor" onclick="navigator.clipboard.writeText('oracle mcp install cursor');var b=this;b.textContent='Copied ✓';setTimeout(function(){b.textContent='Cursor'},1500)">Cursor</button>
-   <button class="btn btn-vscode" onclick="navigator.clipboard.writeText('oracle mcp install vscode');var b=this;b.textContent='Copied ✓';setTimeout(function(){b.textContent='VS Code'},1500)">VS Code</button>
-   <button class="btn btn-copilot" onclick="navigator.clipboard.writeText('oracle mcp install copilot');var b=this;b.textContent='Copied ✓';setTimeout(function(){b.textContent='Copilot'},1500)">Copilot</button>
+   <button class="btn btn-vscode" onclick="navigator.clipboard.writeText('oracle mcp install claude-desktop');var b=this;b.textContent='Copied ✓';setTimeout(function(){b.textContent='Claude Desktop'},1500)">Claude Desktop</button>
+   <button class="btn btn-copilot" onclick="navigator.clipboard.writeText('oracle mcp install codex');var b=this;b.textContent='Copied ✓';setTimeout(function(){b.textContent='Codex'},1500)">Codex</button>
   </div>
   <p class="cmd-hint">Click copies the install command — paste it in your terminal</p>
  </div>
@@ -1734,7 +1734,7 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
  <section class="section" id="chains">
  <p class="section-label rv">Chains</p>
  <h2 class="section-title rv">Where you can <em>operate.</em></h2>
- <p class="section-lede rv">Every chain reads live. <b>Route</b> means Oracle can also price and prepare a swap there; <b>read only</b> means the venue registry is still empty, so routing fail-closes rather than guessing a router. Any EVM chain can be registered with a chain id and an RPC.</p>
+ <p class="section-lede rv">Every built-in EVM chain exposes the full scanner capability set. <b>Route</b> means Oracle can price and prepare a swap there. Any additional EVM chain can be registered with a chain id and an RPC; unsupported paths fail closed rather than guessing a router.</p>
  <div class="chain-grid" id="chain-grid"></div>
  <div class="hl-surface rv">
   <div class="venues-head"><span>hyperliquid // what oracle actually does</span></div>
@@ -1752,8 +1752,8 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
  <p class="section-label rv">Oracle CLI</p>
  <h2 class="section-title rv">One surface. <em>Every chain.</em></h2>
  <div class="cli-install rv">
-  <div class="cli-install-cmd"><code>oracle</code> <span class="cli-install-hint">npm install -g @oracle-agent/oracle</span></div>
-  <p class="cli-install-gate"><b>Locals Only</b> Holders get 0% Oracle fees. The CLI recognises your agent wallet and applies the holder rate automatically. The public package never touches keys.</p>
+  <div class="cli-install-cmd"><code>npm i -g @oracle-agent/oracle</code> <span class="cli-install-hint">public npm package · Node 20.19+</span></div>
+  <p class="cli-install-gate"><b>Locals Only</b> holders get 0% Oracle integrator fees. Everyone gets the same public CLI, desktop, source, and prepare-only product access.</p>
  </div>
  <p class="section-lede rv">The real Oracle shell, isolated from desktop chrome. No accounts, no servers. The CLI runs on your machine and reads straight from public RPCs.</p>
  <p class="section-lede rv">Pin the active surface with <code style="color:var(--blue2)">/chain hyperliquid</code>, switch models, ask naturally. Oracle reads, prices, and prepares — you sign.</p>
@@ -1776,7 +1776,7 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
      <img src="assets/desktop-app.jpg" width="1736" height="959" loading="lazy" decoding="async" alt="Oracle desktop app showing the specialist mesh, with Portfolio, Approvals, Prepare, CLI, Farming Methods, Agent Connect, Receipts, Campaigns and Routes panes.">
      <figcaption>Portfolio, approvals, prepare, farming, receipts and routes in one pane.</figcaption>
     </figure>
-    <div class="os-dl"><a class="os-link" href="https://github.com/demi-hl/oracle/releases/download/v0.2.0/Oracle-0.2.0-arm64.dmg">macOS</a><a class="os-link" href="https://github.com/demi-hl/oracle/releases/download/v0.2.0/Oracle-0.2.0.AppImage">Linux</a><a class="os-link" href="https://github.com/demi-hl/oracle/releases/download/v0.2.0/Oracle-Setup-0.2.0.exe">Windows</a></div>
+    <div class="os-dl"><a class="os-link" href="/downloads/#desktop">macOS</a><a class="os-link" href="/downloads/#desktop">Linux</a><a class="os-link" href="/downloads/#desktop">Windows</a></div>
     </div>
  </div>
 </section>
@@ -1803,7 +1803,7 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
    <a href="https://hermes-agent.nousresearch.com" target="_blank" rel="noopener noreferrer">Hermes</a>
   </div>
   <div class="foot-links">
-   <a href="/oracle-console/">Console</a>
+   <a href="/downloads/">Download</a>
    <a href="https://hermes-agent.nousresearch.com/docs" target="_blank" rel="noopener noreferrer">Docs</a>
   </div>
  </div>
@@ -2254,7 +2254,7 @@ var activeLenis = null;
   }
   splitWords(document);
   if (window.ScrollTrigger) {
-   gsap.fromTo("[data-split] .word-mask > span", { yPercent:112, rotate:2 }, { yPercent:0, rotate:0, duration:1.1, ease:"power4.out", stagger:.035, scrollTrigger:{ trigger:"#protocols", start:"top 78%" }, clearProps:"transform" });
+   gsap.fromTo("[data-split] .word-mask > span", { yPercent:112, rotate:2 }, { yPercent:0, rotate:0, duration:1.1, ease:"power4.out", stagger:.035, scrollTrigger:{ trigger:"[data-split]", start:"top 78%" }, clearProps:"transform" });
    gsap.to(".hero-art", { yPercent:18, scale:.9, ease:"none", scrollTrigger:{ trigger:".home", start:"top top", end:"bottom top", scrub:true } });
    gsap.fromTo(".motion-card", { y:80, rotateX:8, scale:.965 }, { y:0, rotateX:0, scale:1, duration:1.25, ease:"power4.out", stagger:.08, scrollTrigger:{ trigger:".operator-grid", start:"top 82%" }, clearProps:"transform" });
    gsap.to(".motion-command", { y:-34, rotateX:3, ease:"none", scrollTrigger:{ trigger:".motion-lab", start:"top 70%", end:"bottom top", scrub:true } });

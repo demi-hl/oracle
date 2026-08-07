@@ -8,15 +8,13 @@
  *
  * Design constraints, inherited from the modules this sits next to:
  *
- *   - No database. Keys are self-describing and HMAC-signed, exactly like the
- *     gate's session tokens, so verification needs only the secret.
+ *   - No database. Keys are self-describing and HMAC-signed, so verification
+ *     needs only the secret.
  *   - No secrets in the key. A key names a tier and an expiry, nothing else.
  *   - Injected clock and store. Same-inputs-same-output, like grants.mjs.
  *   - Fails CLOSED on a bad signature, OPEN on no key at all — an unkeyed
  *     request is the existing free tier, not an error, so this cannot break
  *     the current public plane.
- *
- * Locals Only holders get the paid tier free. The NFT is the license.
  */
 
 import { createHmac, timingSafeEqual } from "node:crypto";
@@ -25,7 +23,6 @@ export const TIERS = Object.freeze({
   // Requests per minute. `free` mirrors today's unauthenticated behaviour so
   // adding this layer changes nothing for existing callers.
   free: Object.freeze({ name: "free", rpm: 30, chains: 14, history: false }),
-  holder: Object.freeze({ name: "holder", rpm: 300, chains: 14, history: true }),
   build: Object.freeze({ name: "build", rpm: 300, chains: 14, history: true }),
   scale: Object.freeze({ name: "scale", rpm: 3000, chains: 14, history: true }),
 });
@@ -77,18 +74,11 @@ export function readKey(raw, { secret, now = Date.now() } = {}) {
   }
 }
 
-/**
- * Resolve the effective tier for a request.
- *
- * Holder status wins over the key's own tier when it is better, so a holder who
- * never bought a key still gets paid limits. It never DOWNGRADES a paid key.
- */
-export function resolveAccess({ key, isHolder = false, secret, now = Date.now() } = {}) {
+/** Resolve the effective tier for a request. NFT status never changes access. */
+export function resolveAccess({ key, secret, now = Date.now() } = {}) {
   const read = readKey(key, { secret, now });
   if (read === null) return { ok: false, reason: "invalid-key" };
-  let tier = read.tier;
-  if (isHolder && tier.rpm < TIERS.holder.rpm) tier = TIERS.holder;
-  return { ok: true, tier, subject: read.subject, anonymous: read.anonymous, isHolder };
+  return { ok: true, tier: read.tier, subject: read.subject, anonymous: read.anonymous };
 }
 
 /**
@@ -116,7 +106,6 @@ export function describePlans() {
     requestsPerMinute: t.rpm,
     chains: t.chains,
     history: t.history,
-    price: t.name === "free" || t.name === "holder" ? 0 : null,
-    note: t.name === "holder" ? "Included with a Locals Only NFT" : undefined,
+    price: t.name === "free" ? 0 : null,
   }));
 }

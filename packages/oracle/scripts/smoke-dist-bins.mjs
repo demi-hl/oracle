@@ -64,14 +64,17 @@ const DISPATCHED = [
   ["scan", ["scan", "chains"], /Cannot find module|MODULE_NOT_FOUND/],
   ["route", ["route"], /Cannot find module|MODULE_NOT_FOUND/],
   ["upgrade", ["upgrade", "--json"], /Cannot find module|MODULE_NOT_FOUND/],
-  ["gate", ["gate", "info"], /Cannot find module|MODULE_NOT_FOUND/],
+  ["fees", ["fees", "status"], /Cannot find module|MODULE_NOT_FOUND/],
 ];
 const dispatcher = join(stage, (manifest.bin || {}).oracle || "");
 for (const [label, argv, fatal] of DISPATCHED) {
   const run = spawnSync(process.execPath, [dispatcher, ...argv], {
     encoding: "utf8",
     timeout: 45_000,
-    env: { ...process.env, ORACLE_GATE_BYPASS: "1" },
+    env: {
+      ...process.env,
+      ORACLE_FAKE_HOME: join(stage, ".smoke-home"),
+    },
   });
   const output = `${run.stdout || ""}${run.stderr || ""}`;
   if (fatal.test(output)) {

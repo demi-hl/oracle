@@ -5,8 +5,8 @@
  * between providers. Three rules, in order:
  *
  *   1. OFF unless explicitly configured. No silent default skim.
- *   2. Locals Only holders pay ZERO. The NFT is the license; charging holders
- *      a per-swap fee on top would be selling the same access twice.
+ *   2. Locals Only holders pay ZERO Oracle integrator fees. Ownership changes
+ *      only this rate and never changes product access.
  *   3. Whatever is charged must be disclosable. `describeFee()` returns the
  *      exact bps and recipient so the caller can render it BEFORE the user
  *      signs. Oracle's pitch is "decoded before you sign" — an undisclosed fee

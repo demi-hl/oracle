@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { PACKAGE_ROOT, packageBin, paths } from "./paths.mjs";
-import { checkAccess } from "./holder-access.mjs";
 import {
   dispatchOperator,
   resolveOperator,
@@ -36,6 +35,7 @@ const STATIC_HELP = `READ / RESEARCH (no keys, this package)
   oracle plugins install|list|remove|scan|setup
                               manage Agent Plugins (open-standard portable agent tooling)
   oracle harness detect|list   scan PATH for installed agent harnesses (opencode, claude, codex, cursor…)
+  oracle fees status|check     check Locals Only 0% fee eligibility
   oracle upgrade              upgrade installed agent lanes
 
 SIGNING (dispatches to @oracle-agent/operator on THIS machine; never in this package)
@@ -152,13 +152,6 @@ export async function run(argv = []) {
   if (argv.length === 0) {
     const commands = await discoverCommands();
     if (shouldLaunchChat(argv)) {
-      // Bare `oracle` opens chat, which is a gated command like any other.
-      const access = await checkAccess("chat");
-      if (!access.allow) {
-        process.stderr.write(access.message);
-        return 77;
-      }
-      if (access.warning) process.stderr.write(access.warning);
       const chat = commands.get("chat");
       if (chat) return chat.run(buildCtx([]));
     }
@@ -168,12 +161,6 @@ export async function run(argv = []) {
 
   if (isRootChatFlag(argv[0])) {
     const commands = await discoverCommands();
-    const access = await checkAccess("chat");
-    if (!access.allow) {
-      process.stderr.write(access.message);
-      return 77;
-    }
-    if (access.warning) process.stderr.write(access.warning);
     const chat = commands.get("chat");
     if (chat) return chat.run(buildCtx(argv));
   }
@@ -218,12 +205,6 @@ export async function run(argv = []) {
         return 1;
       }
     }
-    const access = await checkAccess(noun);
-    if (!access.allow) {
-      process.stderr.write(access.message);
-      return 77;
-    }
-    if (access.warning) process.stderr.write(access.warning);
     try {
       const code = await cmd.run(buildCtx(rest));
       return typeof code === "number" ? code : 0;

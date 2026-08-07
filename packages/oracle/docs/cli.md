@@ -9,11 +9,7 @@ or broadcast.
 ## Install and first run
 
 ```bash
-# Oracle is distributed to Locals Only holders. Prove ownership at the gate,
-# then install the artifact it returns:
-oracle gate status                                  # if you already have a build
-curl -fL -o oracle.tgz "$ORACLE_GATE_LINK" && npm i -g ./oracle.tgz
-# Node >= 20.19
+npm i -g @oracle-agent/oracle            # Node >= 20.19
 oracle --version
 oracle auth login claude               # or codex / grok
 oracle
@@ -68,7 +64,7 @@ oracle doctor [--json]
 
 `oracle data serve` binds the local read plane to `127.0.0.1:8787`.
 `oracle public serve` binds the unsigned public HTTP plane to loopback. Neither
-command creates a holder gate. Do not expose either port directly.
+command creates authentication. Do not expose either port directly.
 
 ### Optional Hermes integration
 
@@ -92,10 +88,11 @@ arguments can be retained in history or visible to other local users.
 ### MCP connectors
 
 ```bash
-oracle mcp install hermes
 oracle mcp install claude-code
+oracle mcp install claude-desktop
 oracle mcp install codex
 oracle mcp install chatgpt
+oracle mcp install cursor
 oracle-data-mcp
 ```
 
@@ -110,7 +107,7 @@ installed and verified.
 - `/model` — switch models; the persona remains Oracle.
 
 Terminal and configured messaging channels can enter the same Hermes profile,
-but the transport and selected model never create authority. Public holder
+but the transport and selected model never create authority. Shared hosted
 sessions must remain isolated and read/prepare-only.
 
 ## Exit codes
@@ -127,7 +124,7 @@ sessions must remain isolated and read/prepare-only.
 
 A standalone public install can legitimately warn that the optional data server,
 Hermes runtime, profiles, or signer are absent. A Node-version failure is
-blocking. Signing readiness is not required for the public holder path.
+blocking. Signing readiness is not required for the public package.
 
 ## Safety semantics
 
@@ -136,12 +133,11 @@ blocking. Signing readiness is not required for the public holder path.
 - A prepared artifact is inert until a user-controlled wallet signs it.
 - A signature request or transaction hash is not a successful receipt.
 - No CLI flag turns a public install into DEMI's operator lane.
-- A shared hosted beta needs the server-side admission and isolation controls in
-  [holder-beta.md](holder-beta.md).
+- A shared hosted service needs server-side authentication and per-user isolation.
 
 ## More
 
 - [Full setup](../SETUP.md)
 - [Public surface and environment variables](public-surface.md)
-- [Locals-holder beta launch gate](holder-beta.md)
+- [Locals Only 0% fee waiver](locals-only-fee-waiver.md)
 - [Buzz integration](buzz-integration.md)

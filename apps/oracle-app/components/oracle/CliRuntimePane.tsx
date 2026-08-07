@@ -25,7 +25,7 @@ const QUICK = [
   "oracle chain list",
   "oracle route --help",
   "oracle prepare --help",
-  "oracle gate status",
+  "oracle fees status",
 ];
 
 function Output({ result, busy }: { result: CliResult | null; busy: boolean }) {

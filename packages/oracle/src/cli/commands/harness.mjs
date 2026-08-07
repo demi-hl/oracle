@@ -26,7 +26,7 @@ export default {
   name: "harness",
   summary: "detect installed agent harnesses",
   usage,
-  async main(args, _env) {
+  async run(args, _ctx) {
     const sub = args[0];
     if (sub === "help" || sub === "--help" || sub === "-h") {
       process.stdout.write(usage() + "\n");
