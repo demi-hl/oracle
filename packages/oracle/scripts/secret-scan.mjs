@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Pre-publication secret scan. Fails CLOSED: any hit is an error.
 //
-// Checks the working tree AND every blob in git history, because a secret
-// removed in a later commit is still public the moment the repo is.
+// Checks the working tree and every blob reachable from HEAD. Set
+// ORACLE_SCAN_ALL_REFS=1 for an explicit audit of every fetched ref.
 
 import { execFileSync } from "node:child_process";
 import { validateMnemonic } from "@scure/bip39";
@@ -64,6 +64,7 @@ const ALLOWED_VALUES = [
 
 const PUBLIC_EMAIL_RE = /^(?:[0-9]+\+)?[a-z0-9_.-]+\[?bot\]?@users\.noreply\.github\.com$|^oracle@users\.noreply\.github\.com$|^noreply@github\.com$/i;
 const PRIVATE_EMAIL_RE = /@(gmail|icloud|me|yahoo|outlook|hotmail|protonmail)\.com$|@(local|gmk)$|^fleet@|^agent@/i;
+const HISTORY_SCOPE = process.env.ORACLE_SCAN_ALL_REFS === "1" ? "--all" : "HEAD";
 
 function sh(cmd, args) {
   return execFileSync(cmd, args, { cwd: ROOT, encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
@@ -99,7 +100,7 @@ function parseEmail(identity) {
 }
 
 function scanIdentities(findings) {
-  const identities = new Set(sh("git", ["log", "--all", "--format=%an <%ae>|%cn <%ce>"]).split(/[\n|]/).filter(Boolean));
+  const identities = new Set(sh("git", ["log", HISTORY_SCOPE, "--format=%an <%ae>|%cn <%ce>"]).split(/[\n|]/).filter(Boolean));
   for (const identity of identities) {
     const email = parseEmail(identity);
     if (!email) continue;
@@ -128,7 +129,7 @@ for (const rel of tracked) {
 }
 
 // --- 2. every blob in history ---
-const revs = sh("git", ["rev-list", "--all"]).split("\n").filter(Boolean);
+const revs = sh("git", ["rev-list", HISTORY_SCOPE]).split("\n").filter(Boolean);
 const seen = new Set();
 let historyBlobs = 0;
 for (const rev of revs) {

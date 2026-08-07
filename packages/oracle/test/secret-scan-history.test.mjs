@@ -61,3 +61,37 @@ test("history scanner rejects non-public git identities without printing the add
   const publicResult = spawnSync(process.execPath, [scanner], { cwd: publicRepo, encoding: "utf8" });
   assert.equal(publicResult.status, 0, `${publicResult.stdout}\n${publicResult.stderr}`);
 });
+
+test("history scanner defaults to HEAD ancestry and supports explicit all-ref audits", () => {
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), "oracle-secret-scope-"));
+  const privateEmail = "founder@example.gmail.com";
+  initRepo(repo);
+  fs.writeFileSync(path.join(repo, "safe.txt"), "safe\n");
+  git(repo, ["add", "safe.txt"]);
+  git(repo, ["commit", "-qm", "public head"]);
+  const branch = spawnSync("git", ["branch", "--show-current"], { cwd: repo, encoding: "utf8" }).stdout.trim();
+
+  git(repo, ["switch", "-qc", "unrelated-private-ref"]);
+  git(repo, ["config", "user.email", privateEmail]);
+  fs.writeFileSync(path.join(repo, "unrelated.txt"), "safe\n");
+  git(repo, ["add", "unrelated.txt"]);
+  git(repo, ["commit", "-qm", "unrelated private identity"]);
+  git(repo, ["switch", "-q", branch]);
+
+  const headResult = spawnSync(process.execPath, [scanner], {
+    cwd: repo,
+    encoding: "utf8",
+    env: { ...process.env, ORACLE_SCAN_ALL_REFS: "" },
+  });
+  assert.equal(headResult.status, 0, `${headResult.stdout}\n${headResult.stderr}`);
+
+  const allRefsResult = spawnSync(process.execPath, [scanner], {
+    cwd: repo,
+    encoding: "utf8",
+    env: { ...process.env, ORACLE_SCAN_ALL_REFS: "1" },
+  });
+  const output = `${allRefsResult.stdout}\n${allRefsResult.stderr}`;
+  assert.equal(allRefsResult.status, 1);
+  assert.match(output, /non-public git identity/);
+  assert.equal(output.includes(privateEmail), false);
+});
