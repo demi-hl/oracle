@@ -52,4 +52,12 @@ test("history scanner rejects non-public git identities without printing the add
   assert.equal(result.status, 1);
   assert.match(output, /non-public git identity/);
   assert.equal(output.includes(privateEmail), false);
+
+  const publicRepo = fs.mkdtempSync(path.join(os.tmpdir(), "oracle-public-identity-"));
+  initRepo(publicRepo, "noreply@github.com");
+  fs.writeFileSync(path.join(publicRepo, "safe.txt"), "safe\n");
+  git(publicRepo, ["add", "safe.txt"]);
+  git(publicRepo, ["commit", "-qm", "fixture"]);
+  const publicResult = spawnSync(process.execPath, [scanner], { cwd: publicRepo, encoding: "utf8" });
+  assert.equal(publicResult.status, 0, `${publicResult.stdout}\n${publicResult.stderr}`);
 });

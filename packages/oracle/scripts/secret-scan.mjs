@@ -62,7 +62,7 @@ const ALLOWED_VALUES = [
   "0x0000000000000000000000000000000000000000",
 ];
 
-const PUBLIC_EMAIL_RE = /^(?:[0-9]+\+)?[a-z0-9_.-]+\[?bot\]?@users\.noreply\.github\.com$|^oracle@users\.noreply\.github\.com$/i;
+const PUBLIC_EMAIL_RE = /^(?:[0-9]+\+)?[a-z0-9_.-]+\[?bot\]?@users\.noreply\.github\.com$|^oracle@users\.noreply\.github\.com$|^noreply@github\.com$/i;
 const PRIVATE_EMAIL_RE = /@(gmail|icloud|me|yahoo|outlook|hotmail|protonmail)\.com$|@(local|gmk)$|^fleet@|^agent@/i;
 
 function sh(cmd, args) {
