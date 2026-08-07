@@ -154,12 +154,12 @@ test("strategy cards are visible with honest posture", () => {
     "LP rebalancing", "MEV", "Flash loans", "Staking", "Yield",
     "Farming methods", "Delta neutral", "TWAP accumulate &amp; distribute",
     "deBridge · ChangeNOW · LI.FI · revoke.cash", "Live farm discovery",
-    "Custom alerts + shadow trading",
+    "Custom alerts + shadow trading", "Paper-trade until you go live",
   ]) {
     const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     assert.match(strategies, new RegExp(`<h4>${escaped}</h4>`));
   }
-  assert.equal((strategies.match(/class="strategy-card"/g) || []).length, 11);
+  assert.equal((strategies.match(/class="strategy-card"/g) || []).length, 12);
   assert.doesNotMatch(strategies, /is-roadmap/);
   assert.match(strategies, /live third-party yield data/);
   assert.match(strategies, /Custom alerts and shadow loops notify or simulate first/);
@@ -169,6 +169,36 @@ test("strategy cards are visible with honest posture", () => {
   assert.match(strategies, /unsigned preparation/);
   assert.match(html, /href="#strategies">Strategies</);
   assert.doesNotMatch(html, /\+ add agent/i);
+});
+
+test("fee section explains builder codes without publishing the builder address", () => {
+  const start = html.indexOf('id="fees"');
+  const end = html.indexOf("</section>", start);
+  const fees = html.slice(start, end);
+  assert.ok(start > 0 && end > start);
+  assert.match(fees, /builder codes/i);
+  assert.match(fees, /Hyperliquid builder fees/);
+  assert.match(fees, /wallet approves the builder and maximum rate/i);
+  assert.doesNotMatch(fees, /0x[a-fA-F0-9]{40}/);
+});
+
+test("CLI omits the holder banner and route-tree labels stay legible", () => {
+  const cliStart = html.indexOf('id="cli"');
+  const cliEnd = html.indexOf("</section>", cliStart);
+  const cli = html.slice(cliStart, cliEnd);
+  assert.doesNotMatch(cli, /cli-install-gate/);
+  assert.doesNotMatch(cli, /Holders get 0% Oracle fees/);
+  assert.match(html, /\.route-tree text \{ fill:#f4f8fc;/);
+  assert.match(html, /\.route-tree rect \{ fill:#111d2b;/);
+});
+
+test("inline scripts compile and profile-tree wires retain their reveal animation", () => {
+  for (const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)) {
+    assert.doesNotThrow(() => new Function(match[1]));
+  }
+  assert.match(html, /class="wires multi"/);
+  assert.match(html, /\.wires\.in path\{animation:lane-flow/);
+  assert.match(html, /querySelectorAll\("\.rv, \.wires"\)/);
 });
 
 test("airdrop EV calculator stays removed from the splash", () => {
@@ -191,9 +221,9 @@ test("the desktop screenshot is a real captured asset with correct intrinsics", 
 
 test("holder copy stays fee/rate scoped and does not claim custody enforcement", () => {
   assert.doesNotMatch(html, /Oracle unlocks when/);
-  assert.match(html, /Holders get 0% Oracle fees/);
-  assert.match(html, /The CLI recognises your agent wallet and applies the holder rate automatically/);
-  assert.match(html, /The public package never touches keys/);
+  assert.doesNotMatch(html, /Holders get 0% Oracle fees/);
+  assert.doesNotMatch(html, /The CLI recognises your agent wallet and applies the holder rate automatically/);
+  assert.match(html, /0% for NFT holders/);
   assert.doesNotMatch(html, /security boundary/i);
 });
 
