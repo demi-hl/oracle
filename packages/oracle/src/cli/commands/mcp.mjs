@@ -6,13 +6,14 @@ import { installCodex } from "../mcp-targets/codex.mjs";
 import { installChatgpt } from "../mcp-targets/chatgpt.mjs";
 import { installCursor } from "../mcp-targets/cursor.mjs";
 import { installVscode } from "../mcp-targets/vscode.mjs";
+import { installSoul } from "../mcp-targets/install-soul.mjs";
 import { buildServerSpecs } from "../mcp-targets/shared.mjs";
 
 function usage() {
   process.stderr.write(
     "usage: oracle mcp <install|print> [target] [flags]\n" +
       "  targets: claude-code | claude-desktop | codex | copilot | chatgpt | cursor | vscode | generic\n" +
-      "  flags:   --with-control --project --print --json\n",
+      "  flags:   --with-control --with-soul --project --print --json\n",
   );
 }
 
@@ -43,7 +44,7 @@ export default {
   name: "mcp",
   summary: "wire Oracle into AI clients",
   group: "read",
-  usage: "oracle mcp install <target> | oracle mcp print [--target <t>] | oracle mcp watchdog [--once]",
+  usage: "oracle mcp install <target> [--with-control] [--with-soul] | oracle mcp print [--target <t>] | oracle mcp watchdog [--once]",
   async run(ctx) {
     const verb = ctx.argv[0];
     if (!verb || verb === "--help" || verb === "-h") {
@@ -67,6 +68,7 @@ export default {
         args: ctx.argv.slice(1),
         options: {
           "with-control": { type: "boolean", default: false },
+          "with-soul": { type: "boolean", default: false },
           project: { type: "boolean", default: false },
           print: { type: "boolean", default: false },
           json: { type: "boolean", default: false },
@@ -82,6 +84,7 @@ export default {
     }
 
     const withControl = !!values["with-control"];
+    const withSoul = !!values["with-soul"];
     const project = !!values.project;
     const json = !!values.json;
     const operator = ctx.resolveOperator ? ctx.resolveOperator() : { ok: false };
@@ -152,6 +155,16 @@ export default {
         return result.code || 1;
       }
       emitResult(result, { json });
+
+      // Install SOUL if requested (after MCP, independent of MCP outcome)
+      if (withSoul) {
+        const soulResult = await installSoul(target, { cwd: process.cwd(), printOnly });
+        if (soulResult.ok) {
+          process.stderr.write(`  soul → ${soulResult.path || "injected"}\n`);
+        } else {
+          process.stderr.write(`  soul: ${soulResult.reason || "failed"}\n`);
+        }
+      }
       if (result.status && String(result.status).startsWith("printed") && result.print) {
         process.stdout.write(JSON.stringify(result.print, null, 2) + "\n");
       }
