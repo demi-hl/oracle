@@ -27,8 +27,9 @@ phrase, or transaction. Run `oracle fees status` for the configured wallet or
 - Fee recipient configured, non-holder: the configured fee applies, capped at
   100 basis points.
 - Fee recipient configured, Locals Only holder: Oracle's integrator fee is 0%.
-- Hyperliquid builder fees are not waived. Provider fees, bridge fees, gas,
-  slippage, LP fees, and network costs also remain separate.
+- Oracle's Hyperliquid builder fee is also waived after the same verified
+  holder lookup. Provider fees, bridge fees, gas, slippage, LP fees, and
+  network costs remain separate.
 
 Fee resolution stays separate from custody. The public package remains keyless
 and prepare-only; the user's wallet reviews, signs, and submits.

@@ -36,21 +36,24 @@ test("Locals Only documentation is fee-waiver only", () => {
   assert.doesNotMatch(FEE_WAIVER, /holder-gated|challenge|session token|download link/i);
 });
 
-test("Hyperliquid builder-code documentation pins the fee identity and wire units", () => {
-  assert.match(HL_BUILDER, /0x4d47B6757aFd42c3dbd9691b71B43d74Afa4b6b2/);
-  assert.match(HL_BUILDER, /5 basis points/i);
-  assert.match(HL_BUILDER, /[`"]f[`"]\s*[:=]\s*50/i);
-  assert.match(HL_BUILDER, /ApproveBuilderFee/i);
+test("Hyperliquid builder-code documentation pins private configuration, fee tiers, and approval units", () => {
+  assert.doesNotMatch(HL_BUILDER, /0x[a-fA-F0-9]{40}/);
+  assert.match(HL_BUILDER, /Core perpetuals: \*\*2 basis points/i);
+  assert.match(HL_BUILDER, /HIP-3: \*\*1 basis point/i);
+  assert.match(HL_BUILDER, /HIP-4 outcomes: \*\*1 basis point/i);
+  assert.match(HL_BUILDER, /wire values are `20` for core perpetuals and `10` for HIP-3\/HIP-4/i);
+  assert.match(HL_BUILDER, /approveBuilderFee/i);
+  assert.match(HL_BUILDER, /hyperliquidChain/);
+  assert.match(HL_BUILDER, /signatureChainId/);
   assert.match(HL_BUILDER, /main wallet/i);
   assert.match(HL_BUILDER, /maxBuilderFee/i);
-  assert.match(HL_BUILDER, /does not gate|not an access gate/i);
-  assert.match(HL_BUILDER, /does not waive (?:the )?Hyperliquid builder fee/i);
-  assert.match(FEE_WAIVER, /Hyperliquid builder fee.*not waived/i);
-  assert.match(HL_BUILDER, /does not inject|not inject/i);
+  assert.match(HL_BUILDER, /Ownership never changes product access/i);
+  assert.match(HL_BUILDER, /including the Oracle builder fee/i);
+  assert.match(FEE_WAIVER, /builder fee is also waived/i);
+  assert.match(HL_BUILDER, /never signs or submits/i);
   assert.match(README, /hyperliquid-builder-code\.md/);
   assert.match(SETUP, /hyperliquid-builder-code\.md/);
-  assert.match(SETUP, /waiver does not waive the Hyperliquid builder fee/i);
-  assert.doesNotMatch(SETUP, /holder.{0,80}omit|omit.{0,80}builder/i);
+  assert.match(SETUP, /Locals Only holder receives\s+a 0% Oracle rate/i);
 });
 
 test("Buzz documentation covers every public endpoint advertised by integration source", () => {

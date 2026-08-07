@@ -213,10 +213,10 @@ Use `oracle fees status` to check the configured wallet. See
 
 ## Hyperliquid builder code
 
-Eligible Hyperliquid perp orders disclose the separate 5 bps builder code before
-wallet review, including orders prepared for Locals Only holders. The Locals Only
-waiver does not waive the Hyperliquid builder fee. The main wallet must separately
-sign the revocable maximum-fee approval; Oracle only prepares that action. See
+Eligible Hyperliquid core perpetual orders disclose a 2 bps builder fee before
+wallet review; HIP-3 and HIP-4 use 1 bps. A verified Locals Only holder receives
+a 0% Oracle rate. The main wallet must separately sign the revocable maximum-fee
+approval; Oracle only prepares that unsigned action. See
 [hyperliquid-builder-code.md](docs/hyperliquid-builder-code.md).
 
 ## Buzz integration

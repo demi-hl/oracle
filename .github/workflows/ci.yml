@@ -53,6 +53,8 @@ jobs:
 
       - name: secret scan
         run: npm run scan:secrets
+        env:
+          ORACLE_IDENTITY_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
 
       # 0.12.0 shipped `oracle-data` and `oracle init` broken: both read assets
       # relative to the source layout, which does not exist once the package is

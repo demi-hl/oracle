@@ -1,3 +1,5 @@
+import { holderBalance } from "../licensing/locals-only.mjs";
+
 /**
  * Integrator fee policy.
  *
@@ -20,17 +22,17 @@
  * Oracle claiming a share of a fee that is already being charged.
  */
 
-const MAX_BPS = 100; // 1%. A hard ceiling so a typo cannot ship a 50% fee.
+const MAX_BPS = 100; // Parser ceiling. resolveFee applies the lower per-action product cap.
 
 /**
- * 10 bps. Deliberately at the low end: LI.FI's own default is 25 bps and
+ * 5 bps. Deliberately at the low end: LI.FI's own default is 25 bps and
  * Matcha runs 15, so this stays invisible to anyone comparison-shopping.
  *
  * The fee's job is not revenue maximisation — Locals Only holders pay zero, so
  * a small non-holder fee makes the NFT obviously worth holding. A large one
  * would just teach people to route around Oracle.
  */
-export const DEFAULT_FEE_BPS = 10;
+export const DEFAULT_FEE_BPS = 5;
 
 /**
  * Per-action pricing. A same-chain swap is the most price-shopped action in
@@ -38,17 +40,17 @@ export const DEFAULT_FEE_BPS = 10;
  * so it stays cheapest. The others are not comparison-shopped the same way and
  * deliver more work per transaction.
  *
- *   swap    10 bps  below LI.FI 25 and Matcha 15
+ *   swap     5 bps  below LI.FI 25 and Matcha 15
  *   bridge  15 bps  multi-chain routing, longer settlement, more failure modes
- *   perps    5 bps  venues already charge taker fees; stacking is punitive
+ *   perps    0      Hyperliquid builder fees are separate; never stack by default
  *   nft      0      marketplace fees are already heavy
  *
  * A holder pays zero on every one of these.
  */
 export const FEE_TIERS = Object.freeze({
-  swap: 10,
+  swap: 5,
   bridge: 15,
-  perps: 5,
+  perps: 0,
   nft: 0,
 });
 
@@ -75,36 +77,51 @@ function parseBps(raw, { fallback = 0 } = {}) {
 }
 
 /**
- * Resolve the fee that applies to one route.
- *
- * `isHolder` is passed in rather than looked up here: this module must stay
- * synchronous and side-effect free so it can be called from inside quote
- * builders without turning them into async chain-readers.
+ * Resolve the standard fee that applies to one route. Holder exemptions are
+ * applied only by resolveVerifiedFee after a live balance lookup.
  */
-export function resolveFee({ env = process.env, isHolder = false, action = "swap" } = {}) {
+export function resolveFee({ env = process.env, action = "swap" } = {}) {
   const recipient = String(env[FEE_RECIPIENT_ENV] || "").trim();
-  // Setting a recipient is the opt-in. Once that exists, bps defaults to 10
-  // rather than forcing every deployment to restate the house number.
-  const bps = parseBps(env[FEE_ENV], { fallback: recipient ? tierBps(action) : 0 });
+  const productCapBps = tierBps(action);
+  const requestedBps = parseBps(env[FEE_ENV], { fallback: recipient ? productCapBps : 0 });
+  const bps = Math.min(requestedBps, productCapBps);
   const integrator = String(env[INTEGRATOR_ENV] || DEFAULT_INTEGRATOR_ID).trim();
-
-  // Holder check comes first. A zero-bps tier (nft) would otherwise return
-  // "not-configured" for a holder, which is a true zero with a misleading
-  // reason — the UI would say "No Oracle fee" instead of crediting the NFT.
-  if (isHolder) {
-    return { bps: 0, recipient, integrator, action, applies: false, reason: "locals-only-holder" };
-  }
 
   if (!bps) {
     return { bps: 0, recipient: "", integrator, action, applies: false, reason: "not-configured" };
   }
   if (!/^0x[a-fA-F0-9]{40}$/.test(recipient)) {
-    // Fail closed. A fee with nowhere to go is a fee that silently vanishes
-    // into the aggregator, which is the exact situation this module exists to
-    // end.
     return { bps: 0, recipient: "", integrator, action, applies: false, reason: "no-recipient" };
   }
   return { bps, recipient, integrator, action, applies: true, reason: "configured" };
+}
+
+export async function resolveVerifiedFee({
+  wallet,
+  env = process.env,
+  action = "swap",
+  holderCheck = {},
+} = {}) {
+  const standard = resolveFee({ env, action });
+  const address = String(wallet || "").trim().toLowerCase();
+  if (!/^0x[a-f0-9]{40}$/.test(address)) {
+    return { ...standard, holderVerificationStatus: "wallet-required" };
+  }
+  try {
+    const balance = BigInt(await holderBalance(address, holderCheck));
+    if (balance > 0n) {
+      return {
+        ...standard,
+        bps: 0,
+        applies: false,
+        reason: "locals-only-holder",
+        holderVerificationStatus: "holder",
+      };
+    }
+    return { ...standard, holderVerificationStatus: "non-holder" };
+  } catch {
+    return { ...standard, holderVerificationStatus: "unavailable" };
+  }
 }
 
 /** Human-readable disclosure. Render this next to the quote, before signing. */

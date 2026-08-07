@@ -8,9 +8,7 @@
 // has one less party to trust. Ported from the resolution chain already proven
 // in DEMI's polymarket bot (src/hooks/useResolveName.js).
 //
-// Verified live 2026-08-05 against 0x4d47b6757afd42c3dbd9691b71b43d74afa4b6b2:
-//   .hl    -> demi.hl        .hype -> demi.hype
-//   .eth   -> demigodzx.eth  .base -> (no record, call OK)
+// Verified live 2026-08-05 against an operator-controlled public address.
 
 import { keccak_256 } from "@noble/hashes/sha3.js";
 import { rpcCall } from "./providers/evm-rpc.mjs";

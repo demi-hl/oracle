@@ -13,8 +13,8 @@ oracle doctor                           # verify local posture
 The CLI, source, and desktop beta are public to everyone. Locals Only holders
 receive a 0% Oracle integrator fee; the NFT does not gate product access.
 
-Hyperliquid perp orders disclose Oracle's 5 bps builder code. The exact address,
-approval flow, wire units, and separation from the Locals Only waiver are documented in
+Hyperliquid core perpetual orders use a 2 bps builder fee; HIP-3 and HIP-4 use 1 bps.
+The private operator configuration, approval flow, wire units, and holder waiver are documented in
 [Hyperliquid builder code](packages/oracle/docs/hyperliquid-builder-code.md).
 
 Prefer an API key instead? `oracle auth api-key openrouter` accepts hidden

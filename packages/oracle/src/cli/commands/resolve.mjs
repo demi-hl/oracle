@@ -4,7 +4,7 @@ const USAGE = `oracle resolve <name-or-address> [--json]
 
   oracle resolve demi.hl
   oracle resolve vitalik.eth
-  oracle resolve 0x4d47b6757afd42c3dbd9691b71b43d74afa4b6b2
+  oracle resolve 0x1111111111111111111111111111111111111111
 
 Reads on-chain name records. No API key: HL Names publishes a paid REST API,
 but the contract answers primaryName(address) for free.
