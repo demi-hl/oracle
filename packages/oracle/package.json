@@ -1,6 +1,6 @@
 {
   "name": "@oracle-agent/oracle",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "description": "Oracle: standalone prepare-only multichain agent control plane with optional Hermes integration. Policy-bounded intents for a user-signed wallet; the public package never takes your key.",
   "license": "BUSL-1.1",
   "type": "module",
