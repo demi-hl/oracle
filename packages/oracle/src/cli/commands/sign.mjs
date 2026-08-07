@@ -42,14 +42,20 @@ export default {
         writeFileSync(keyFile, JSON.stringify({ key: clean }, null, 2) + "\n", { mode: 0o600 });
         process.stderr.write(`Saved to ${keyFile} (0600)\n`);
 
-        // Overwrite with zeros, then delete
+        // Shred the temp file
         try {
           try { writeFileSync(keyfilePath, Buffer.alloc(statSync(keyfilePath).size, 0x00)); } catch {}
           unlinkSync(keyfilePath);
         } catch {}
-        process.stderr.write(`Cleaned up ${keyfilePath}\n`);
+        
+        // Auto-arm: importing a key means you want to use it
+        const execEnv = join(dir, "exec.env");
+        writeFileSync(execEnv, "ORACLE_EXEC_ENABLED=1\n", "utf8");
+        process.stderr.write(`Armed: ${execEnv}\n`);
         return 0;
       }
+
+      // --- Interactive ---
 
       const rl = createInterface({ input: process.stdin, output: process.stderr });
       const ask = (q) => new Promise((resolve) => rl.question(q, resolve));
@@ -73,6 +79,11 @@ export default {
       mkdirSync(keyDir, { recursive: true, mode: 0o700 });
       writeFileSync(keyFile, JSON.stringify({ key: clean }, null, 2) + "\n", { mode: 0o600 });
       process.stderr.write(`Saved to ${keyFile} (0600)\n`);
+
+      // Auto-arm
+      const execEnv = join(dir, "exec.env");
+      writeFileSync(execEnv, "ORACLE_EXEC_ENABLED=1\n", "utf8");
+      process.stderr.write(`Armed: ${execEnv}\n`);
       return 0;
     }
     process.stderr.write(
