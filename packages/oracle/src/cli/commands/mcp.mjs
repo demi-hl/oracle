@@ -43,12 +43,22 @@ export default {
   name: "mcp",
   summary: "wire Oracle into AI clients",
   group: "read",
-  usage: "oracle mcp install <target> | oracle mcp print [--target <t>]",
+  usage: "oracle mcp install <target> | oracle mcp print [--target <t>] | oracle mcp watchdog [--once]",
   async run(ctx) {
     const verb = ctx.argv[0];
     if (!verb || verb === "--help" || verb === "-h") {
       usage();
       return verb ? 0 : 1;
+    }
+
+    if (verb === "watchdog") {
+      const { spawn } = await import("node:child_process");
+      const path = await import("node:path");
+      const once = ctx.argv.includes("--once");
+      const bin = path.join(ctx.root, "bin", "oracle-mcp-watchdog.mjs");
+      const child = spawn(process.execPath, [bin, ...(once ? ["--once"] : [])], { stdio: "inherit", detached: true });
+      child.unref();
+      return 0;
     }
 
     let values, positionals;
