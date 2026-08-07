@@ -62,6 +62,7 @@ policy and custody wall still apply.
 | Name | Default | Meaning |
 |---|---|---|
 | `ORACLE_EXECUTE_ENABLED` | off | allow the signing surface to arm at all |
+| `ORACLE_EXEC_ENABLED` | off | legacy local exec-client arm flag. Any non-empty value currently arms that client; use literal `1` and keep signer policy, chain allowlists, and caps enabled |
 | `ORACLE_DEPLOY_ENABLED` | off | allow contract deployment paths to arm |
 | `ORACLE_ONBOARD_HTTP` | off | expose onboarding routes over HTTP |
 | `ORACLE_PUBLIC_API_MODE` | off | run the server in public-plane mode |
@@ -92,9 +93,11 @@ policy and custody wall still apply.
 | `ORACLE_GATE_HOST` | `127.0.0.1` | Locals Only distribution gate bind host. This is the one surface meant to be exposed publicly (behind TLS) — a gate that runs on the visitor's machine is not a gate |
 | `ORACLE_GATE_PORT` | `8810` | distribution gate port |
 | `ORACLE_GATE_DOMAIN` | host:port | domain named in the message holders sign; binds the signature to this service |
-| `ORACLE_INTEGRATOR_FEE_BPS` | unset (no fee) | Integrator fee in basis points on routed swaps, clamped to 100 (1%). Unset, zero, negative or malformed means **no fee**. Locals Only holders are exempt regardless of this value — the NFT is the license, so charging holders per swap would sell the same access twice |
+| `ORACLE_INTEGRATOR_FEE_BPS` | unset (5 bps when recipient is set) | Integrator fee in basis points on routed swaps, clamped to 100 (1%). Unset without a recipient, zero, negative, or malformed means **no fee**. Locals Only holders are exempt regardless of this value |
 | `ORACLE_INTEGRATOR_FEE_RECIPIENT` | unset | EVM address that receives the fee. **Required**: a fee configured without a valid recipient fails closed to no fee, because otherwise the basis points are charged and silently kept by the aggregator |
 | `ORACLE_INTEGRATOR_ID` | `oracle` | Integrator/partner string sent to route providers. ParaSwap accepts any value with no registration; LI.FI requires the id to be registered at portal.li.fi or the quote 400s |
+| `ORACLE_HL_BUILDER_ADDRESS` | unset | Hyperliquid builder address. A prepared eligible order includes the configured builder fee only after Oracle verifies the wallet's live `maxBuilderFee` approval covers it. Order preparation requires the wallet address in `user`. Use `prepareBuilderApproval` to prepare the separate unsigned wallet approval. Unset means no builder fee |
+| `ORACLE_HL_BUILDER_FEE_BPS` | tiered when builder address is set | Optional lower override in 0.1 bps increments. It cannot exceed the product tier: core perps 2 bps; HIP-3 and HIP-4 1 bps. The spot policy is 1 bps but remains inactive until a spot-order prepare path ships. Locals Only holders are verified by live NFT balance and exempt; an unavailable holder check fails closed to no builder fee |
 | `ORACLE_GATE_SECRET` | random per process | HMAC secret for gate session tokens. Unset means sessions do not survive a restart; there is deliberately no hardcoded fallback |
 | `ORACLE_GATE_TARBALL` | unset | Path to the packed `.tgz` the gate serves to proven holders. **Unset means the gate hands out a public-registry `npm install` line, which is discovery, not enforcement** — anyone can run that command without ever contacting the gate. Set this to make holder-gating real, since a check running on the visitor's machine can always be patched out |
 | `ORACLE_GATE_DOWNLOAD_TTL_MS` | `300000` | Lifetime of a signed download link. The link is HMAC-bound to one address and one deadline, so a leaked URL is useless after it expires and cannot be edited to name another wallet |
@@ -179,6 +182,9 @@ list.
 | `ORACLE_ADDRESS_BOOK` | address-book path |
 | `ORACLE_OPERATOR_BIN_DIR` | operator binary directory |
 | `ORACLE_AUDIT_STREAM` | audit stream destination |
+| `ORACLE_EVM_KEY_FILE` | path to the local EVM key file consumed by the operator signing subprocess; never place key material in the variable itself |
+| `ORACLE_SOLANA_KEY_FILE` | path to the local Solana key file consumed by the operator signing subprocess; never place key material in the variable itself |
+| `ORACLE_BTC_WIF_FILE` | path to the local Bitcoin WIF file consumed by the operator signing subprocess; never place WIF material in the variable itself |
 
 ### Packaged desktop mode
 
@@ -199,6 +205,8 @@ what the bundled app does differently from a plain `npm i -g` install.
 | `ORACLE_DEFAULT_ADDRESS` | default address for reads |
 | `ORACLE_PROFILE` | active profile name |
 | `ORACLE_PRIVY_APP_ID` | Privy app id for connect flows |
+| `ORACLE_GATEWAY_PROVIDER` | gateway-agent model provider; defaults to `nous-direct` |
+| `ORACLE_GATEWAY_MODEL` | gateway-agent model id; defaults to `deepseek/deepseek-v4-pro` |
 
 ### Runtime integration
 

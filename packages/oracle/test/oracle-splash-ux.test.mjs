@@ -6,6 +6,9 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const html = readFileSync(join(root, "public/oracle-splash/index.html"), "utf8");
+const variantHtml = ["ice.html", "ivory.html"].map((name) =>
+  readFileSync(join(root, "public/oracle-splash/_variants", name), "utf8")
+);
 const cliImage = join(root, "public/oracle-splash/assets/cli-chain-hyperliquid.jpg");
 
 test("hero leads with the product shot and the CLI section keeps its full treatment", () => {
@@ -178,7 +181,11 @@ test("fee section explains builder codes without publishing the builder address"
   assert.ok(start > 0 && end > start);
   assert.match(fees, /builder codes/i);
   assert.match(fees, /Hyperliquid builder fees/);
-  assert.match(fees, /wallet approves the builder and maximum rate/i);
+  assert.match(fees, /wallet approves a 2 bps maximum/i);
+  assert.match(fees, /Core perps use 2 bps/i);
+  assert.match(fees, /HIP-3 and HIP-4 use 1 bps/i);
+  assert.match(fees, /Spot is set to 1 bps but remains inactive/i);
+  assert.match(fees, /separate from the 5 bps routed-swap fee/i);
   assert.doesNotMatch(fees, /0x[a-fA-F0-9]{40}/);
 });
 
@@ -328,4 +335,11 @@ test("the profile lanes animate rather than sitting as a static diagram", () => 
   // Reduced motion must stop it dead, not just slow it.
   const rm = html.slice(html.indexOf("@keyframes lane-node"));
   assert.match(rm, /prefers-reduced-motion:reduce/);
+});
+
+test("every splash variant keeps product access public and omits the removed custody strip", () => {
+  for (const surface of [html, ...variantHtml]) {
+    assert.doesNotMatch(surface, /holder-gated|Locals Only access|oracle gate status|id="custody"|You keep custody|Multi-wallet|Per-wallet limits|Revoke anytime/i);
+    assert.match(surface, /desktop app or public CLI/i);
+  }
 });

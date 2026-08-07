@@ -12,14 +12,25 @@
 // rounded to szDecimals. Integers are always allowed regardless of sig figs.
 // We do that rounding here, once, in decimal — never through a float.
 
-import { hlMetaAndAssetCtxs, hlAllMids } from "./hl-info.mjs";
+import { hlMetaAndAssetCtxs, hlAllMids, hlInfo } from "./hl-info.mjs";
 import { resolveHlAsset } from "./hl-assets.mjs";
 import { toScaledInteger } from "../../exact-integer.mjs";
 import { stampPrepared } from "../../prepare-envelope.mjs";
+import { holderBalance } from "../../gate/holder-gate.mjs";
 
 export const HL_PERP_MAX_SIG_FIGS = 5;
 export const HL_PERP_PRICE_DECIMALS = 6; // 6 - szDecimals for perps
 export const HL_SIGNATURE_CHAIN_ID = "0x66eee";
+export const HL_BUILDER_DEFAULT_FEE_BPS = 2;
+export const HL_BUILDER_MAX_FEE_BPS = 10;
+export const HL_BUILDER_ADDRESS_ENV = "ORACLE_HL_BUILDER_ADDRESS";
+export const HL_BUILDER_FEE_ENV = "ORACLE_HL_BUILDER_FEE_BPS";
+export const HL_BUILDER_FEE_TIERS = Object.freeze({
+  perp: 2,
+  spot: 1,
+  hip3: 1,
+  hip4: 1,
+});
 
 export const ORDER_TYPES = Object.freeze({
   LIMIT: "limit",
@@ -40,6 +51,82 @@ export const MARGIN_MODE = Object.freeze({
   CROSS: "cross",
   ISOLATED: "isolated",
 });
+
+export function hlBuilderFeeBpsForKind(kind = "perp") {
+  if (kind === "perp" || kind === "main") return HL_BUILDER_FEE_TIERS.perp;
+  if (kind === "spot") return HL_BUILDER_FEE_TIERS.spot;
+  if (kind === "hip3") return HL_BUILDER_FEE_TIERS.hip3;
+  if (kind === "outcome" || kind === "hip4") return HL_BUILDER_FEE_TIERS.hip4;
+  throw new Error(`hl-perps: unknown builder fee kind ${kind}`);
+}
+
+function resolveBuilderFee({ env = process.env, isHolder = false, kind = "perp" } = {}) {
+  if (isHolder) return null;
+  const address = String(env?.[HL_BUILDER_ADDRESS_ENV] || "").trim().toLowerCase();
+  if (!address) return null;
+  if (!/^0x[a-f0-9]{40}$/.test(address)) {
+    throw new Error(`hl-perps: ${HL_BUILDER_ADDRESS_ENV} must be an EVM address`);
+  }
+  const raw = env?.[HL_BUILDER_FEE_ENV];
+  const tierBps = hlBuilderFeeBpsForKind(kind);
+  const bps = raw === undefined || raw === null ? tierBps : Number(raw);
+  if (!Number.isFinite(bps) || bps <= 0 || Math.abs(bps * 10 - Math.round(bps * 10)) > 1e-9) {
+    throw new Error(`hl-perps: ${HL_BUILDER_FEE_ENV} must be a positive number in 0.1 bps increments`);
+  }
+  if (bps > HL_BUILDER_MAX_FEE_BPS) {
+    throw new Error(`hl-perps: builder fee ${bps} bps exceeds the ${HL_BUILDER_MAX_FEE_BPS} bps cap`);
+  }
+  if (bps > tierBps) {
+    throw new Error(`hl-perps: builder fee ${bps} bps exceeds the ${tierBps} bps product tier for ${kind}`);
+  }
+  const wireFee = Math.round(bps * 10);
+  const percent = (wireFee / 1000).toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+  return {
+    wire: { b: address, f: wireFee },
+    disclosure: { address, bps, percent: `${percent}%` },
+  };
+}
+
+async function verifyBuilderApproval(builderFee, args = {}, opts = {}) {
+  if (!builderFee) return { approved: false, approvedFeeBps: 0, status: "not-configured" };
+  const user = String(args.user || opts.user || "").trim().toLowerCase();
+  if (!/^0x[a-f0-9]{40}$/.test(user)) {
+    return { approved: false, approvedFeeBps: 0, status: "wallet-required" };
+  }
+  try {
+    const approvedWire = Number(await hlInfo({
+      type: "maxBuilderFee",
+      user,
+      builder: builderFee.disclosure.address,
+    }, opts));
+    if (!Number.isInteger(approvedWire) || approvedWire < 0) {
+      return { approved: false, approvedFeeBps: 0, status: "invalid-response" };
+    }
+    return {
+      approved: approvedWire >= builderFee.wire.f,
+      approvedFeeBps: approvedWire / 10,
+      status: approvedWire >= builderFee.wire.f ? "approved" : "insufficient",
+    };
+  } catch {
+    return { approved: false, approvedFeeBps: 0, status: "unavailable" };
+  }
+}
+
+async function verifyHolderExemption(builderFee, args = {}, opts = {}) {
+  if (!builderFee) return { exempt: false, status: "not-configured" };
+  if (opts.isHolder === true) return { exempt: true, status: "holder" };
+  const user = String(args.user || opts.user || "").trim().toLowerCase();
+  if (!/^0x[a-f0-9]{40}$/.test(user)) return { exempt: false, status: "wallet-required" };
+  try {
+    const balanceOf = opts.holderBalance || holderBalance;
+    const balance = BigInt(await balanceOf(user));
+    return balance > 0n
+      ? { exempt: true, status: "holder" }
+      : { exempt: false, status: "non-holder" };
+  } catch {
+    return { exempt: false, status: "unavailable" };
+  }
+}
 
 /** Exact decimal rounding — no floats, so 0.1+0.2 problems cannot appear. */
 function roundDecimal(value, maxDecimals, { roundDown = null } = {}) {
@@ -164,6 +251,28 @@ function stamped(result) {
   return stampPrepared(result, { provider: result.provider || "hl-perps", kind: result.kind });
 }
 
+export function hlPrepareBuilderApproval(args = {}, opts = {}) {
+  const fee = resolveBuilderFee({ env: opts.env });
+  if (!fee) throw new Error(`hl-perps: ${HL_BUILDER_ADDRESS_ENV} is required`);
+  const nonce = Number(args.nonce ?? opts.nonce ?? Date.now());
+  if (!Number.isSafeInteger(nonce) || nonce <= 0) throw new Error("hl-perps: nonce must be a positive integer");
+  const action = {
+    type: "approveBuilderFee",
+    hyperliquidChain: opts.testnet || process.env.HL_TESTNET === "1" ? "Testnet" : "Mainnet",
+    signatureChainId: HL_SIGNATURE_CHAIN_ID,
+    maxFeeRate: fee.disclosure.percent,
+    builder: fee.disclosure.address,
+    nonce,
+  };
+  return stamped({
+    provider: "hl-perps",
+    venue: "hyperliquid",
+    kind: "builder-fee-approval",
+    builderFee: fee.disclosure,
+    ...envelope(action, nonce),
+  });
+}
+
 /**
  * Prepare a perp order.
  *
@@ -231,6 +340,12 @@ export async function hlPreparePerpOrder(args = {}, opts = {}) {
     orders: [order],
     grouping: args.grouping || "na",
   };
+  const configuredBuilderFee = resolveBuilderFee({ env: opts.env, kind: info.kind });
+  const holderVerification = await verifyHolderExemption(configuredBuilderFee, args, opts);
+  const chargeableBuilderFee = holderVerification.status === "non-holder" ? configuredBuilderFee : null;
+  const builderApproval = await verifyBuilderApproval(chargeableBuilderFee, args, opts);
+  const builderFee = builderApproval.approved ? chargeableBuilderFee : null;
+  if (builderFee) action.builder = builderFee.wire;
 
   const nonce = Number(args.nonce ?? Date.now());
   const notional = Number(price) * Number(size);
@@ -253,6 +368,14 @@ export async function hlPreparePerpOrder(args = {}, opts = {}) {
     notionalUsd: Number.isFinite(notional) ? notional : null,
     maxLeverage: info.maxLeverage,
     markPx: info.markPx,
+    builderFee: builderFee?.disclosure ?? null,
+    holderExempt: holderVerification.exempt,
+    holderVerificationStatus: holderVerification.status,
+    builderApprovalRequired: chargeableBuilderFee && !builderFee
+      ? { ...configuredBuilderFee.disclosure, ...builderApproval }
+      : configuredBuilderFee && !holderVerification.exempt && holderVerification.status !== "non-holder"
+        ? { ...configuredBuilderFee.disclosure, approved: false, status: holderVerification.status }
+        : null,
     ...envelope(action, nonce),
   });
 }
@@ -372,7 +495,12 @@ export async function hlPrepareBracketOrder(args = {}, opts = {}) {
   }
   if (orders.length === 1) throw new Error("hl-perps: a bracket needs takeProfitPx and/or stopLossPx");
 
-  const action = { type: "order", orders, grouping: "normalTpsl" };
+  const action = {
+    type: "order",
+    orders,
+    grouping: "normalTpsl",
+    ...(entry.action.builder ? { builder: entry.action.builder } : {}),
+  };
   return stamped({
     provider: "hl-perps",
     venue: "hyperliquid",
@@ -382,6 +510,7 @@ export async function hlPrepareBracketOrder(args = {}, opts = {}) {
     entry: { side: entry.side, price: entry.price, size: entry.size },
     takeProfitPx: args.takeProfitPx == null ? null : formatPerpPrice(args.takeProfitPx, info.szDecimals),
     stopLossPx: args.stopLossPx == null ? null : formatPerpPrice(args.stopLossPx, info.szDecimals),
+    builderFee: entry.builderFee,
     ...envelope(action, Number(args.nonce ?? Date.now())),
   });
 }

@@ -63,13 +63,13 @@ test("a configured non-holder carries the fee", () => {
   assert.equal(fee.recipient, RECIP);
 });
 
-test("the house default is 10 bps once a recipient is set", () => {
+test("the house default is 5 bps once a recipient is set", () => {
   // Setting a recipient is the opt-in; the operator should not have to restate
   // the house number in every deployment.
   const fee = resolveFee({ env: { ORACLE_INTEGRATOR_FEE_RECIPIENT: RECIP }, isHolder: false });
   assert.equal(fee.applies, true);
   assert.equal(fee.bps, DEFAULT_FEE_BPS);
-  assert.equal(DEFAULT_FEE_BPS, 10, "10 bps sits below LI.FI 25 and Matcha 15");
+  assert.equal(DEFAULT_FEE_BPS, 5);
 });
 
 test("the default never applies without a recipient", () => {
@@ -121,20 +121,19 @@ test("provider params match each API's documented shape", () => {
 
 test("each action carries its own price", () => {
   // A same-chain swap is the most price-shopped action in crypto, so it stays
-  // cheapest. Bridges do more work; perps venues already charge taker fees;
-  // NFT marketplaces are already expensive.
+  // cheapest. Bridges do more work. Perps use their separate builder-fee path,
+  // and NFT marketplaces are already expensive.
   const env = { ORACLE_INTEGRATOR_FEE_RECIPIENT: RECIP };
-  assert.equal(resolveFee({ env, action: "swap" }).bps, 10);
+  assert.equal(resolveFee({ env, action: "swap" }).bps, 5);
   assert.equal(resolveFee({ env, action: "bridge" }).bps, 15);
-  assert.equal(resolveFee({ env, action: "perps" }).bps, 5);
+  assert.equal(resolveFee({ env, action: "perps" }).bps, 0);
   assert.equal(resolveFee({ env, action: "nft" }).bps, 0);
 });
 
-test("swap stays the cheapest tier", () => {
-  // If this ever inverts, Oracle is charging most for the thing users compare
-  // hardest, which is how an aggregator loses its routing volume.
+test("swap stays below comparison routes and never stacks onto perps", () => {
   assert.ok(FEE_TIERS.swap <= FEE_TIERS.bridge, "swap must not cost more than a bridge");
   assert.ok(FEE_TIERS.swap < 15, "swap must stay under Matcha's 15 bps");
+  assert.equal(FEE_TIERS.perps, 0, "routed fees must not stack onto Hyperliquid builder fees");
   assert.ok(FEE_TIERS.nft === 0, "NFT marketplaces already take enough");
 });
 

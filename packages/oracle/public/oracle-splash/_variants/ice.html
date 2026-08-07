@@ -958,7 +958,7 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
      <a class="enter-cta primary" href="/downloads/">Download beta</a>
      <a class="enter-cta ghost" href="#cli">See the CLI</a>
     </div>
-    <p class="hero-note-line">macOS · Windows · Linux &nbsp;/&nbsp; desktop app or holder-gated CLI</p>
+    <p class="hero-note-line">macOS · Windows · Linux &nbsp;/&nbsp; desktop app or public CLI</p>
    </div>
 
    <figure class="hero-product">
@@ -997,10 +997,10 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
  <p class="section-label rv">Oracle CLI</p>
  <h2 class="section-title rv">One surface. <em>Every chain.</em></h2>
  <div class="cli-install rv">
-  <div class="cli-install-cmd"><code>oracle gate status</code></div>
-  <p class="cli-install-gate"><b>Locals Only access</b> The CLI checks your agent wallet, or a wallet you import, for a <a href="https://opensea.io/collection/locals-only-hyperevm" target="_blank" rel="noopener noreferrer">Locals Only</a> NFT. It is a client-side check on software you run, so treat it as who the build is for, not as a security boundary. Keys and signing never live in the public package.</p>
+  <div class="cli-install-cmd"><code>npm install -g @oracle-agent/oracle</code></div>
  </div>
- <p class="section-lede rv">The real Oracle shell, isolated from desktop chrome. Pin the active surface with <code style="color:var(--blue2)">/chain hyperliquid</code>, switch models with <code style="color:var(--blue2)">/model</code>, then ask naturally.</p>
+ <p class="section-lede rv">The real Oracle shell, isolated from desktop chrome. No accounts, no servers. The CLI runs on your machine and reads straight from public RPCs.</p>
+ <p class="section-lede rv">Pin the active surface with <code style="color:var(--blue2)">/chain hyperliquid</code>, switch models, ask naturally. Oracle reads, prices, and prepares — you sign.</p>
  <div class="convert-grid rv">
   <div>
    <figure class="cli-frame cli-proof">
@@ -1421,19 +1421,6 @@ footer{margin-top:clamp(72px,12vh,120px);border-top:1px solid var(--line);paddin
  </div>
  </section>
 
- <section class="section" id="custody" style="padding-top:clamp(48px,8vh,80px)">
-  <div class="strip-inner rv" style="border:1px solid var(--line);border-radius:16px;padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;justify-content:space-between;background:linear-gradient(180deg, rgba(184,240,255,.05), transparent)">
-   <div class="strip-left">
-    <strong style="font-family:var(--display);font-weight:400;font-size:26px;display:block;margin-bottom:6px">You keep custody.</strong>
-    <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)">oracle never holds your keys</span>
-   </div>
-   <div class="strip-right" style="display:flex;flex-wrap:wrap;gap:10px">
-    <span class="pill on" style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;border:1px solid rgba(184,240,255,.35);border-radius:999px;padding:9px 12px;color:var(--blue)">Multi-wallet</span>
-    <span class="pill on" style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;border:1px solid rgba(184,240,255,.35);border-radius:999px;padding:9px 12px;color:var(--blue)">Per-wallet limits</span>
-    <span class="pill" style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:9px 12px;color:var(--cool)">Revoke anytime</span>
-   </div>
-  </div>
- </section>
 </main>
 
 <div class="mega-oracle rv" aria-hidden="true">oracle</div>

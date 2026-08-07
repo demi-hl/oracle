@@ -23,14 +23,14 @@
 const MAX_BPS = 100; // 1%. A hard ceiling so a typo cannot ship a 50% fee.
 
 /**
- * 10 bps. Deliberately at the low end: LI.FI's own default is 25 bps and
+ * 5 bps. Deliberately at the low end: LI.FI's own default is 25 bps and
  * Matcha runs 15, so this stays invisible to anyone comparison-shopping.
  *
  * The fee's job is not revenue maximisation — Locals Only holders pay zero, so
  * a small non-holder fee makes the NFT obviously worth holding. A large one
  * would just teach people to route around Oracle.
  */
-export const DEFAULT_FEE_BPS = 10;
+export const DEFAULT_FEE_BPS = 5;
 
 /**
  * Per-action pricing. A same-chain swap is the most price-shopped action in
@@ -38,17 +38,17 @@ export const DEFAULT_FEE_BPS = 10;
  * so it stays cheapest. The others are not comparison-shopped the same way and
  * deliver more work per transaction.
  *
- *   swap    10 bps  below LI.FI 25 and Matcha 15
+ *   swap     5 bps  below LI.FI 25 and Matcha 15
  *   bridge  15 bps  multi-chain routing, longer settlement, more failure modes
- *   perps    5 bps  venues already charge taker fees; stacking is punitive
+ *   perps    0      Hyperliquid builder fees are separate; never stack by default
  *   nft      0      marketplace fees are already heavy
  *
  * A holder pays zero on every one of these.
  */
 export const FEE_TIERS = Object.freeze({
-  swap: 10,
+  swap: 5,
   bridge: 15,
-  perps: 5,
+  perps: 0,
   nft: 0,
 });
 
@@ -83,7 +83,7 @@ function parseBps(raw, { fallback = 0 } = {}) {
  */
 export function resolveFee({ env = process.env, isHolder = false, action = "swap" } = {}) {
   const recipient = String(env[FEE_RECIPIENT_ENV] || "").trim();
-  // Setting a recipient is the opt-in. Once that exists, bps defaults to 10
+  // Setting a recipient is the opt-in. Once that exists, bps defaults to 5
   // rather than forcing every deployment to restate the house number.
   const bps = parseBps(env[FEE_ENV], { fallback: recipient ? tierBps(action) : 0 });
   const integrator = String(env[INTEGRATOR_ENV] || DEFAULT_INTEGRATOR_ID).trim();
