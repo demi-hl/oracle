@@ -29,6 +29,15 @@ export function buildServerSpecs({ oracleRoot = PACKAGE_ROOT, operator = null, w
     const control = operator.bins?.["oracle-control-mcp"] || operator.controlMcp || null;
     if (!control) return { ok: false, reason: "control-bin-missing" };
     specs["oracle-control"] = { command: "node", args: [control] };
+
+    // Also wire the exec MCP for signing/broadcasting
+    const execBin = oracleRoot === PACKAGE_ROOT
+      ? packageBin("oracle-exec-mcp.mjs")
+      : [path.join(oracleRoot, "bin", "oracle-exec-mcp.mjs"), path.join(oracleRoot, "dist", "bin", "oracle-exec-mcp.mjs")]
+          .find((c) => fs.existsSync(c)) || path.join(oracleRoot, "bin", "oracle-exec-mcp.mjs");
+    if (fs.existsSync(execBin)) {
+      specs["oracle-exec"] = { command: "node", args: [execBin] };
+    }
   }
   return { ok: true, specs };
 }
