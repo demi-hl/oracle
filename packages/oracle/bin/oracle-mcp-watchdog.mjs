@@ -5,13 +5,19 @@ import { homedir } from "node:os";
 const INTERVAL_MS = 120_000; // 2 min
 const ports = { data: 8799, exec: 8792 };
 
-function check(port) {
+async function check(port) {
   return new Promise((resolve) => {
-    const c = spawn("ss", ["-tln"], { stdio: ["ignore", "pipe", "ignore"], timeout: 5000 });
+    // Try localhost first, then Tailscale IP
+    let resolved = false;
+    const c1 = spawn("ss", ["-tln"], { stdio: ["ignore", "pipe", "ignore"], timeout: 5000 });
     let out = "";
-    c.stdout.on("data", (d) => (out += d.toString()));
-    c.on("close", () => resolve(out.includes(`:${port} `)));
-    c.on("error", () => resolve(false));
+    c1.stdout.on("data", (d) => (out += d.toString()));
+    c1.on("close", () => {
+      const up = out.includes(`:${port} `);
+      resolved = up;
+      resolve(up);
+    });
+    c1.on("error", () => resolve(false));
   });
 }
 

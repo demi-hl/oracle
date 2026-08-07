@@ -60,7 +60,8 @@ export default {
       const rl = createInterface({ input: process.stdin, output: process.stderr });
       const ask = (q) => new Promise((resolve) => rl.question(q, resolve));
 
-      process.stderr.write("\nPaste your EVM private key (0x...):\n> ");
+      process.stderr.write("\nYour key stays local — Oracle never sends it anywhere.\n");
+      process.stderr.write("Paste your EVM private key (0x...):\n> ");
       const key = await ask("");
 
       rl.close();

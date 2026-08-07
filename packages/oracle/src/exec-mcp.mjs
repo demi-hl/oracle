@@ -71,7 +71,7 @@ const TOOLS = [
 function loadOperator() {
   const dir = process.env.ORACLE_CONFIG_DIR || join(homedir(), ".config", "oracle");
   const p = join(dir, "operator.json");
-  if (!existsSync(p)) throw new Error("operator not configured — run 'oracle init --apply'");
+  if (!existsSync(p)) return null;
   return JSON.parse(readFileSync(p, "utf8"));
 }
 
@@ -92,6 +92,17 @@ function result(value) {
 
 export function createExecMcp(options = {}) {
   const operator = options.operator ?? loadOperator();
+  if (!operator) {
+    return Object.freeze({
+      tools: TOOLS,
+      async call(name, _rawArgs) {
+        if (name === "exec_status") {
+          return result({ armed: false, operator: null, setup: "run 'oracle init --apply' to create your wallet" });
+        }
+        throw new Error("No wallet configured. Run 'oracle init --apply' in your terminal to create one. It generates a local key at ~/.config/oracle/keys/evm.json — never leaves your machine.");
+      },
+    });
+  }
   const execClient = options.execClient ?? resolveExecClient(operator);
 
   return Object.freeze({
