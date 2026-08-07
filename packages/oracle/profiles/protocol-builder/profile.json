@@ -1,0 +1,39 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "protocol-builder",
+  "label": "protocol builder",
+  "role": "builder",
+  "color": "#ff8c5a",
+  "description": "Builder lane for protocol, chain-family token/NFT collections, gacha, DEX, scanner, and mint-bot surfaces with unsigned deploy/mint preparation.",
+  "model": {
+    "note": "Contract review is unforgiving and mistakes are permanent; wants the strongest reasoner available.",
+    "suggested": "strong-reasoner"
+  },
+  "skills": [
+    "oracle-protocol-builder",
+    "oracle-contract-research",
+    "oracle-protocol-security",
+    "oracle-multichain-token-launch",
+    "oracle-multichain-nft-launch",
+    "oracle-nft-gacha-launch",
+    "oracle-dex-launch",
+    "oracle-receipts",
+    "oracle-nft-mint-gas-war"
+  ],
+  "mcp": [
+    "oracle-data"
+  ],
+  "chains": [],
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": [
+      "read:chain",
+      "simulate:tx",
+      "prepare:deploy",
+      "prepare:verify",
+      "prepare:mint"
+    ],
+    "signing": "user-wallet",
+    "rationale": "Deployment is irreversible and often mints authority. Oracle prepares the transaction; the user signs it knowingly."
+  }
+}

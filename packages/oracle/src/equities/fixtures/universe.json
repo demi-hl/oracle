@@ -1,0 +1,411 @@
+{
+ "TSLA": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "NVDA": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "HOOD": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni"
+  ]
+ },
+ "GOOGL": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "INTC": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "AMZN": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "MSFT": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "META": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "EWY": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "BTC": {
+  "venues": [
+   "hip3",
+   "arcus_perp"
+  ]
+ },
+ "ETH": {
+  "venues": [
+   "hip3",
+   "arcus_perp"
+  ]
+ },
+ "CRCL": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "COIN": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni"
+  ]
+ },
+ "HYPE": {
+  "venues": [
+   "hip3",
+   "arcus_perp"
+  ]
+ },
+ "SOL": {
+  "venues": [
+   "hip3",
+   "arcus_perp"
+  ]
+ },
+ "LIT": {
+  "venues": [
+   "hip3",
+   "arcus_perp"
+  ]
+ },
+ "ZEC": {
+  "venues": [
+   "hip3",
+   "arcus_perp"
+  ]
+ },
+ "XRP": {
+  "venues": [
+   "hip3",
+   "arcus_perp"
+  ]
+ },
+ "BABA": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "AAPL": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "MU": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "PLTR": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "AVGO": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "GLW": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "IREN": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "AAOI": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "RDDT": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "ORCL": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "AMD": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "SNDK": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "MSTR": {
+  "venues": [
+   "hip3",
+   "arcus_spot",
+   "rh_uni"
+  ]
+ },
+ "NFLX": {
+  "venues": [
+   "hip3",
+   "arcus_spot",
+   "rh_uni"
+  ]
+ },
+ "COST": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "LLY": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "TSM": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "RIVN": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "USAR": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "CRWV": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "GME": {
+  "venues": [
+   "hip3",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "LITE": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "MRVL": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "RKLB": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "DRAM": {
+  "venues": [
+   "hip3",
+   "arcus_perp"
+  ]
+ },
+ "CBRS": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "ZM": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "SPCX": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "ASML": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "DELL": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "NOW": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "NBIS": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "BE": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "QCOM": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "AMAT": {
+  "venues": [
+   "hip3",
+   "arcus_spot"
+  ]
+ },
+ "SKHY": {
+  "venues": [
+   "hip3",
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "SLV": {
+  "venues": [
+   "arcus_perp",
+   "arcus_spot"
+  ]
+ },
+ "USO": {
+  "venues": [
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "SPY": {
+  "venues": [
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "QQQ": {
+  "venues": [
+   "arcus_perp",
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ },
+ "SGOV": {
+  "venues": [
+   "arcus_spot",
+   "rh_uni",
+   "rh_oracle"
+  ]
+ }
+}

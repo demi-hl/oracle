@@ -1,0 +1,9 @@
+{
+  "command": "node",
+  "args": ["oracle-data-mcp"],
+  "env": {
+    "ORACLE_PROFILE": "oracle",
+    "ORACLE_DATA_MODE": "public"
+  },
+  "description": "Oracle multichain agent — scan chains, quote swaps/bridges, prepare unsigned transactions, check approvals, read portfolio, research tokens. Never signs or broadcasts. All EVM + Hyperliquid + Polymarket + Solana + Bitcoin."
+}

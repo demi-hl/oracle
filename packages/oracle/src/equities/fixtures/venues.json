@@ -1,0 +1,3542 @@
+{
+ "capturedAt": 1785893959,
+ "venues": {
+  "hyperliquid_hip3": {
+   "type": "perp",
+   "chain": "hyperliquid",
+   "tier": "quote-only",
+   "dexs": {
+    "abcd": {
+     "USA500": {
+      "mark": 6980.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     }
+    },
+    "cash": {
+     "USA500": {
+      "mark": 7457.8,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "TSLA": {
+      "mark": 400.21,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "NVDA": {
+      "mark": 197.49,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "HOOD": {
+      "mark": 113.27,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "GOOGL": {
+      "mark": 359.53,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "INTC": {
+      "mark": 141.02,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "AMZN": {
+      "mark": 241.75,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "MSFT": {
+      "mark": 371.48,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "META": {
+      "mark": 622.67,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "GOLD": {
+      "mark": 4035.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "SILVER": {
+      "mark": 59.831,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "EWY": {
+      "mark": 199.56,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "WTI": {
+      "mark": 69.373,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "BTC": {
+      "mark": 70000.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 40
+     },
+     "KWEB": {
+      "mark": 24.422,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "ETH": {
+      "mark": 2184.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 40
+     },
+     "CAR": {
+      "mark": 150.83,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     }
+    },
+    "flx": {
+     "TSLA": {
+      "mark": 395.5,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "NVDA": {
+      "mark": 208.99,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "CRCL": {
+      "mark": 80.037,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 5
+     },
+     "COIN": {
+      "mark": 164.78,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "XMR": {
+      "mark": 317.99,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "GOLD": {
+      "mark": 4153.2,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "SILVER": {
+      "mark": 65.65,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "OIL": {
+      "mark": 76.4,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "GAS": {
+      "mark": 3.2429,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 5
+     },
+     "BTC": {
+      "mark": 91470.2,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 1
+     },
+     "COPPER": {
+      "mark": 6.33,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "PALLADIUM": {
+      "mark": 1264.1,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "PLATINUM": {
+      "mark": 1658.2,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "USDE": {
+      "mark": 0.9984,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "USA500": {
+      "mark": 7435.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 30
+     },
+     "USA100": {
+      "mark": 29530.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 30
+     }
+    },
+    "hyna": {
+     "BTC": {
+      "mark": 64149.0,
+      "vol24h": 522869.1482000001,
+      "oi": 1890964.9773,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 40
+     },
+     "ETH": {
+      "mark": 1869.0,
+      "vol24h": 389050.00303,
+      "oi": 1346669.0747999998,
+      "fundingHourly": 1.18782e-05,
+      "fundingAnnPct": 10.4053,
+      "maxLev": 25
+     },
+     "HYPE": {
+      "mark": 54.895,
+      "vol24h": 30304.23644,
+      "oi": 697725.3311000001,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "SOL": {
+      "mark": 73.868,
+      "vol24h": 246996.06121,
+      "oi": 531659.02056,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 20
+     },
+     "LIT": {
+      "mark": 3.37,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 3
+     },
+     "ZEC": {
+      "mark": 507.84,
+      "vol24h": 10552.4064,
+      "oi": 72499.23839999999,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "XRP": {
+      "mark": 1.0707,
+      "vol24h": 0.0,
+      "oi": 36667.1922,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 20
+     },
+     "LIGHTER": {
+      "mark": 2.5774,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 5
+     },
+     "BNB": {
+      "mark": 599.9,
+      "vol24h": 8174.03204,
+      "oi": 39816.5628,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "DOGE": {
+      "mark": 0.070064,
+      "vol24h": 594.410522,
+      "oi": 41386.10416,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "SUI": {
+      "mark": 0.69182,
+      "vol24h": 0.0,
+      "oi": 20437.331348,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "PUMP": {
+      "mark": 0.002401,
+      "vol24h": 32831.650109,
+      "oi": 148416.033458,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "FARTCOIN": {
+      "mark": 0.13485,
+      "vol24h": 10211.152743,
+      "oi": 27587.774820000002,
+      "fundingHourly": 1.70293e-05,
+      "fundingAnnPct": 14.9177,
+      "maxLev": 10
+     },
+     "ENA": {
+      "mark": 0.09229,
+      "vol24h": 6302.471478,
+      "oi": 179176.4205,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "XMR": {
+      "mark": 331.4,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 5
+     },
+     "LTC": {
+      "mark": 45.185,
+      "vol24h": 0.0,
+      "oi": 60339.14530000001,
+      "fundingHourly": 1.20124e-05,
+      "fundingAnnPct": 10.5229,
+      "maxLev": 10
+     },
+     "LINK": {
+      "mark": 8.1522,
+      "vol24h": 0.0,
+      "oi": 15818.528880000002,
+      "fundingHourly": 5.1199e-06,
+      "fundingAnnPct": 4.485,
+      "maxLev": 10
+     },
+     "XPL": {
+      "mark": 0.07836,
+      "vol24h": 0.0,
+      "oi": 19406.6376,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "IP": {
+      "mark": 0.2947,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 3
+     },
+     "BCH": {
+      "mark": 236.67,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "ADA": {
+      "mark": 0.19195,
+      "vol24h": 0.0,
+      "oi": 27454.608500000002,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 10
+     },
+     "1000PEPE": {
+      "mark": 0.002884,
+      "vol24h": 0.0,
+      "oi": 38916.061519999996,
+      "fundingHourly": -6.43864e-05,
+      "fundingAnnPct": -56.4025,
+      "maxLev": 10
+     },
+     "SILVER": {
+      "mark": 85.97,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "GOLD": {
+      "mark": 4993.2,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "BASED": {
+      "mark": 0.07752,
+      "vol24h": 8633.454546,
+      "oi": 34915.62816,
+      "fundingHourly": 1.25e-05,
+      "fundingAnnPct": 10.95,
+      "maxLev": 3
+     }
+    },
+    "km": {
+     "US500": {
+      "mark": 750.97,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "BABA": {
+      "mark": 116.54,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "EUR": {
+      "mark": 1.1612,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 50
+     },
+     "USBOND": {
+      "mark": 86.038,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "SMALL2000": {
+      "mark": 292.75,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "USTECH": {
+      "mark": 733.79,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "USENERGY": {
+      "mark": 58.247,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "USOIL": {
+      "mark": 114.1,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "TSLA": {
+      "mark": 386.5,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 12
+     },
+     "SILVER": {
+      "mark": 70.451,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "GOLD": {
+      "mark": 4348.8,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "AAPL": {
+      "mark": 292.11,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "GOOGL": {
+      "mark": 358.55,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "SEMI": {
+      "mark": 543.11,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "GLDMINE": {
+      "mark": 73.889,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "NVDA": {
+      "mark": 211.07,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 12
+     },
+     "TENCENT": {
+      "mark": 465.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "JPN225": {
+      "mark": 56942.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "MU": {
+      "mark": 1080.7,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "PLTR": {
+      "mark": 130.51,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 12
+     },
+     "XIAOMI": {
+      "mark": 26.311,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "BMNR": {
+      "mark": 15.749,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "RTX": {
+      "mark": 181.52,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     }
+    },
+    "mkts": {
+     "US500": {
+      "mark": 772.73,
+      "vol24h": 2123293.3004800007,
+      "oi": 1779645.09926,
+      "fundingHourly": -6.956e-06,
+      "fundingAnnPct": -6.0935,
+      "maxLev": 25
+     },
+     "BABA": {
+      "mark": 116.54,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "EUR": {
+      "mark": 1.1612,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 50
+     },
+     "USBOND": {
+      "mark": 86.038,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "SMALL2000": {
+      "mark": 292.75,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "USTECH": {
+      "mark": 722.16,
+      "vol24h": 3207025.9787899987,
+      "oi": 3910642.27632,
+      "fundingHourly": -3.01072e-05,
+      "fundingAnnPct": -26.3739,
+      "maxLev": 25
+     },
+     "USENERGY": {
+      "mark": 58.247,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "USOIL": {
+      "mark": 114.1,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "TSLA": {
+      "mark": 386.5,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 12
+     },
+     "SILVER": {
+      "mark": 70.451,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "GOLD": {
+      "mark": 4348.8,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "AAPL": {
+      "mark": 292.11,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "GOOGL": {
+      "mark": 358.55,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "SEMI": {
+      "mark": 543.11,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 15
+     },
+     "GLDMINE": {
+      "mark": 73.889,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "NVDA": {
+      "mark": 211.07,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 12
+     },
+     "TENCENT": {
+      "mark": 465.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "JPN225": {
+      "mark": 56942.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 25
+     },
+     "MU": {
+      "mark": 1080.7,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "PLTR": {
+      "mark": 130.51,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 12
+     },
+     "XIAOMI": {
+      "mark": 26.311,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "BMNR": {
+      "mark": 15.749,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "RTX": {
+      "mark": 181.52,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     }
+    },
+    "para": {
+     "TOTAL2": {
+      "mark": 884.68,
+      "vol24h": 130.25303,
+      "oi": 83527.94687999999,
+      "fundingHourly": 7.5e-06,
+      "fundingAnnPct": 6.57,
+      "maxLev": 20
+     },
+     "OTHERS": {
+      "mark": 158.1351,
+      "vol24h": 103187.3831,
+      "oi": 329790.75104999996,
+      "fundingHourly": 7.5e-06,
+      "fundingAnnPct": 6.57,
+      "maxLev": 10
+     },
+     "BTCD": {
+      "mark": 59.23616,
+      "vol24h": 7219.4402,
+      "oi": 668349.746048,
+      "fundingHourly": -1.13694e-05,
+      "fundingAnnPct": -9.9596,
+      "maxLev": 20
+     },
+     "H100": {
+      "mark": 2.56,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "AVGO": {
+      "mark": 417.8,
+      "vol24h": 6281.9591,
+      "oi": 85582.152,
+      "fundingHourly": 3.1392e-05,
+      "fundingAnnPct": 27.4994,
+      "maxLev": 10
+     },
+     "COHR": {
+      "mark": 324.1908,
+      "vol24h": 955722.1107000001,
+      "oi": 484794.92232000007,
+      "fundingHourly": 3.95978e-05,
+      "fundingAnnPct": 34.6877,
+      "maxLev": 10
+     },
+     "GLW": {
+      "mark": 159.2456,
+      "vol24h": 357047.009,
+      "oi": 392670.985392,
+      "fundingHourly": 3.34061e-05,
+      "fundingAnnPct": 29.2637,
+      "maxLev": 10
+     },
+     "CRDO": {
+      "mark": 237.85,
+      "vol24h": 517758.4360999999,
+      "oi": 429162.269,
+      "fundingHourly": 7.97463e-05,
+      "fundingAnnPct": 69.8578,
+      "maxLev": 10
+     },
+     "LRCX": {
+      "mark": 318.485,
+      "vol24h": 366269.1731,
+      "oi": 212212.92520000003,
+      "fundingHourly": 2.04008e-05,
+      "fundingAnnPct": 17.8711,
+      "maxLev": 10
+     },
+     "NET": {
+      "mark": 289.89,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "STX": {
+      "mark": 843.45,
+      "vol24h": 293446.4634199999,
+      "oi": 42152.2572,
+      "fundingHourly": -1.42589e-05,
+      "fundingAnnPct": -12.4908,
+      "maxLev": 10
+     },
+     "IREN": {
+      "mark": 40.675,
+      "vol24h": 159788.46645,
+      "oi": 397357.32899999997,
+      "fundingHourly": 4.29616e-05,
+      "fundingAnnPct": 37.6344,
+      "maxLev": 10
+     },
+     "VST": {
+      "mark": 144.8,
+      "vol24h": 10037.2996,
+      "oi": 20138.784000000003,
+      "fundingHourly": -0.0002030855,
+      "fundingAnnPct": -177.9029,
+      "maxLev": 10
+     },
+     "TER": {
+      "mark": 406.36,
+      "vol24h": 64131.1861,
+      "oi": 145119.2832,
+      "fundingHourly": -5.34057e-05,
+      "fundingAnnPct": -46.7834,
+      "maxLev": 10
+     },
+     "AAOI": {
+      "mark": 132.26,
+      "vol24h": 918802.3304,
+      "oi": 532550.1804,
+      "fundingHourly": -0.0005236395,
+      "fundingAnnPct": -458.7082,
+      "maxLev": 10
+     },
+     "10Y": {
+      "mark": 98.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "CIEN": {
+      "mark": 326.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "NAVER": {
+      "mark": 146.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "RDDT": {
+      "mark": 150.5025,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "UNITREE": {
+      "mark": 65.9005,
+      "vol24h": 4455203.330829997,
+      "oi": 1529666.5898799996,
+      "fundingHourly": -1.0723e-06,
+      "fundingAnnPct": -0.9393,
+      "maxLev": 10
+     }
+    },
+    "vntl": {
+     "SPACEX": {
+      "mark": 2109.5,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 3
+     },
+     "OPENAI": {
+      "mark": 1336.2,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 3
+     },
+     "ANTHROPIC": {
+      "mark": 1619.3,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 3
+     },
+     "MAG7": {
+      "mark": 63.661,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "SEMIS": {
+      "mark": 661.1,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "ROBOT": {
+      "mark": 38.317,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "INFOTECH": {
+      "mark": 191.3,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "NUCLEAR": {
+      "mark": 128.05,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "DEFENSE": {
+      "mark": 62.011,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "ENERGY": {
+      "mark": 54.599,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "BIOTECH": {
+      "mark": 140.88,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "GOLDJM": {
+      "mark": 124.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "SILVERJM": {
+      "mark": 31.5,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "WHEAT": {
+      "mark": 611.42,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "SOY": {
+      "mark": 1142.3,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     }
+    },
+    "xyz": {
+     "XYZ100": {
+      "mark": 29688.0,
+      "vol24h": 730214029.3148006,
+      "oi": 240690555.5424,
+      "fundingHourly": -1.55489e-05,
+      "fundingAnnPct": -13.6208,
+      "maxLev": 30
+     },
+     "TSLA": {
+      "mark": 325.53,
+      "vol24h": 28010633.458110012,
+      "oi": 35740878.830639996,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "NVDA": {
+      "mark": 216.15,
+      "vol24h": 72112973.4602,
+      "oi": 177221002.84680003,
+      "fundingHourly": 3.76405e-05,
+      "fundingAnnPct": 32.9731,
+      "maxLev": 20
+     },
+     "GOLD": {
+      "mark": 4088.6,
+      "vol24h": 96023595.95567001,
+      "oi": 252968325.15728,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 25
+     },
+     "HOOD": {
+      "mark": 93.433,
+      "vol24h": 6284175.046094997,
+      "oi": 15840734.717496,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "INTC": {
+      "mark": 97.93,
+      "vol24h": 105106959.34257,
+      "oi": 53550811.19920001,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "PLTR": {
+      "mark": 159.56,
+      "vol24h": 43248551.12523999,
+      "oi": 11035403.51496,
+      "fundingHourly": -6.2969e-06,
+      "fundingAnnPct": -5.5161,
+      "maxLev": 10
+     },
+     "COIN": {
+      "mark": 150.95,
+      "vol24h": 9569400.837340003,
+      "oi": 11538589.6214,
+      "fundingHourly": 9.3813e-06,
+      "fundingAnnPct": 8.218,
+      "maxLev": 10
+     },
+     "META": {
+      "mark": 589.73,
+      "vol24h": 28999134.66610001,
+      "oi": 53214246.44836,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "AAPL": {
+      "mark": 310.82,
+      "vol24h": 36474326.66124001,
+      "oi": 42787804.4528,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "MSFT": {
+      "mark": 490.03,
+      "vol24h": 97904502.63092002,
+      "oi": 82734242.49168,
+      "fundingHourly": -1.98712e-05,
+      "fundingAnnPct": -17.4072,
+      "maxLev": 20
+     },
+     "ORCL": {
+      "mark": 144.48,
+      "vol24h": 14289566.003290005,
+      "oi": 58685455.94015999,
+      "fundingHourly": 2.06655e-05,
+      "fundingAnnPct": 18.103,
+      "maxLev": 10
+     },
+     "GOOGL": {
+      "mark": 379.74,
+      "vol24h": 33068818.58571001,
+      "oi": 103574772.3294,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "AMZN": {
+      "mark": 278.27,
+      "vol24h": 31631390.004070003,
+      "oi": 26325458.975779995,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "AMD": {
+      "mark": 474.46,
+      "vol24h": 146064517.13429996,
+      "oi": 31550632.53972,
+      "fundingHourly": 7.0299e-06,
+      "fundingAnnPct": 6.1582,
+      "maxLev": 10
+     },
+     "MU": {
+      "mark": 883.9,
+      "vol24h": 366681064.88704073,
+      "oi": 232685536.53680015,
+      "fundingHourly": -7.8334e-06,
+      "fundingAnnPct": -6.8621,
+      "maxLev": 10
+     },
+     "SNDK": {
+      "mark": 1417.4,
+      "vol24h": 390770200.0687995,
+      "oi": 149674917.028,
+      "fundingHourly": -2.18934e-05,
+      "fundingAnnPct": -19.1786,
+      "maxLev": 10
+     },
+     "MSTR": {
+      "mark": 97.305,
+      "vol24h": 22404265.890694004,
+      "oi": 23712280.36008,
+      "fundingHourly": 2.07858e-05,
+      "fundingAnnPct": 18.2084,
+      "maxLev": 10
+     },
+     "CRCL": {
+      "mark": 63.08,
+      "vol24h": 30557870.03572499,
+      "oi": 43720396.01359999,
+      "fundingHourly": 7.7434e-06,
+      "fundingAnnPct": 6.7832,
+      "maxLev": 10
+     },
+     "NFLX": {
+      "mark": 73.907,
+      "vol24h": 3802510.397264001,
+      "oi": 4007633.9771479997,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "COST": {
+      "mark": 953.23,
+      "vol24h": 215623.675735,
+      "oi": 291439.015032,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "LLY": {
+      "mark": 1127.1,
+      "vol24h": 2158972.3351999996,
+      "oi": 2336552.91402,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "SKHX": {
+      "mark": 1169.2,
+      "vol24h": 748930941.6426011,
+      "oi": 359021787.0096004,
+      "fundingHourly": 9.29421e-05,
+      "fundingAnnPct": 81.4173,
+      "maxLev": 10
+     },
+     "TSM": {
+      "mark": 418.3,
+      "vol24h": 4906285.799800003,
+      "oi": 12240459.4102,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "JPY": {
+      "mark": 157.65,
+      "vol24h": 5079711.002100002,
+      "oi": 24009076.581000004,
+      "fundingHourly": 2.7604e-06,
+      "fundingAnnPct": 2.4181,
+      "maxLev": 50
+     },
+     "EUR": {
+      "mark": 1.153,
+      "vol24h": 788615.16749,
+      "oi": 10774543.5618,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 50
+     },
+     "SILVER": {
+      "mark": 59.805,
+      "vol24h": 67198076.73220004,
+      "oi": 110628263.82149996,
+      "fundingHourly": 3.24868e-05,
+      "fundingAnnPct": 28.4584,
+      "maxLev": 25
+     },
+     "RIVN": {
+      "mark": 15.783,
+      "vol24h": 381784.9049500001,
+      "oi": 644571.09114,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "BABA": {
+      "mark": 129.58,
+      "vol24h": 4318270.48434,
+      "oi": 10344372.177480001,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "CL": {
+      "mark": 76.008,
+      "vol24h": 467386225.5581969,
+      "oi": 200447131.02921608,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "COPPER": {
+      "mark": 6.6228,
+      "vol24h": 4753953.954635,
+      "oi": 10948398.770088,
+      "fundingHourly": 1.87201e-05,
+      "fundingAnnPct": 16.3988,
+      "maxLev": 20
+     },
+     "NATGAS": {
+      "mark": 2.6994,
+      "vol24h": 4764190.5456,
+      "oi": 7636722.99324,
+      "fundingHourly": 2.48977e-05,
+      "fundingAnnPct": 21.8104,
+      "maxLev": 10
+     },
+     "URANIUM": {
+      "mark": 85.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "ALUMINIUM": {
+      "mark": 3080.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "SMSN": {
+      "mark": 172.82,
+      "vol24h": 125605760.37448998,
+      "oi": 66330622.45571996,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "PLATINUM": {
+      "mark": 1727.8,
+      "vol24h": 3390772.2259899997,
+      "oi": 3599018.4579200004,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "USAR": {
+      "mark": 17.375,
+      "vol24h": 1251510.34875,
+      "oi": 1881942.1975,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "CRWV": {
+      "mark": 90.604,
+      "vol24h": 13361528.782869998,
+      "oi": 5696090.45992,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "URNM": {
+      "mark": 52.243,
+      "vol24h": 143843.21486,
+      "oi": 1099905.31452,
+      "fundingHourly": -0.0001137384,
+      "fundingAnnPct": -99.6348,
+      "maxLev": 10
+     },
+     "PALLADIUM": {
+      "mark": 1340.7,
+      "vol24h": 738889.1985599998,
+      "oi": 2199531.50508,
+      "fundingHourly": 2.06076e-05,
+      "fundingAnnPct": 18.0523,
+      "maxLev": 20
+     },
+     "DXY": {
+      "mark": 97.15,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "GME": {
+      "mark": 19.267,
+      "vol24h": 804347.5875800002,
+      "oi": 1360242.87854,
+      "fundingHourly": 1.84659e-05,
+      "fundingAnnPct": 16.1761,
+      "maxLev": 10
+     },
+     "KR200": {
+      "mark": 1041.9,
+      "vol24h": 2795709.274010999,
+      "oi": 1668458.0259000002,
+      "fundingHourly": 0.0002935877,
+      "fundingAnnPct": 257.1828,
+      "maxLev": 20
+     },
+     "SOFTBANK": {
+      "mark": 36.809,
+      "vol24h": 245651.489601,
+      "oi": 375724.333836,
+      "fundingHourly": 3.07993e-05,
+      "fundingAnnPct": 26.9802,
+      "maxLev": 10
+     },
+     "JP225": {
+      "mark": 65832.0,
+      "vol24h": 2995694.6754100006,
+      "oi": 1379933.51808,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "HYUNDAI": {
+      "mark": 282.51,
+      "vol24h": 1941923.8992099997,
+      "oi": 1764457.45146,
+      "fundingHourly": -0.0001495294,
+      "fundingAnnPct": -130.9878,
+      "maxLev": 10
+     },
+     "KIOXIA": {
+      "mark": 343.66,
+      "vol24h": 13155362.53862999,
+      "oi": 13713549.540600002,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "EWY": {
+      "mark": 169.98,
+      "vol24h": 53636442.58535003,
+      "oi": 11590936.200000016,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "EWJ": {
+      "mark": 95.06,
+      "vol24h": 718670.2347690002,
+      "oi": 1217249.9542,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "BRENTOIL": {
+      "mark": 79.739,
+      "vol24h": 230225868.31649,
+      "oi": 130048253.62033999,
+      "fundingHourly": -8.2274e-06,
+      "fundingAnnPct": -7.2072,
+      "maxLev": 20
+     },
+     "VIX": {
+      "mark": 20.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 3
+     },
+     "HIMS": {
+      "mark": 32.12,
+      "vol24h": 750965.95845,
+      "oi": 2846340.1384,
+      "fundingHourly": 9.1894e-06,
+      "fundingAnnPct": 8.0499,
+      "maxLev": 10
+     },
+     "SP500": {
+      "mark": 7751.4,
+      "vol24h": 655393418.0605001,
+      "oi": 657095138.6184,
+      "fundingHourly": -6.9159e-06,
+      "fundingAnnPct": -6.0583,
+      "maxLev": 50
+     },
+     "DKNG": {
+      "mark": 23.705,
+      "vol24h": 174786.26758,
+      "oi": 533984.9933,
+      "fundingHourly": 8.9335e-05,
+      "fundingAnnPct": 78.2575,
+      "maxLev": 10
+     },
+     "LITE": {
+      "mark": 845.66,
+      "vol24h": 13601559.489710003,
+      "oi": 9523939.62108,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "CORN": {
+      "mark": 4.61,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "XLE": {
+      "mark": 58.59,
+      "vol24h": 381660.781,
+      "oi": 980217.7308,
+      "fundingHourly": 2.5973e-05,
+      "fundingAnnPct": 22.7523,
+      "maxLev": 20
+     },
+     "WHEAT": {
+      "mark": 6.3,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "TTF": {
+      "mark": 57.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "BX": {
+      "mark": 136.91,
+      "vol24h": 545068.9931000002,
+      "oi": 581900.3583999999,
+      "fundingHourly": 1.45497e-05,
+      "fundingAnnPct": 12.7455,
+      "maxLev": 10
+     },
+     "PURRDAT": {
+      "mark": 6.7224,
+      "vol24h": 1966704.3981,
+      "oi": 6122210.683200001,
+      "fundingHourly": 3.62327e-05,
+      "fundingAnnPct": 31.7398,
+      "maxLev": 10
+     },
+     "MRVL": {
+      "mark": 217.8,
+      "vol24h": 44343200.8242,
+      "oi": 31574248.200000003,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "RKLB": {
+      "mark": 75.81,
+      "vol24h": 4850996.126079999,
+      "oi": 5002002.9318,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "BIRD": {
+      "mark": 2.2773,
+      "vol24h": 229355.9302700001,
+      "oi": 101397.69342,
+      "fundingHourly": -0.0003025267,
+      "fundingAnnPct": -265.0134,
+      "maxLev": 10
+     },
+     "VOL": {
+      "mark": 15.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "DRAM": {
+      "mark": 54.024,
+      "vol24h": 239408219.67220032,
+      "oi": 70894992.88799998,
+      "fundingHourly": 7.918e-06,
+      "fundingAnnPct": 6.9362,
+      "maxLev": 20
+     },
+     "CBRS": {
+      "mark": 221.57,
+      "vol24h": 16763913.490399998,
+      "oi": 48780886.6512,
+      "fundingHourly": -7.33265e-05,
+      "fundingAnnPct": -64.234,
+      "maxLev": 10
+     },
+     "EWZ": {
+      "mark": 36.285,
+      "vol24h": 1015798.5529099997,
+      "oi": 322100.4935999999,
+      "fundingHourly": 5.70771e-05,
+      "fundingAnnPct": 49.9995,
+      "maxLev": 20
+     },
+     "KRW": {
+      "mark": 1426.4,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 50
+     },
+     "ZM": {
+      "mark": 101.41,
+      "vol24h": 120897.173142,
+      "oi": 330164.59339999995,
+      "fundingHourly": -8.02489e-05,
+      "fundingAnnPct": -70.298,
+      "maxLev": 10
+     },
+     "EBAY": {
+      "mark": 109.79,
+      "vol24h": 419573.0120999999,
+      "oi": 357192.9818,
+      "fundingHourly": 2.11527e-05,
+      "fundingAnnPct": 18.5298,
+      "maxLev": 10
+     },
+     "H100": {
+      "mark": 2.6,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "NIFTY": {
+      "mark": 24250.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "ARM": {
+      "mark": 277.48,
+      "vol24h": 4525838.696500002,
+      "oi": 3228496.4488,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "EWT": {
+      "mark": 101.98,
+      "vol24h": 322163.2334,
+      "oi": 569227.8848,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 20
+     },
+     "GBP": {
+      "mark": 1.3444,
+      "vol24h": 29362.8376,
+      "oi": 71328.48640000001,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 50
+     },
+     "SPCX": {
+      "mark": 115.18,
+      "vol24h": 836514500.2387012,
+      "oi": 181098428.5291999,
+      "fundingHourly": -3.2087e-06,
+      "fundingAnnPct": -2.8108,
+      "maxLev": 20
+     },
+     "IBOV": {
+      "mark": 175000.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 20
+     },
+     "ASML": {
+      "mark": 1710.0,
+      "vol24h": 1231801.7885,
+      "oi": 1908052.2,
+      "fundingHourly": 1.2087e-06,
+      "fundingAnnPct": 1.0588,
+      "maxLev": 10
+     },
+     "MINIMAX": {
+      "mark": 29.647,
+      "vol24h": 3849689.714569999,
+      "oi": 7778112.8024999965,
+      "fundingHourly": 0.0002813429,
+      "fundingAnnPct": 246.4564,
+      "maxLev": 10
+     },
+     "BB": {
+      "mark": 8.8578,
+      "vol24h": 1789185.42014,
+      "oi": 11279481.774119997,
+      "fundingHourly": -2.42699e-05,
+      "fundingAnnPct": -21.2604,
+      "maxLev": 10
+     },
+     "QNT": {
+      "mark": 59.016,
+      "vol24h": 1304606.3123099993,
+      "oi": 1885225.98912,
+      "fundingHourly": 0.0001124536,
+      "fundingAnnPct": 98.5094,
+      "maxLev": 10
+     },
+     "DELL": {
+      "mark": 466.2,
+      "vol24h": 5326210.439000003,
+      "oi": 4708247.04,
+      "fundingHourly": -4.02e-05,
+      "fundingAnnPct": -35.2152,
+      "maxLev": 10
+     },
+     "IBM": {
+      "mark": 234.44,
+      "vol24h": 1276938.5612000008,
+      "oi": 1537288.7232,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "AVGO": {
+      "mark": 417.7,
+      "vol24h": 3046502.027000002,
+      "oi": 4715348.468,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "NOW": {
+      "mark": 118.01,
+      "vol24h": 1209850.3654,
+      "oi": 1608969.5818,
+      "fundingHourly": 4.73334e-05,
+      "fundingAnnPct": 41.4641,
+      "maxLev": 10
+     },
+     "NBIS": {
+      "mark": 223.48,
+      "vol24h": 28689803.031099997,
+      "oi": 35154145.9536,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "WDC": {
+      "mark": 549.72,
+      "vol24h": 2947764.9339700015,
+      "oi": 2161124.13096,
+      "fundingHourly": 3.22881e-05,
+      "fundingAnnPct": 28.2844,
+      "maxLev": 10
+     },
+     "NOK": {
+      "mark": 9.8965,
+      "vol24h": 1474261.4258809998,
+      "oi": 967892.9406099999,
+      "fundingHourly": -4.57233e-05,
+      "fundingAnnPct": -40.0536,
+      "maxLev": 10
+     },
+     "SMH": {
+      "mark": 573.96,
+      "vol24h": 1416888.6410999997,
+      "oi": 1684266.1053600002,
+      "fundingHourly": -7.09733e-05,
+      "fundingAnnPct": -62.1726,
+      "maxLev": 20
+     },
+     "BE": {
+      "mark": 227.43,
+      "vol24h": 3780599.8699999996,
+      "oi": 2210287.5522000003,
+      "fundingHourly": 4.41298e-05,
+      "fundingAnnPct": 38.6577,
+      "maxLev": 10
+     },
+     "ZHIPU": {
+      "mark": 132.16,
+      "vol24h": 5060374.486740002,
+      "oi": 4928753.8944,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "QCOM": {
+      "mark": 162.6,
+      "vol24h": 1415337.9938000005,
+      "oi": 3891808.236,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "STRC": {
+      "mark": 93.17,
+      "vol24h": 5333768.169,
+      "oi": 10849311.088,
+      "fundingHourly": 1.32e-05,
+      "fundingAnnPct": 11.5632,
+      "maxLev": 10
+     },
+     "BOT": {
+      "mark": 27.363,
+      "vol24h": 1007854.7111699998,
+      "oi": 3479510.27382,
+      "fundingHourly": 5.9032e-06,
+      "fundingAnnPct": 5.1712,
+      "maxLev": 10
+     },
+     "AMAT": {
+      "mark": 547.07,
+      "vol24h": 871952.6558799994,
+      "oi": 933585.8964000001,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "IBIDEN": {
+      "mark": 127.16,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "GIGADEV": {
+      "mark": 55.127,
+      "vol24h": 3613590.3883200022,
+      "oi": 3136279.7713,
+      "fundingHourly": 0.0002406024,
+      "fundingAnnPct": 210.7677,
+      "maxLev": 10
+     },
+     "SHAZ": {
+      "mark": 55.811,
+      "vol24h": 1411851.2573699995,
+      "oi": 3446801.41106,
+      "fundingHourly": -3.32409e-05,
+      "fundingAnnPct": -29.119,
+      "maxLev": 10
+     },
+     "SKHY": {
+      "mark": 153.61,
+      "vol24h": 144893988.06420004,
+      "oi": 70122031.05120006,
+      "fundingHourly": 6.25e-06,
+      "fundingAnnPct": 5.475,
+      "maxLev": 10
+     },
+     "KSTR": {
+      "mark": 23.815,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "CXMT": {
+      "mark": 8.0662,
+      "vol24h": 25668307.640990037,
+      "oi": 75730418.88791999,
+      "fundingHourly": -0.0002991861,
+      "fundingAnnPct": -262.087,
+      "maxLev": 10
+     },
+     "GEV": {
+      "mark": 1021.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "KORU": {
+      "mark": 18.76,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 10
+     },
+     "UNITREE": {
+      "mark": 75.0,
+      "vol24h": 0.0,
+      "oi": 0.0,
+      "fundingHourly": 0.0,
+      "fundingAnnPct": 0.0,
+      "maxLev": 5
+     }
+    }
+   }
+  },
+  "arcus": {
+   "type": "perp",
+   "chain": "robinhood-4663",
+   "tier": "quote-only",
+   "markets": {
+    "BTC": {
+     "mark": 63934.9,
+     "oracle": 63944.8,
+     "vol24h": 29660807.21,
+     "oi": 2993757.11417952,
+     "fundingHourly": 1.25e-05,
+     "fundingAnnPct": 10.95,
+     "category": "CRYPTO",
+     "isOutsideRth": false,
+     "rth": null
+    },
+    "ETH": {
+     "mark": 1863.54,
+     "oracle": 1862.66,
+     "vol24h": 6348209.64,
+     "oi": 1272975.7183736041,
+     "fundingHourly": 1.25e-05,
+     "fundingAnnPct": 10.95,
+     "category": "CRYPTO",
+     "isOutsideRth": false,
+     "rth": null
+    },
+    "SOL": {
+     "mark": 73.389,
+     "oracle": 73.43,
+     "vol24h": 4248004.93,
+     "oi": 800011.7868889229,
+     "fundingHourly": 8.07200256076e-06,
+     "fundingAnnPct": 7.0711,
+     "category": "CRYPTO",
+     "isOutsideRth": false,
+     "rth": null
+    },
+    "HYPE": {
+     "mark": 54.706,
+     "oracle": 54.735,
+     "vol24h": 883809.71,
+     "oi": 228897.44434680403,
+     "fundingHourly": 1.25e-05,
+     "fundingAnnPct": 10.95,
+     "category": "CRYPTO",
+     "isOutsideRth": false,
+     "rth": null
+    },
+    "DYDX": {
+     "mark": 0.1138,
+     "oracle": 0.1138,
+     "vol24h": 1489.72,
+     "oi": 442.875845782,
+     "fundingHourly": 1.25e-05,
+     "fundingAnnPct": 10.95,
+     "category": "CRYPTO",
+     "isOutsideRth": false,
+     "rth": null
+    },
+    "ZEC": {
+     "mark": 502.836,
+     "oracle": 502.994,
+     "vol24h": 12113.45,
+     "oi": 48633.728206812004,
+     "fundingHourly": 1.25e-05,
+     "fundingAnnPct": 10.95,
+     "category": "CRYPTO",
+     "isOutsideRth": false,
+     "rth": null
+    },
+    "AMD": {
+     "mark": 475.46,
+     "oracle": 475.29,
+     "vol24h": 149732.64,
+     "oi": 147680.75819097398,
+     "fundingHourly": 0.000113429411387719,
+     "fundingAnnPct": 99.3642,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "INTC": {
+     "mark": 98.09,
+     "oracle": 98.11,
+     "vol24h": 25794.05,
+     "oi": 23233.688564846,
+     "fundingHourly": 4.6967072539243e-05,
+     "fundingAnnPct": 41.1432,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "GOOGL": {
+     "mark": 377.86,
+     "oracle": 377.86,
+     "vol24h": 73928.97,
+     "oi": 217195.202748496,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "META": {
+     "mark": 589.28,
+     "oracle": 589.25,
+     "vol24h": 16928.06,
+     "oi": 63921.34593099199,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "MU": {
+     "mark": 889.32,
+     "oracle": 889.83,
+     "vol24h": 132269.42,
+     "oi": 62072.807428716005,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "BABA": {
+     "mark": 129.81,
+     "oracle": 129.83,
+     "vol24h": 375.86,
+     "oi": 12573.421731216,
+     "fundingHourly": 5.065851947752e-05,
+     "fundingAnnPct": 44.3769,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "HOOD": {
+     "mark": 93.45,
+     "oracle": 93.5,
+     "vol24h": 11730.86,
+     "oi": 4365.483640665,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "CRCL": {
+     "mark": 62.98,
+     "oracle": 63.05,
+     "vol24h": 7871.05,
+     "oi": 8741.144086101998,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "GLD": {
+     "mark": 374.4,
+     "oracle": 374.31,
+     "vol24h": 515094.24,
+     "oi": 259310.76844607998,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "COMMODITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "SLV": {
+     "mark": 53.9,
+     "oracle": 53.88,
+     "vol24h": 37901.39,
+     "oi": 97046.60368172,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "COMMODITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "USO": {
+     "mark": 115.06,
+     "oracle": 115.06,
+     "vol24h": 194491.34,
+     "oi": 315088.84345404396,
+     "fundingHourly": -0.000101746538765035,
+     "fundingAnnPct": -89.13,
+     "category": "COMMODITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "SPY": {
+     "mark": 772.7,
+     "oracle": 772.64,
+     "vol24h": 679857.07,
+     "oi": 227663.44592686,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "INDICES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "QQQ": {
+     "mark": 722.64,
+     "oracle": 722.66,
+     "vol24h": 505708.23,
+     "oi": 115381.228077528,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "INDICES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "NVDA": {
+     "mark": 216.35,
+     "oracle": 216.38,
+     "vol24h": 430114.59,
+     "oi": 143763.18464835998,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "TSLA": {
+     "mark": 325.75,
+     "oracle": 325.74,
+     "vol24h": 19418.19,
+     "oi": 46604.9520387,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "AAPL": {
+     "mark": 310.16,
+     "oracle": 310.04,
+     "vol24h": 998420.61,
+     "oi": 212379.28164875202,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "AMZN": {
+     "mark": 278.0,
+     "oracle": 277.92,
+     "vol24h": 16207.11,
+     "oi": 235852.81826280002,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "MSFT": {
+     "mark": 490.3,
+     "oracle": 490.11,
+     "vol24h": 167670.31,
+     "oi": 197164.8474411,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "SNDK": {
+     "mark": 1418.7,
+     "oracle": 1420.61,
+     "vol24h": 1715903.15,
+     "oi": 188228.35271475,
+     "fundingHourly": -3.4794153117646e-05,
+     "fundingAnnPct": -30.4797,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "DRAM": {
+     "mark": 54.39,
+     "oracle": 54.47,
+     "vol24h": 20836.57,
+     "oi": 19694.266155753,
+     "fundingHourly": 2.506928151394e-05,
+     "fundingAnnPct": 21.9607,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "PLTR": {
+     "mark": 159.79,
+     "oracle": 159.84,
+     "vol24h": 87432.9,
+     "oi": 66996.50878259099,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "CRWV": {
+     "mark": 90.72,
+     "oracle": 90.73,
+     "vol24h": 17334.51,
+     "oi": 37859.360657328,
+     "fundingHourly": 1.3773238234147e-05,
+     "fundingAnnPct": 12.0654,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "ORCL": {
+     "mark": 145.57,
+     "oracle": 145.59,
+     "vol24h": 79081.68,
+     "oi": 180749.251871722,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "SPCX": {
+     "mark": 115.63,
+     "oracle": 115.68,
+     "vol24h": 181508.86,
+     "oi": 26228.346794735997,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "BE": {
+     "mark": 229.14,
+     "oracle": 229.22,
+     "vol24h": 351.6,
+     "oi": 45447.937832646,
+     "fundingHourly": 8.0792721323435e-05,
+     "fundingAnnPct": 70.7744,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "USAR": {
+     "mark": 17.4,
+     "oracle": 17.4,
+     "vol24h": 7108.47,
+     "oi": 22984.983833759998,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "LIT": {
+     "mark": 2.0379,
+     "oracle": 2.0355,
+     "vol24h": 8201.5,
+     "oi": 97921.505779503,
+     "fundingHourly": 1.25e-05,
+     "fundingAnnPct": 10.95,
+     "category": "CRYPTO",
+     "isOutsideRth": false,
+     "rth": null
+    },
+    "XRP": {
+     "mark": 1.0682,
+     "oracle": 1.0687,
+     "vol24h": 195578.18,
+     "oi": 39824.240413328,
+     "fundingHourly": 1.25e-05,
+     "fundingAnnPct": 10.95,
+     "category": "CRYPTO",
+     "isOutsideRth": false,
+     "rth": null
+    },
+    "COIN": {
+     "mark": 150.9,
+     "oracle": 150.98,
+     "vol24h": 1000.87,
+     "oi": 9540.38954166,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    },
+    "SKHY": {
+     "mark": 154.18,
+     "oracle": 154.52,
+     "vol24h": 23783.8,
+     "oi": 46058.150326448,
+     "fundingHourly": 4.80324074074e-06,
+     "fundingAnnPct": 4.2076,
+     "category": "EQUITIES",
+     "isOutsideRth": true,
+     "rth": {
+      "startSecondsOfDay": 14400,
+      "endSecondsOfDay": 72000,
+      "timezone": "America/New_York",
+      "isOvernight": false
+     }
+    }
+   }
+  },
+  "arcus_spot": {
+   "type": "spot",
+   "chain": "robinhood-4663",
+   "tier": "quote-only",
+   "pairs": {
+    "SNDK": {
+     "last": 1424.7999997077093,
+     "bid": 1418.3499871,
+     "ask": 1417.99261684,
+     "vol24h": 2179708.953695
+    },
+    "USO": {
+     "last": 115.251280472,
+     "bid": 115.209999768,
+     "ask": 115.370215429,
+     "vol24h": 1059521.741916
+    },
+    "AMD": {
+     "last": 474.85999017752283,
+     "bid": 475.859997831,
+     "ask": 476.086952816,
+     "vol24h": 982780.528355
+    },
+    "NVDA": {
+     "last": 216.2,
+     "bid": 216.529828234,
+     "ask": 216.230000001,
+     "vol24h": 636263.720174
+    },
+    "USAR": {
+     "last": 17.31999991704193,
+     "bid": 17.3999999575,
+     "ask": 17.4200000011,
+     "vol24h": 286709.421511
+    },
+    "TSLA": {
+     "last": 325.8042032293725,
+     "bid": 325.529999896,
+     "ask": 325.790000003,
+     "vol24h": 190513.789104
+    },
+    "MU": {
+     "last": 890.1599997409503,
+     "bid": 887.929997614,
+     "ask": 888.650000038,
+     "vol24h": 175262.507717
+    },
+    "COIN": {
+     "last": 150.08999864220303,
+     "bid": 150.539999977,
+     "ask": 150.78000001,
+     "vol24h": 169201.153089
+    },
+    "SPCX": {
+     "last": 115.2754986015,
+     "bid": 115.219828605,
+     "ask": 115.32000001,
+     "vol24h": 168485.98757
+    },
+    "ORCL": {
+     "last": 144.06999995009727,
+     "bid": 145.039998768,
+     "ask": 145.070000004,
+     "vol24h": 167925.910843
+    },
+    "AAPL": {
+     "last": 310.36297838646846,
+     "bid": 310.502998644,
+     "ask": 310.258137861,
+     "vol24h": 146356.642882
+    },
+    "SLV": {
+     "last": 53.94263091584441,
+     "bid": 53.9339887669,
+     "ask": 54.0000000037,
+     "vol24h": 138713.336239
+    },
+    "GME": {
+     "last": 19.253344594368755,
+     "bid": 19.2386431255,
+     "ask": 19.2389521664,
+     "vol24h": 128669.135956
+    },
+    "SPY": {
+     "last": 772.5899756077091,
+     "bid": 772.629995768,
+     "ask": 773.870000016,
+     "vol24h": 121786.461779
+    },
+    "CRCL": {
+     "last": 63.519999999999996,
+     "bid": 62.8599998864,
+     "ask": 62.9400000048,
+     "vol24h": 97980.286524
+    },
+    "MSFT": {
+     "last": 490.179981068,
+     "bid": 490.319996078,
+     "ask": 490.720000011,
+     "vol24h": 79233.049541
+    },
+    "META": {
+     "last": 588.8199875787568,
+     "bid": 589.439997361,
+     "ask": 589.583700537,
+     "vol24h": 78054.36506
+    },
+    "CRWV": {
+     "last": 90.42999897649365,
+     "bid": 90.7299995938,
+     "ask": 90.7821160561,
+     "vol24h": 73501.789655
+    },
+    "SKHY": {
+     "last": 155.55,
+     "bid": 153.449998781,
+     "ask": 153.690000001,
+     "vol24h": 71670.775621
+    },
+    "QQQ": {
+     "last": 724.232428572879,
+     "bid": 722.469994473,
+     "ask": 723.630000018,
+     "vol24h": 50826.519127
+    },
+    "AMZN": {
+     "last": 277.9201681211211,
+     "bid": 277.87999754,
+     "ask": 278.165892319,
+     "vol24h": 43074.270194
+    },
+    "INTC": {
+     "last": 98.55999941947239,
+     "bid": 98.0099991411,
+     "ask": 98.1700000017,
+     "vol24h": 42140.15426
+    },
+    "BE": {
+     "last": 226.94999983336,
+     "bid": 228.859999684,
+     "ask": 228.997723804,
+     "vol24h": 38627.52881
+    },
+    "PLTR": {
+     "last": 159.56999753533864,
+     "bid": 159.449999301,
+     "ask": 159.710000015,
+     "vol24h": 36163.315472
+    },
+    "NFLX": {
+     "last": 73.59999660302128,
+     "bid": 73.7399999886,
+     "ask": 73.8256569056,
+     "vol24h": 34775.83496
+    },
+    "MSTR": {
+     "last": 97.35999959543805,
+     "bid": 96.639999032,
+     "ask": 97.0048749117,
+     "vol24h": 34689.484254
+    },
+    "RDDT": {
+     "last": 157.14,
+     "bid": 158.519998766,
+     "ask": 160.393217547,
+     "vol24h": 28251.128955
+    },
+    "GOOGL": {
+     "last": 378.139227903,
+     "bid": 378.064462215,
+     "ask": 378.310000036,
+     "vol24h": 26077.461053
+    },
+    "DELL": {
+     "last": 465.78999783243046,
+     "bid": 460.939996743,
+     "ask": 464.86694912,
+     "vol24h": 23291.950698
+    },
+    "COST": {
+     "last": 950.8699993959934,
+     "bid": 950.479990557,
+     "ask": 949.128250586,
+     "vol24h": 23129.095955
+    },
+    "CASHCAT": {
+     "last": 0.08525550916438367,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 17629.537819
+    },
+    "RKLB": {
+     "last": 76.55999956689655,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 16462.500431
+    },
+    "ASML": {
+     "last": 1711.6099981936816,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 14848.341428
+    },
+    "RBLX": {
+     "last": 37.07,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 13016.864143
+    },
+    "QCOM": {
+     "last": 161.75,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 10009.524963
+    },
+    "ASTS": {
+     "last": 70.36,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 8877.315417
+    },
+    "AAOI": {
+     "last": 135.38999912037264,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 8526.426138
+    },
+    "IREN": {
+     "last": 40.59,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 7275.93205
+    },
+    "TTWO": {
+     "last": 243.55,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 6004.581689
+    },
+    "TSM": {
+     "last": 415.5999977262993,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 5796.368953
+    },
+    "AVGO": {
+     "last": 421.41,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 5296.677521
+    },
+    "PONS": {
+     "last": 0.022952771570465047,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 4609.707872
+    },
+    "BABA": {
+     "last": 128.5299978882361,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 4354.143612
+    },
+    "LITE": {
+     "last": 853.1699787744234,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 3958.684005
+    },
+    "QUBT": {
+     "last": 9.31,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 3793.228231
+    },
+    "IONQ": {
+     "last": 41.8,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 3500.0
+    },
+    "PENG": {
+     "last": 58.39999983210207,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 3371.500508
+    },
+    "SMCI": {
+     "last": 31.779999665880396,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 2256.527096
+    },
+    "NBIS": {
+     "last": 228.23999811461775,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1998.286453
+    },
+    "MXL": {
+     "last": 73.78,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1983.307031
+    },
+    "QBTS": {
+     "last": 21.909999481142307,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1975.725531
+    },
+    "RDW": {
+     "last": 10.56,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1762.736279
+    },
+    "CLSK": {
+     "last": 14.1000029496,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1665.636042
+    },
+    "MRVL": {
+     "last": 218.42,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1611.041625
+    },
+    "INOD": {
+     "last": 71.73999840884676,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1353.736494
+    },
+    "SOXX": {
+     "last": 544.27,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1250.814297
+    },
+    "TENDIES": {
+     "last": 0.02067286178495856,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1179.939436
+    },
+    "XNDU": {
+     "last": 11.644338931426146,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1178.026497
+    },
+    "SPMO": {
+     "last": 151.49999783752205,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1148.726036
+    },
+    "GLW": {
+     "last": 152.42,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1000.0
+    },
+    "LUNR": {
+     "last": 14.06,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 1000.0
+    },
+    "RGTI": {
+     "last": 17.2278313072,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 676.747656
+    },
+    "UPS": {
+     "last": 108.8999999005721,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 663.874781
+    },
+    "SOFI": {
+     "last": 18.62,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 652.383955
+    },
+    "SHOP": {
+     "last": 118.63999989653632,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 642.688003
+    },
+    "LLY": {
+     "last": 1122.909996110842,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 623.290428
+    },
+    "JUGGERNAUT": {
+     "last": 0.0016634411865373644,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 603.862274
+    },
+    "APLD": {
+     "last": 31.329999344200463,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 584.874151
+    },
+    "DDOG": {
+     "last": 291.44,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 517.180904
+    },
+    "BRODIE": {
+     "last": 0.0004667213462577752,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 383.646998
+    },
+    "4663": {
+     "last": 0.00011729452138145226,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 372.712184
+    },
+    "XLK": {
+     "last": 183.72999187774647,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 371.141759
+    },
+    "NU": {
+     "last": 14.689999845382484,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 347.989223
+    },
+    "BA": {
+     "last": 237.1699999382178,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 257.201932
+    },
+    "HOODRAT": {
+     "last": 0.000893713912805805,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 232.996204
+    },
+    "EWY": {
+     "last": 170.28,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 215.237844
+    },
+    "ZS": {
+     "last": 160.61,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 210.395339
+    },
+    "SGOV": {
+     "last": 100.47999681583435,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 204.673767
+    },
+    "VIRTUAL": {
+     "last": 0.5547356651287059,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 196.125283
+    },
+    "NNE": {
+     "last": 18.30999992186652,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 189.249291
+    },
+    "meow": {
+     "last": 0.00023180043701203482,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 187.435533
+    },
+    "XOM": {
+     "last": 152.54,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 141.944445
+    },
+    "PIPEDOG": {
+     "last": 0.002271020850524843,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 119.792718
+    },
+    "NOW": {
+     "last": 111.98,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 111.0
+    },
+    "CELH": {
+     "last": 29.16999964476005,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 101.685926
+    },
+    "AMAT": {
+     "last": 544.1799801064665,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 100.43238
+    },
+    "PR": {
+     "last": 20.59,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 100.0
+    },
+    "CBRS": {
+     "last": 220.16,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 100.0
+    },
+    "WDAY": {
+     "last": 165.94,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 100.0
+    },
+    "MDB": {
+     "last": 377.8,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 100.0
+    },
+    "POET": {
+     "last": 8.499999680121766,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 92.721868
+    },
+    "MARIAN": {
+     "last": 0.0006294587104669453,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 85.925959
+    },
+    "F": {
+     "last": 14.4299998988,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 65.348918
+    },
+    "RIVN": {
+     "last": 15.4499999552,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 63.479126
+    },
+    "ZM": {
+     "last": 99.92999969241815,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 55.226817
+    },
+    "INTU": {
+     "last": 308.6099961798,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 53.516803
+    },
+    "ELF": {
+     "last": 82.5099984944,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 52.580932
+    },
+    "LULU": {
+     "last": 121.00999914798155,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 51.099527
+    },
+    "DIH": {
+     "last": 0.00015221500145045234,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 43.220133
+    },
+    "CCL": {
+     "last": 29.479999996501384,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 42.044856
+    },
+    "GOAT": {
+     "last": 1.8949740966929497e-05,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 34.398131
+    },
+    "REPE": {
+     "last": 0.0001670483515492642,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 32.673381
+    },
+    "WOOD": {
+     "last": 0.004767804138927502,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 30.462463
+    },
+    "STONKS": {
+     "last": 0.0003007354193279344,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 22.025129
+    },
+    "ARROW": {
+     "last": 0.26972661903939005,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 20.738897
+    },
+    "WISHBONE": {
+     "last": 0.002318019978205594,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 19.144527
+    },
+    "TENOV": {
+     "last": 4.193216900340317e-05,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 18.616739
+    },
+    "HOPPY": {
+     "last": 3.293111915001189e-05,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 10.0
+    },
+    "WETH": {
+     "last": 1839.1853432755129,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "UMC": {
+     "last": 20.839999686,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "HOOD": {
+     "last": 6.157304176807602e-07,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "P": {
+     "last": 73.39999739138824,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "HOODIES": {
+     "last": 6.237864028045694e-05,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "FLNC": {
+     "last": 13.169999989333334,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "RH67": {
+     "last": 0.00040896926025595515,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "HOODAGENT": {
+     "last": 0.00038499134819360676,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "TSEM": {
+     "last": 245.29046436865525,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "KITSU": {
+     "last": 0.0013989010794571777,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "THREADGUY": {
+     "last": 0.0017378919751707806,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "ROBIN": {
+     "last": 0.0025121026120732,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "NVTS": {
+     "last": 10.84,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "HOODIE": {
+     "last": 1.6103883668702087e-05,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "CRWD": {
+     "last": 726.95,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    },
+    "FUTU": {
+     "last": 102.479998932,
+     "bid": 0.0,
+     "ask": 0.0,
+     "vol24h": 0.0
+    }
+   }
+  },
+  "rh_uniswap": {
+   "type": "spot",
+   "chain": "robinhood-4663",
+   "tier": "prepare",
+   "pools": {
+    "QQQ": {
+     "addr": "0xD5f3879160bc7c32ebb4dC785F8a4F505888de68",
+     "liq": 116323.1,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xEbD78dcfc8a6b3A696f1E191aD1ff321f9579f79"
+    },
+    "NFLX": {
+     "addr": "0xE0444EF8BF4eD74f74FD73686e2ddF4C1c5591E8",
+     "liq": 75447.48,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xeA75eA625d83aE276b9ae8B0A3dC205916EE65cF"
+    },
+    "USO": {
+     "addr": "0xa30FA36Db767ad9eD3f7a60fC79526fB4d56D344",
+     "liq": 109084.27,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0x6ED11C7DfD8e2ca5620eed29a7B9b53AE90dD0D2"
+    },
+    "ORCL": {
+     "addr": "0xb0992820E760d836549ba69BC7598b4af75dEE03",
+     "liq": 18665.22,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0x3a03bd306e0cbec0c0a33d5dee9c88e31c1ed46fd1d9a1e0350cd76260e2da73"
+    },
+    "SGOV": {
+     "addr": "0x92FD66527192E3e61d4DDd13322Aa222DE86F9B5",
+     "liq": 17032.33,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xfAb520051f96F4D2a32c22B6a3dD7fFfdf231bFe"
+    },
+    "MSTR": {
+     "addr": "0xec262a75e413fAfD0dF80480274532C79D42da09",
+     "liq": 87940.62,
+     "quote": "WETH",
+     "quoteAddr": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+     "dex": "uniswap",
+     "pair": "0x70504a6FafdbfB75fE971FAA4dD716e79aC5624c"
+    },
+    "PLTR": {
+     "addr": "0x894E1EC2D74FFE5AEF8Dc8A9e84686acCB964F2A",
+     "liq": 114965.42,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xee430ee1003e1985e1828a01b9a20dad67ad4302994fe2abb4a173de4ac54623"
+    },
+    "HOOD": {
+     "addr": "0x32aC8C1D7672667D5EbdEa22935F7B06fC8D496f",
+     "liq": 63478.43,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0x1c1F6e283a72A68c15C816324363c794151cf913"
+    },
+    "COIN": {
+     "addr": "0x6330D8C3178a418788dF01a47479c0ce7CCF450b",
+     "liq": 106110.52,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0x007a13fa152f6dc383cad20a8eaab4e1e2538b606936eae2a424f8aa47d6db31"
+    },
+    "AMD": {
+     "addr": "0x86923f96303D656E4aa86D9d42D1e57ad2023fdC",
+     "liq": 33356.95,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xde9f85fdd9e05a943a52f2c69ffafe3064a3287df03d02c9b431bc92d4781274"
+    },
+    "GOOGL": {
+     "addr": "0x2e0847E8910a9732eB3fb1bb4b70a580ADAD4FE3",
+     "liq": 403723.79,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xd4ecb79fdc521d7725d22b33ed43cb4e47aa96bfad76aa29577e3151f723ac5e"
+    },
+    "META": {
+     "addr": "0xc0D6457C16Cc70d6790Dd43521C899C87ce02f35",
+     "liq": 100217.76,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0x5875d407a42965b0e768c8925cea290e06fa50603ef34fc99eb92a1050e6ae36"
+    },
+    "AMZN": {
+     "addr": "0x12f190a9F9d7D37a250758b26824B97CE941bF54",
+     "liq": 77988.41,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xd32646872e6712af8cf778e34b6bbef1d2ae0bddd83764e1b07333518ad59333"
+    },
+    "MSFT": {
+     "addr": "0xe93237C50D904957Cf27E7B1133b510C669c2e74",
+     "liq": 136622.73,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0x9194a557b6a6bb2236b49ea7e2bbccec5d3eeb705aef00903be4b3de1d949579"
+    },
+    "SPY": {
+     "addr": "0x117cc2133c37B721F49dE2A7a74833232B3B4C0C",
+     "liq": 300688.01,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xfe2a80bb5618fd14984b92ca6d45bf5ba67443ddb1435e28b2e48df2fc1526cd"
+    },
+    "AAPL": {
+     "addr": "0xaF3D76f1834A1d425780943C99Ea8A608f8a93f9",
+     "liq": 317663.17,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xc748f4671a867db48b552f6b7650bf3255e05f80f00e3f7aad1b17ccb7898fdb"
+    },
+    "TSLA": {
+     "addr": "0x322F0929c4625eD5bAd873c95208D54E1c003b2d",
+     "liq": 309507.87,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0x8517f8071ae5b831b738052f12125e8e3d6c158b78728aa44ce3b25e5104d32e"
+    },
+    "GME": {
+     "addr": "0x1b0E319c6A659F002271B69dB8A7df2F911c153E",
+     "liq": 391967.06,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0xE9713f453aDB9245B19559790c96F470a18F2fDF"
+    },
+    "NVDA": {
+     "addr": "0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC",
+     "liq": 1732831.66,
+     "quote": "USDG",
+     "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+     "dex": "uniswap",
+     "pair": "0x3bb34a44f1b2b5f32c034c38a53065a521a47b199700fa9bd19d60985ff24bf1"
+    }
+   }
+  },
+  "rh_chainlink_oracles": {
+   "type": "oracle",
+   "chain": "robinhood-4663",
+   "tier": "read-only",
+   "scaleExp": 24,
+   "assets": {
+    "NVDA": {
+     "oracle": "0xc7B219c58fF4Cc70F46Ef39cb40A6bcc84155077",
+     "token": "0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC",
+     "rawPrice": "216901018957263507006748688",
+     "usd": 216.901
+    },
+    "SPY": {
+     "oracle": "0xe8dAb19184f72b5a5a9d51A6C50A1b04b0669ce7",
+     "token": "0x117cc2133c37B721F49dE2A7a74833232B3B4C0C",
+     "rawPrice": "772915808415602435347019830",
+     "usd": 772.9158
+    },
+    "AAPL": {
+     "oracle": "0xd209B6D73F7C1D196F768f419f500161EBD437e6",
+     "token": "0xaF3D76f1834A1d425780943C99Ea8A608f8a93f9",
+     "rawPrice": "310113584540844830647590003",
+     "usd": 310.1136
+    },
+    "TSLA": {
+     "oracle": "0x2d3fc316Ef26Eb15a48bACCc43b1F11026b43165",
+     "token": "0x322F0929c4625eD5bAd873c95208D54E1c003b2d",
+     "rawPrice": "325373103462648293683884168",
+     "usd": 325.3731
+    },
+    "GME": {
+     "oracle": "0x5F35Bad049EF7bb69ea1fBBfa210D6B7e2eaD00d",
+     "token": "0x1b0E319c6A659F002271B69dB8A7df2F911c153E",
+     "rawPrice": "19270023894829629588740690",
+     "usd": 19.27
+    },
+    "MSFT": {
+     "oracle": "0x4191d8f7B29FC68073C2f933A5481192D4a735f3",
+     "token": "0xe93237C50D904957Cf27E7B1133b510C669c2e74",
+     "rawPrice": "490046857658103496048335099",
+     "usd": 490.0469
+    },
+    "GOOGL": {
+     "oracle": "0x436E106a92d6386C0E0dA44eB55Ede09fEeee4fF",
+     "token": "0x2e0847E8910a9732eB3fb1bb4b70a580ADAD4FE3",
+     "rawPrice": "377960468670981152016628500",
+     "usd": 377.9605
+    },
+    "AMZN": {
+     "oracle": "0x5480f1C1516C3EDCb79C449dcCc06C280502f632",
+     "token": "0x12f190a9F9d7D37a250758b26824B97CE941bF54",
+     "rawPrice": "278125344875427645530280457",
+     "usd": 278.1253
+    },
+    "META": {
+     "oracle": "0xf7282cD4277296D41d6Fdb80e2fBD73f03881B6C",
+     "token": "0xc0D6457C16Cc70d6790Dd43521C899C87ce02f35",
+     "rawPrice": "588545729796704947914135413",
+     "usd": 588.5457
+    },
+    "AMD": {
+     "oracle": "0xCf2fD48E4B5EFBff49F46351Aa3F25c6301A7961",
+     "token": "0x86923f96303D656E4aa86D9d42D1e57ad2023fdC",
+     "rawPrice": "474610588517129761240903938",
+     "usd": 474.6106
+    },
+    "QQQ": {
+     "oracle": "0x6126E6aec4139c660ab0e467Ff392c125E3FdF70",
+     "token": "0xD5f3879160bc7c32ebb4dC785F8a4F505888de68",
+     "rawPrice": "721342144464259135681328244",
+     "usd": 721.3421
+    },
+    "ORCL": {
+     "oracle": "0x2fFFD1C00D79709354900992296349071816EA51",
+     "token": "0xb0992820E760d836549ba69BC7598b4af75dEE03",
+     "rawPrice": "144964977536572145349460233",
+     "usd": 144.965
+    },
+    "PLTR": {
+     "oracle": "0x3b1905b76Fa4cFf867BA33C6222D227E29F99bcc",
+     "token": "0x894E1EC2D74FFE5AEF8Dc8A9e84686acCB964F2A",
+     "rawPrice": "160046448457596087419148399",
+     "usd": 160.0464
+    },
+    "USO": {
+     "oracle": "0xd60E92007CcDfC767544E8921f4F36bEE310F7a1",
+     "token": "0xa30FA36Db767ad9eD3f7a60fC79526fB4d56D344",
+     "rawPrice": "115900143716178208060977995",
+     "usd": 115.9001
+    },
+    "SGOV": {
+     "oracle": "0x7b205ba006ba6269298158A4AEaf89088EeaE286",
+     "token": "0x92FD66527192E3e61d4DDd13322Aa222DE86F9B5",
+     "rawPrice": "100541178080000000000000000",
+     "usd": 100.5412
+    }
+   },
+   "block": 28078117
+  }
+ }
+}

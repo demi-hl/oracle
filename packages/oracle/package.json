@@ -1,0 +1,123 @@
+{
+  "name": "@oracle-agent/oracle",
+  "version": "0.12.1",
+  "description": "Oracle: standalone prepare-only multichain agent control plane with optional Hermes integration. Policy-bounded intents for a user-signed wallet; the public package never takes your key.",
+  "license": "BUSL-1.1",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/demi-hl/oracle",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/demi-hl/oracle.git"
+  },
+  "keywords": [
+    "ai-agent",
+    "multichain",
+    "evm",
+    "self-custody",
+    "defi",
+    "hermes",
+    "nous",
+    "mcp"
+  ],
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "bin": {
+    "oracle": "./bin/oracle.mjs",
+    "oracle-data": "./bin/desk-server.mjs",
+    "oracle-public": "./bin/oracle-public-server.mjs",
+    "oracle-data-mcp": "./bin/oracle-data-mcp.mjs",
+    "oracle-init": "./bin/oracle-init.mjs",
+    "oracle-upgrade": "./bin/oracle-upgrade.mjs",
+    "oracle-scan": "./bin/oracle-scan.mjs",
+    "oracle-route": "./bin/oracle-route.mjs",
+    "oracle-equities": "./bin/oracle-equities.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./farming": "./src/data/providers/farming.mjs",
+    "./data": "./src/data/desk-data.mjs",
+    "./policy": "./src/public-control/policy-schema.mjs",
+    "./chains": "./src/chains.mjs",
+    "./scanner": "./src/scanner/index.mjs",
+    "./router": "./src/router/index.mjs",
+    "./equities": "./src/equities/index.mjs",
+    "./action-semantics": "./src/action-semantics.mjs",
+    "./address-book": "./src/address-book.mjs",
+    "./names": "./src/data/names.mjs",
+    "./nft-gas-war": "./src/nft-gas-war-guard.mjs",
+    "./prepare-envelope": "./src/prepare-envelope.mjs",
+    "./connect": "./src/onboarding/harness-configs.mjs",
+    "./receipts": "./src/action-receipts.mjs",
+    "./risk": "./src/portfolio-risk.mjs",
+    "./watch": "./src/watch-preferences.mjs",
+    "./signals": "./src/signals/index.mjs",
+    "./agent-grants": "./src/public-api/agent-grants.mjs"
+  },
+  "scripts": {
+    "test": "ORACLE_TEST_ISOLATE_SECRETS=1 ORACLE_ROUTE_ATTESTATION_SECRET=oracle-unit-test-secret ORACLE_GATE_BYPASS=1 node --test test/*.test.mjs",
+    "test:boundary": "ORACLE_TEST_ISOLATE_SECRETS=1 ORACLE_ROUTE_ATTESTATION_SECRET=oracle-unit-test-secret node --test test/custody-boundary.test.mjs",
+    "e2e:solana-bitcoin": "node scripts/e2e-solana-bitcoin.mjs",
+    "e2e:hypercore-staking": "node scripts/e2e-hypercore-staking.mjs",
+    "start:data": "node bin/desk-server.mjs",
+    "start:public": "node bin/oracle-public-server.mjs",
+    "scan:public-apis": "node scripts/public-api-scan.mjs",
+    "health": "node -e \"import('./src/data/desk-data.mjs').then(m=>m.data.health().then(h=>console.log(JSON.stringify(h,null,2))))\"",
+    "init": "node bin/oracle-init.mjs",
+    "init:apply": "node bin/oracle-init.mjs --apply",
+    "scan": "node bin/oracle-scan.mjs",
+    "verify:venues": "node scripts/verify-v3-venues.mjs",
+    "route": "node bin/oracle-route.mjs",
+    "scan:secrets": "node scripts/secret-scan.mjs",
+    "test:count": "node scripts/check-test-count.mjs",
+    "test:count:update": "node scripts/check-test-count.mjs --update",
+    "test:protocol-templates": "RUN_PROTOCOL_TEMPLATE_TESTS=1 node --test test/protocol-templates.test.mjs",
+    "protocol:gate": "node scripts/protocol-template-gate.mjs",
+    "gate:docs": "node scripts/check-doc-drift.mjs",
+    "gate:release": "npm run gate:docs && node --test test/flag-polarity.test.mjs",
+    "build:dist": "node scripts/build-dist.mjs",
+    "verify:dist": "node scripts/verify-dist.mjs",
+    "publish:dist": "ORACLE_PUBLISH_STAGED=1 node scripts/publish-dist.mjs",
+    "prepublishOnly": "node scripts/guard-publish.mjs"
+  },
+  "dependencies": {
+    "@msgpack/msgpack": "^3.1.3",
+    "@noble/curves": "^2.2.0",
+    "@noble/hashes": "^2.2.0",
+    "@scure/base": "^2.2.0",
+    "ethers": "^6.16.0",
+    "viem": "^2.55.8"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "!src/**/__pycache__/**",
+    "profiles/",
+    "skills/",
+    "skins/",
+    "plugins/",
+    "public/",
+    "artifacts/",
+    "README.md",
+    "SETUP.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "docs/",
+    "examples/",
+    "scripts/",
+    "protocols/templates/**/src/**",
+    "protocols/templates/**/test/**",
+    "protocols/templates/**/foundry.toml",
+    "protocols/templates/**/remappings.txt",
+    "protocols/templates/**/SECURITY.md",
+    "src/protocol-templates/**"
+  ],
+  "devDependencies": {
+    "@scure/bip39": "^1.6.0",
+    "esbuild": "^0.28.1"
+  }
+}

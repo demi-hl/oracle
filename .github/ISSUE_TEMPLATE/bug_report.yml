@@ -1,0 +1,54 @@
+name: Bug report
+description: Something behaves incorrectly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **If this is a security issue — a custody-boundary escape, an allowlist or
+        slippage-guard bypass, grant forgery, or secret leakage — do NOT file here.**
+        See [SECURITY.md](../blob/main/SECURITY.md) and email security@demi.la.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The actual behaviour, and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: |
+        Exact commands, and the real output. Paste it rather than describing it —
+        an error string is usually the fastest route to a diagnosis.
+      placeholder: |
+        $ oracle-scan token base 0x...
+        <output>
+    validations:
+      required: true
+
+  - type: input
+    id: chain
+    attributes:
+      label: Chain / provider involved
+      placeholder: "base (8453), dexscreener"
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Output of `node --version` and your Oracle version or commit.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before filing
+      options:
+        - label: "`npm test` passes on a clean checkout (if not, say so above — that's the bug)"
+        - label: I have not pasted any private key, mnemonic, or API key into this report
+          required: true

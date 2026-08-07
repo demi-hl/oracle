@@ -1,0 +1,94 @@
+{
+  "name": "@oracle-agent/desktop",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Oracle desktop beta app",
+  "author": "demi.la",
+  "main": "src/main.cjs",
+  "scripts": {
+    "ensure:natives": "node scripts/ensure-native-deps.mjs",
+    "build:runtime": "npm run ensure:natives && npm --workspace @oracle-agent/app run build:desktop && node scripts/stage-next-runtime.mjs",
+    "smoke": "node scripts/smoke-runtime.mjs",
+    "smoke:electron": "node scripts/smoke-electron.mjs",
+    "check:platforms": "node scripts/check-platform-branching.mjs",
+    "smoke:packaged": "node scripts/smoke-packaged.mjs",
+    "e2e": "npm run build:runtime && npm run smoke && npm run smoke:electron",
+    "build:linux": "npm run e2e && electron-builder --linux AppImage --publish never && npm run smoke:packaged",
+    "notarize:mac": "node scripts/notarize-mac.mjs",
+    "build:mac": "npm run e2e && electron-builder --mac dmg --publish never && npm run smoke:packaged",
+    "build:win": "npm run e2e && electron-builder --win nsis --publish never && npm run smoke:packaged",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@oracle-agent/oracle": "0.12.1",
+    "electron-store": "^10.1.0"
+  },
+  "devDependencies": {
+    "electron": "39.8.10",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "la.demi.oracle.desktop",
+    "productName": "Oracle",
+    "copyright": "Copyright \u00a9 demi.la",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "package.json",
+      "node_modules/**/*",
+      "!node_modules/@oracle-agent/oracle/.publish-stage/**",
+      "!node_modules/@oracle-agent/oracle/dist/**",
+      "!node_modules/@oracle-agent/oracle/design/**",
+      "!node_modules/@oracle-agent/oracle/scripts/**",
+      "!node_modules/@oracle-agent/oracle/protocols/**",
+      "!node_modules/@oracle-agent/oracle/docs/**",
+      "!node_modules/@oracle-agent/oracle/test/**",
+      "!node_modules/@oracle-agent/oracle/test-baseline.json",
+      "!node_modules/@oracle-agent/oracle/public/oracle-splash/**",
+      "!**/*.tgz",
+      "!**/*.map"
+    ],
+    "extraResources": [],
+    "afterPack": "build/after-pack.cjs",
+    "icon": "build/icon.png",
+    "asar": true,
+    "mac": {
+      "category": "public.app-category.finance",
+      "target": [
+        "dmg"
+      ],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "signIgnore": [
+        "oracle-app/apps/oracle-app/\\.next/.*"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Finance",
+      "executableName": "oracle-desktop",
+      "synopsis": "Oracle desktop",
+      "maintainer": "demi.la",
+      "syncDesktopName": true
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "executableName": "Oracle",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "desktopName": "Oracle"
+}

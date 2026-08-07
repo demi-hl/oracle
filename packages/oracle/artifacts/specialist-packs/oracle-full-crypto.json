@@ -1,0 +1,298 @@
+{
+  "id": "oracle-full-crypto",
+  "name": "Oracle Full Crypto Pack",
+  "version": 4,
+  "audience": "public-users",
+  "description": "Default capability set for public Oracle: trader, builder, analyzer, deterministic /balance aggregation, multichain scanner, meme-token sniping, RFQ routing, tokenized-asset buys, NFT mint gas-war limits, Solana, Bitcoin inscriptions, chain-family token/NFT collections, gacha/DEX launches, and protocol build under bound grants. User signs everything.",
+  "posture": {
+    "default": "DISARMED",
+    "custody": "self-custodial",
+    "signing": "user-wallet-only",
+    "broadcast": "user-or-explicit-grant-only",
+    "never": [
+      "operator-hot-wallet-by-default",
+      "private-executor-custody",
+      "house-custody",
+      "unguarded-broadcast",
+      "uncapped-gas-war-mints"
+    ]
+  },
+  "includes_protocol_build": true,
+  "skill_packs": {
+    "research": [
+      "oracle-token-research",
+      "oracle-contract-research",
+      "oracle-smart-wallet-scanner",
+      "oracle-meme-token-sniper",
+      "oracle-bitcoin",
+      "oracle-solana",
+      "hyperliquid",
+      "polymarket",
+      "oracle-chain-graphs-telegram-cards",
+      "oracle-rfq-tokenized-assets",
+      "oracle-hypercore-staking"
+    ],
+    "execution_prepare": [
+      "self-custodial-onchain-execution",
+      "multichain-exec-desk",
+      "trade-loop-circuit-breaker",
+      "protocol-api-key-integration",
+      "oracle-bitcoin",
+      "oracle-best-execution",
+      "oracle-equities",
+      "oracle-rfq-tokenized-assets",
+      "oracle-meme-token-sniper",
+      "oracle-nft-mint-gas-war",
+      "oracle-solana-nft",
+      "oracle-hypercore-staking"
+    ],
+    "venues": [
+      "oracle-solana",
+      "oracle-bitcoin",
+      "hyperliquid",
+      "polymarket",
+      "rh-token-research",
+      "rh-token-swap",
+      "rh-token-chart",
+      "oracle-meme-token-sniper",
+      "oracle-rfq-tokenized-assets",
+      "oracle-solana-nft",
+      "oracle-hypercore-staking"
+    ],
+    "protocol_build": [
+      "oracle-protocol-builder",
+      "oracle-contract-research",
+      "oracle-protocol-security",
+      "oracle-multichain-token-launch",
+      "oracle-multichain-nft-launch",
+      "oracle-nft-gacha-launch",
+      "oracle-dex-launch",
+      "protocol-api-key-integration",
+      "oracle-nft-mint-gas-war"
+    ],
+    "product_law": [
+      "oracle-public-product",
+      "oracle-grants",
+      "oracle-receipts",
+      "trade-loop-circuit-breaker",
+      "oracle-chain-graphs-telegram-cards",
+      "oracle-nft-mint-gas-war"
+    ],
+    "launch_build": [
+      "oracle-protocol-builder",
+      "oracle-nft-gacha-launch",
+      "oracle-dex-launch",
+      "oracle-protocol-security",
+      "oracle-multichain-token-launch",
+      "oracle-multichain-nft-launch",
+      "oracle-nft-mint-gas-war"
+    ],
+    "analysis": [
+      "oracle-token-research",
+      "oracle-contract-research",
+      "oracle-smart-wallet-scanner",
+      "oracle-meme-token-sniper",
+      "oracle-best-execution",
+      "oracle-equities",
+      "balance",
+      "oracle-chain-graphs-telegram-cards",
+      "oracle-rfq-tokenized-assets"
+    ]
+  },
+  "excluded_from_public": [
+    "private deploy ops",
+    "private executor ops",
+    "private chain ops",
+    "operator infrastructure access",
+    "any skill that requires an operator wallet or server root access"
+  ],
+  "protocol_build": {
+    "enabled": true,
+    "modes": [
+      "research-existing-protocol",
+      "scaffold-contracts",
+      "scaffold-nft-or-gacha",
+      "scaffold-dex-or-launchpad",
+      "write-deploy-scripts",
+      "prepare-unsigned-deploy-txs",
+      "security-checklist",
+      "launchpad-public-surface",
+      "multichain-token-launch",
+      "multichain-nft-collection-launch"
+    ],
+    "user_signs": true,
+    "grant_actions_example": [
+      "read:chain",
+      "simulate:tx",
+      "prepare:deploy",
+      "prepare:verify"
+    ],
+    "targets": "user-provided factory/router/implementations only unless added to destination allowlist",
+    "copy": "Oracle can classify and prepare chain-family token, NFT collection, protocol, gacha, and DEX launches. Unsupported adapters fail closed. You still sign every side effect."
+  },
+  "profiles": [
+    {
+      "id": "polymarket-agent",
+      "skills": [
+        "polymarket",
+        "polymarket-trade-journal",
+        "trade-loop-circuit-breaker",
+        "oracle-chain-graphs-telegram-cards"
+      ],
+      "description": "Polymarket prediction markets: public event pricing/cards plus prepared order intents when user CLOB/API keys are configured."
+    },
+    {
+      "id": "hyperliquid-agent",
+      "skills": [
+        "hyperliquid",
+        "hyperliquid-hip4-outcome-markets",
+        "trade-loop-circuit-breaker",
+        "oracle-chain-graphs-telegram-cards",
+        "oracle-rfq-tokenized-assets",
+        "oracle-hypercore-staking"
+      ],
+      "description": "Hyperliquid perps/spot, HyperEVM, HIP-3 builder dexs, HIP-4 outcome markets, and HyperCore HYPE staking/delegation prepares. API-key actions activate only with user-provided keys."
+    },
+    {
+      "id": "robinhood-agent",
+      "skills": [
+        "rh-public-token-research",
+        "rh-token-research",
+        "rh-token-chart",
+        "rh-token-swap",
+        "oracle-meme-token-sniper",
+        "oracle-chain-graphs-telegram-cards",
+        "oracle-rfq-tokenized-assets"
+      ],
+      "description": "Robinhood Chain tokens/NFTs plus tokenized Robinhood-style assets when chain/contract/route is verified."
+    },
+    {
+      "id": "solana-agent",
+      "skills": [
+        "oracle-solana",
+        "oracle-receipts",
+        "oracle-circuit-breaker",
+        "oracle-best-execution",
+        "oracle-equities",
+        "oracle-meme-token-sniper",
+        "oracle-chain-graphs-telegram-cards",
+        "oracle-rfq-tokenized-assets",
+        "oracle-solana-nft"
+      ],
+      "label": "solana agent",
+      "description": "Solana research, SPL accounts, Jupiter quotes, live simulation, Magic Eden NFT reads plus unsigned buy/list/mint tickets, launch/meme-token scanning, and unsigned swap preparation."
+    },
+    {
+      "id": "bitcoin-agent",
+      "skills": [
+        "oracle-bitcoin",
+        "oracle-receipts",
+        "oracle-circuit-breaker",
+        "oracle-smart-wallet-scanner"
+      ],
+      "label": "bitcoin agent",
+      "description": "Bitcoin L1, Ordinals/runes research, Satflow PSBTs, and inscription preparation."
+    },
+    {
+      "id": "stable-agent",
+      "skills": [
+        "evm-contract-research",
+        "self-custodial-onchain-execution",
+        "oracle-meme-token-sniper",
+        "oracle-chain-graphs-telegram-cards",
+        "oracle-rfq-tokenized-assets"
+      ]
+    },
+    {
+      "id": "protocol-builder",
+      "skills": [
+        "oracle-protocol-builder",
+        "oracle-contract-research",
+        "oracle-protocol-security",
+        "oracle-nft-gacha-launch",
+        "oracle-dex-launch",
+        "oracle-receipts",
+        "oracle-multichain-token-launch",
+        "oracle-multichain-nft-launch"
+      ],
+      "label": "protocol builder",
+      "description": "Classify by chain family, then scaffold, review, and prepare unsigned token, NFT collection, gacha, DEX, and protocol launches."
+    }
+  ],
+  "default_tools": {
+    "read": [
+      "mad_data",
+      "web_search",
+      "evm_quote",
+      "evm_simulate",
+      "btc_health",
+      "btc_fees",
+      "btc_inscription_info",
+      "solana_balance",
+      "portfolio_balance",
+      "portfolio_snapshot",
+      "portfolio_history",
+      "portfolio_value_graph",
+      "nft_inventory",
+      "nft_gallery",
+      "nft_pnl"
+    ],
+    "prepare": [
+      "evm_prepare",
+      "evm_protocol_prepare",
+      "evm_protocol_quote",
+      "jupiter_quote",
+      "jupiter_prepare",
+      "bitcoin_inscribe_prepare",
+      "nft_prepare_list"
+    ],
+    "never_public_default": [
+      "evm_sign",
+      "evm_send",
+      "solana_sign",
+      "solana_send",
+      "bitcoin_sign",
+      "bitcoin_send",
+      "bitcoin_inscribe_sign_commit",
+      "bitcoin_inscribe_sign_reveal"
+    ]
+  },
+  "capabilities": [
+    "trader",
+    "builder",
+    "analyzer",
+    "solana-jupiter",
+    "bitcoin-inscriptions",
+    "nft-project-launch",
+    "gacha-launch",
+    "dex-launch",
+    "meme-token-sniping",
+    "onchain-scanner",
+    "smart-wallet-scanner",
+    "best-execution-routing",
+    "bridges",
+    "perps",
+    "vaults",
+    "prediction-markets",
+    "ordinals-runes",
+    "per-chain-graphs",
+    "telegram-cards",
+    "hip-3-builder-dex",
+    "hip-4-outcome-markets",
+    "polymarket-api-key-trading",
+    "cross-chain-rfq",
+    "rfq-best-execution",
+    "tokenized-robinhood-assets",
+    "nft-mint-gas-war-limits",
+    "nft-mint-bot",
+    "solana-nft-marketplace",
+    "solana-nft-mint",
+    "hypercore-hype-staking",
+    "hypercore-validator-delegation",
+    "multichain-token-launch",
+    "multichain-nft-collection-launch",
+    "multichain-balance",
+    "nft-inventory-gallery-pnl",
+    "portfolio-balance-history-graph"
+  ]
+}

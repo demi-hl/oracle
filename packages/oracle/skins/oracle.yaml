@@ -1,0 +1,56 @@
+name: oracle
+description: filled lowercase oracle in the classic boxed layout
+colors:
+  banner_border: "#455867"
+  banner_title: "#B8F0FF"
+  banner_accent: "#91C2D7"
+  banner_dim: "#60717F"
+  banner_text: "#EAF2F8"
+  ui_accent: "#B8F0FF"
+  ui_label: "#A5D9EB"
+  ui_ok: "#7EE7B5"
+  ui_error: "#FF7B7B"
+  ui_warn: "#F0C674"
+  prompt: "#B8F0FF"
+  input_rule: "#455867"
+  response_border: "#91C2D7"
+  status_bar_bg: "#11161B"
+  status_bar_text: "#91A2B1"
+  status_bar_strong: "#EAF2F8"
+  status_bar_dim: "#60717F"
+  status_bar_good: "#7EE7B5"
+  status_bar_warn: "#F0C674"
+  status_bar_bad: "#FF9B71"
+  status_bar_critical: "#FF7B7B"
+  session_label: "#B8F0FF"
+  session_border: "#455867"
+  voice_status_bg: "#11161B"
+  selection_bg: "#23313B"
+  completion_menu_bg: "#11161B"
+  completion_menu_current_bg: "#23313B"
+  completion_menu_meta_bg: "#11161B"
+  completion_menu_meta_current_bg: "#23313B"
+spinner:
+  waiting_faces: ["·", "··", "···"]
+  thinking_faces: ["◇", "◈", "◆", "◈"]
+  thinking_verbs: ["thinking", "reading", "checking", "routing"]
+  wings: [["", ""]]
+branding:
+  agent_name: "oracle"
+  welcome: ""
+  goodbye: "exit"
+  response_label: " oracle "
+  prompt_symbol: "›"
+  help_header: "oracle"
+tool_prefix: "│"
+banner_logo: |
+  [bold #B8F0FF]                                       ████[/]
+  [bold #B8F0FF]                                      ░░███[/]
+  [bold #ACDEEF]  ██████  ████████   ██████    ██████  ░███   ██████[/]
+  [bold #A5D9EB] ███░░███░░███░░███ ░░░░░███  ███░░███ ░███  ███░░███[/]
+  [bold #9FCBDD]░███ ░███ ░███ ░░░   ███████ ░███ ░░░  ░███ ░███████[/]
+  [bold #9FCBDD]░███ ░███ ░███      ███░░███ ░███  ███ ░███ ░███░░░[/]
+  [bold #ACDEEF]░░██████  █████    ░░████████░░██████  █████░░██████[/]
+  [bold #B8F0FF] ░░░░░░  ░░░░░      ░░░░░░░░  ░░░░░░  ░░░░░  ░░░░░░[/]
+banner_hero: |
+  [bold #EAF2F8]THE FUTURE IS AGENTIC[/]

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORACLE / download</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<meta name="description" content="Install the Oracle CLI. Desktop builds are in beta." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#0B1018; --ink:#E8F0F7; --dim:#94A7BC; --line:rgba(184,240,255,.14);
+ --line-2:rgba(184,240,255,.22); --ice:#B8F0FF; --blue2:#6FA8FF;
+ --mono:"JetBrains Mono",ui-monospace,monospace;
+ --sans:"Instrument Sans",system-ui,sans-serif;
+ --serif:"Instrument Serif",Georgia,serif;
+ --ease:cubic-bezier(.22,1,.36,1); --max:1100px; --pad:24px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+ -webkit-font-smoothing:antialiased;line-height:1.55;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad);text-align:center}
+.wrap section{margin-left:auto;margin-right:auto}
+.install{margin-left:auto;margin-right:auto}
+.cmd{justify-content:center}
+.wrap ul,.wrap ol{display:inline-block;text-align:left}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(14px);
+ background:color-mix(in oklab,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+.nav-in{max-width:var(--max);margin:0 auto;padding:14px var(--pad);
+ display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--serif);font-size:22px;letter-spacing:.02em;text-decoration:none;display:inline-flex;align-items:center;gap:10px}
+.orbital{width:26px;height:26px;display:inline-block;flex:0 0 auto}
+.orbital svg{width:100%;height:100%;overflow:visible}
+.orbital .ring{fill:none;stroke:currentColor;stroke-width:2.2;opacity:.55}
+.orbital .ring.r1{animation:orbspin 14s linear infinite;transform-origin:50% 50%}
+.orbital .ring.r2{animation:orbspin 19s linear infinite reverse;transform-origin:50% 50%}
+.orbital .halo{fill:currentColor;opacity:.16}
+.orbital .core{fill:currentColor;opacity:.92}
+@keyframes orbspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.orbital .ring{animation:none}}
+.nav a.back{font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+ text-transform:uppercase;color:var(--dim);text-decoration:none;transition:color .4s var(--ease)}
+.nav a.back:hover{color:var(--ice)}
+
+header{padding:150px 0 56px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+ color:var(--blue2);margin:0 0 18px}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,6.5vw,72px);
+ line-height:1.02;letter-spacing:-.015em;margin:0 0 20px}
+h1 em{font-style:italic;color:var(--ice)}
+.lede{max-width:60ch;color:var(--dim);font-size:17px;margin:0 auto}
+
+section{padding:0 0 64px}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(24px,3.4vw,34px);
+ letter-spacing:-.01em;margin:0 0 8px}
+.sub{color:var(--dim);font-size:15px;margin:0 auto 26px;max-width:62ch}
+
+.install{border:1px solid var(--line-2);border-radius:14px;background:#05080D;
+ padding:26px;position:relative;overflow:hidden}
+.install::after{content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(130deg,rgba(184,240,255,.08),transparent 46%)}
+.cmd{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.cmd code{font-family:var(--mono);font-size:15px;color:var(--ice);
+ background:rgba(184,240,255,.07);border:1px solid var(--line);
+ padding:12px 16px;border-radius:9px;flex:1;min-width:260px}
+.copy{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+ background:transparent;color:var(--ink);border:1px solid var(--line-2);
+ padding:12px 18px;border-radius:9px;cursor:pointer;transition:all .4s var(--ease)}
+.copy:hover{border-color:var(--ice);color:var(--ice)}
+.copy.done{border-color:var(--ice);color:var(--ice)}
+.ver{font-family:var(--mono);font-size:11px;color:var(--dim);
+ letter-spacing:.1em;margin-top:16px;display:flex;gap:18px;flex-wrap:wrap}
+.ver b{color:var(--ink);font-weight:500}
+
+.os-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+.os{border:1px solid var(--line);border-radius:12px;padding:18px;background:rgba(255,255,255,.012)}
+.os h3{font-family:var(--sans);font-size:14px;font-weight:600;margin:0 0 6px;letter-spacing:.01em}
+.os p{margin:0;color:var(--dim);font-size:13px}
+.os .tag{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:10px;
+ letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:999px;
+ border:1px solid var(--line-2);color:var(--dim)}
+.os .tag.ready{color:var(--ice);border-color:color-mix(in oklab,var(--ice) 40%,transparent)}
+
+.note{border:1px solid var(--line);border-left:2px solid var(--blue2);border-radius:10px;
+ padding:18px 20px;background:rgba(111,168,255,.05);color:var(--dim);font-size:14px}
+.note b{color:var(--ink);font-weight:600}
+.note code{font-family:var(--mono);font-size:13px;color:var(--ice)}
+
+footer{border-top:1px solid var(--line);padding:30px 0 60px;color:var(--dim);font-size:13px}
+footer .tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}
+ html{scroll-behavior:auto}}
+@media (max-width:640px){header{padding:120px 0 40px}.cmd code{min-width:100%}}
+table.dl{width:100%;border-collapse:collapse;margin:16px 0 0;font-size:14px}
+table.dl th{text-align:left;font-weight:600;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.14);color:#9fb2c9}
+table.dl td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top}
+table.dl code{font-size:12px;overflow-wrap:anywhere}
+.arch{font-size:11px;color:#7f93aa;letter-spacing:.08em}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+ <div class="nav-in">
+  <a class="brand" href="/">
+   <span class="orbital" aria-hidden="true">
+    <svg viewBox="0 0 100 100">
+     <g class="ring r1"><ellipse cx="50" cy="50" rx="45" ry="17"/></g>
+     <g class="ring r2"><ellipse cx="50" cy="50" rx="45" ry="17" transform="rotate(64 50 50)"/></g>
+     <circle class="halo" cx="50" cy="50" r="13"/>
+     <circle class="core" cx="50" cy="50" r="11"/>
+    </svg>
+   </span>
+   oracle</a>
+  <a class="back" href="/">← back to site</a>
+ </div>
+</nav>
+
+<main class="wrap">
+ <header>
+  <p class="eyebrow">Download</p>
+  <h1>Install <em>Oracle.</em></h1>
+  <p class="lede">The CLI is the full product and it runs on macOS, Windows and Linux today.
+   Linux, macOS and Windows desktop builds are all live. Locals Only holders get 0% fees.</p>
+ </header>
+
+ <section>
+  <h2>Oracle CLI</h2>
+  <p class="sub">One command. Node 20 or newer. The CLI recognises your agent wallet and applies 0% fees automatically for Locals Only holders. Keys and signing never live in the public
+   package.</p>
+  <div class="install">
+   <div class="cmd">
+    <code id="cmd">curl -fL -o oracle.tgz "$ORACLE_GATE_LINK" &amp;&amp; npm i -g ./oracle.tgz</code>
+    <button class="copy" id="copy" type="button">Copy</button>
+   </div>
+   <div class="ver">
+    <span>latest <b id="ver">0.12.0</b></span>
+    <span>registry <b>npmjs.com</b></span>
+    <span>requires <b>node ≥ 20</b></span>
+   </div>
+  </div>
+
+  <div class="os-grid">
+   <div class="os">
+    <h3>macOS</h3>
+    <p>Apple silicon and Intel. Runs in any terminal.</p>
+    <span class="tag ready">CLI ready</span>
+   </div>
+   <div class="os">
+    <h3>Linux</h3>
+    <p>Any distro with Node 20+. Primary development target.</p>
+    <span class="tag ready">CLI ready</span>
+   </div>
+   <div class="os">
+    <h3>Windows</h3>
+    <p>PowerShell or WSL. Same command.</p>
+    <span class="tag ready">CLI ready</span>
+   </div>
+  </div>
+ </section>
+
+ <section>
+  <h2>Desktop app</h2>
+  <p class="sub">An Electron shell around the same runtime.</p>
+  <div class="note">
+   <b>Beta, ready to use.</b> Desktop builds are live for everyone. Locals Only holders get 0% fees.
+   Pull the AppImage, DMG, or installer — no gate, no link. Verify the checksum, then run it.
+   The desktop app runs the same runtime as the CLI, no separate signer needed.
+  </div>
+  <table class="dl">
+   <tr><th>Build</th><th>Status</th><th>SHA-256</th></tr>
+   <tr><td>Linux <code>.AppImage</code></td><td>Live &middot; 123 MB</td>
+    <td><code>64cef5676ca19fbd01ab58e27a1f98eb5b5a6678e3ba51a095fd5685be70c814</code></td></tr>
+   <tr><td>macOS <code>.dmg</code> <span class="arch">arm64</span></td><td>Live &middot; signed + notarized &middot; 118 MB</td>
+    <td><code>6d45a0c4063fa1071217e94e2871916d161fa2dbf4512d127262203e17902c57</code></td></tr>
+   <tr><td>Windows <code>.exe</code> <span class="arch">x64</span></td><td>Live &middot; 99 MB</td>
+    <td><code>cb84c8f7c2da7743c17fe022b001da7701f13ae48053f760214daf62972bfbbf</code></td></tr>
+  </table>
+  <p class="sub"><b>Windows SmartScreen will warn on first run.</b> The installer carries
+   electron-builder's generated signature, not a CA-issued code-signing certificate, so
+   Windows shows "unknown publisher": choose More info, then Run anyway. Verify the checksum
+   below first.</p>
+  <p class="sub"><b>The macOS build is signed and notarized</b> with Developer ID
+   <code>5BV985Z9LJ</code>, and the ticket is stapled, so it opens with no Gatekeeper prompt.
+   Verified by mounting the dmg and asking Gatekeeper directly:
+   <code>Oracle.app: accepted &middot; source=Notarized Developer ID</code>.</p>
+  <p class="sub">Checksums are printed so you can verify what the gate served you:
+   <code>sha256sum Oracle-0.1.0.AppImage</code>. The desktop shell holds no keys and
+   broadcasts nothing; it prepares transactions your wallet signs.</p>
+ </section>
+
+ <section>
+  <h2>After install</h2>
+  <p class="sub">Run <code style="font-family:var(--mono);color:var(--ice)">oracle</code> to open the shell.
+   Pin a surface with <code style="font-family:var(--mono);color:var(--ice)">/chain hyperliquid</code>,
+   switch models with <code style="font-family:var(--mono);color:var(--ice)">/model</code>, then ask naturally.
+   Oracle reads state, prices routes and prepares transactions. Your wallet signs them.</p>
+ </section>
+</main>
+
+<footer class="wrap">
+ <span class="tag">the future is agentic / by demi</span>
+</footer>
+
+<script>
+(function(){
+ var btn=document.getElementById("copy");
+ var cmd=document.getElementById("cmd");
+ if(!btn||!cmd)return;
+ btn.addEventListener("click",function(){
+  var text=cmd.textContent.trim();
+  try{
+   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text);}
+   else{
+    var ta=document.createElement("textarea");ta.value=text;ta.setAttribute("readonly","");
+    ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);
+    ta.select();document.execCommand("copy");document.body.removeChild(ta);
+   }
+  }catch(e){}
+  // Feedback is unconditional: a button that looks dead is worse than one that
+  // confirms while the browser blocked the write. The command stays selectable.
+  btn.textContent="Copied";btn.classList.add("done");
+  setTimeout(function(){btn.textContent="Copy";btn.classList.remove("done");},1600);
+ });
+ // Click the command to select it -- always works, no permissions involved.
+ cmd.style.cursor="pointer";
+ cmd.title="Click to select";
+ cmd.addEventListener("click",function(){
+  var r=document.createRange();r.selectNodeContents(cmd);
+  var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);
+ });
+})();
+</script>
+</body>
+</html>

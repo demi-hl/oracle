@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Oracle agent profile",
+  "description": "Definition of one Oracle specialist lane. Consumed by bin/oracle-init to create a Hermes profile.",
+  "type": "object",
+  "required": ["id", "label", "role", "description", "skills", "posture"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z_][a-z0-9-]*$",
+      "description": "Hermes profile name. No dots (Hermes rejects them)."
+    },
+    "label": { "type": "string", "description": "Human-facing name, lowercase." },
+    "role": { "enum": ["router", "venue", "builder"] },
+    "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "description": { "type": "string", "minLength": 10 },
+    "template": { "type": "boolean" },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "note": { "type": "string" },
+        "suggested": {
+          "enum": [
+            "strong-reasoner",
+            "fast-tool-caller",
+            "news-reasoner",
+            "skeptical-reasoner",
+            "careful-verifier",
+            "balanced"
+          ],
+          "description": "A CAPABILITY class, deliberately not a model id. Oracle makes no model calls and does not pin providers; the operator maps a class to whatever their Hermes serves."
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Repo-local skill names under skills/. Must exist; oracle-init verifies."
+    },
+    "mcp": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "chains": {
+      "type": "array",
+      "items": { "type": "integer" },
+      "description": "EVM chain ids this lane owns. Empty for non-EVM or chain-agnostic lanes."
+    },
+    "nonEvm": { "type": "string" },
+    "posture": {
+      "type": "object",
+      "required": ["default", "grantActions", "signing", "rationale"],
+      "additionalProperties": false,
+      "properties": {
+        "default": {
+          "enum": ["DISARMED"],
+          "description": "Only DISARMED is a valid shipped default. A lane that ships armed is a bug."
+        },
+        "grantActions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "read:chain",
+              "simulate:tx",
+              "prepare:swap",
+              "prepare:order",
+              "prepare:deploy",
+              "prepare:verify",
+              "prepare:mint",
+              "prepare:inscription"
+            ]
+          },
+          "description": "Note every allowed action is read, simulate, or PREPARE. No shipped lane may request a broadcast or signing action."
+        },
+        "signing": {
+          "enum": ["none", "user-wallet"],
+          "description": "Never 'house'. Oracle holds no keys."
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Why this posture. Forces the author to justify the grant rather than copy it."
+        }
+      }
+    }
+  }
+}

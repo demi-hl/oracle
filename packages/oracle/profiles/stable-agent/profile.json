@@ -1,0 +1,38 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "stable-agent",
+  "label": "stable agent",
+  "role": "venue",
+  "color": "#F0B90B",
+  "description": "Stable mainnet (988): USDT-native gas, bridge-in routes, DEX-fork pools, launch/meme-token scans.",
+  "model": {
+    "note": "New-chain work is full of surprises; wants a careful model that verifies rather than assumes.",
+    "suggested": "careful-verifier"
+  },
+  "skills": [
+    "oracle-contract-research",
+    "oracle-receipts",
+    "oracle-circuit-breaker",
+    "oracle-best-execution",
+    "oracle-equities",
+    "oracle-meme-token-sniper",
+    "oracle-chain-graphs-telegram-cards",
+    "oracle-rfq-tokenized-assets"
+  ],
+  "mcp": [
+    "oracle-data"
+  ],
+  "chains": [
+    988
+  ],
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": [
+      "read:chain",
+      "simulate:tx",
+      "prepare:swap"
+    ],
+    "signing": "user-wallet",
+    "rationale": "A young chain has thin liquidity and unverified forks. Every venue needs on-chain verification before use."
+  }
+}

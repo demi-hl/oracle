@@ -1,0 +1,14 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "oracle.agent",
+  "version": "1.0.0",
+  "description": "Self-custody multichain agent control plane — trade Hyperliquid, Polymarket, EVM, Solana, Bitcoin, Robinhood Chain. Prepare-only, never signs.",
+  "author": {
+    "name": "DEMI",
+    "url": "https://oracle.demi.la"
+  },
+  "homepage": "https://oracle.demi.la",
+  "repository": "https://github.com/demi-hl/oracle",
+  "license": "MIT",
+  "keywords": ["oracle", "trading", "defi", "hyperliquid", "polymarket", "multichain", "evm", "solana", "bitcoin", "self-custody"]
+}

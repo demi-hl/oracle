@@ -1,0 +1,40 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "oracle",
+  "label": "oracle",
+  "role": "router",
+  "color": "#7CC4FF",
+  "description": "Router for multichain trading, building, analysis, wallet/NFT inventory and value history, scanners, RFQ, tokenized-asset buys, NFT mint gas limits, meme-token sniping, and chain-family token/NFT launches.",
+  "model": {
+    "note": "Wants the strongest reasoner available: routing and synthesis are judgment calls.",
+    "suggested": "strong-reasoner"
+  },
+  "skills": [
+    "oracle-desk",
+    "oracle-action-semantics",
+    "oracle-grants",
+    "oracle-receipts",
+    "oracle-best-execution",
+    "oracle-equities",
+    "oracle-smart-wallet-scanner",
+    "oracle-meme-token-sniper",
+    "oracle-chain-graphs-telegram-cards",
+    "oracle-rfq-tokenized-assets",
+    "oracle-nft-mint-gas-war",
+    "oracle-multichain-token-launch",
+    "oracle-multichain-nft-launch",
+    "balance"
+  ],
+  "mcp": [
+    "oracle-data"
+  ],
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": [
+      "read:chain",
+      "simulate:tx"
+    ],
+    "signing": "none",
+    "rationale": "The router reads and simulates so it can compare options. It hands anything that moves value to a specialist lane, which needs its own grant."
+  }
+}

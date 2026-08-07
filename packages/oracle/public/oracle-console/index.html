@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Oracle Console</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <p class="hero-line">Preview agent permissions before you install a real wallet-enforced session.</p>
+      <p class="hero-sub">
+        Full crypto pack: multichain reads, quotes, simulation, and unsigned
+        transaction prep across 11 EVM chains plus Solana and Bitcoin L1 lanes.
+        Protocol builder included &mdash; design and prepare a deploy, sign it yourself.
+      </p>
+      <p class="hero-posture">
+        Every lane starts <strong>DISARMED</strong>. This console previews policy only and does not authorize an agent.
+      </p>
+    </header>
+
+    <section class="cta-row">
+      <button id="connect-btn" class="cta" type="button">Preview agent permissions</button>
+      <button id="btc-connect-btn" class="cta cta-secondary" type="button">Connect Bitcoin wallet</button>
+      <p id="wallet-state" class="wallet-state" aria-live="polite"></p>
+      <p id="btc-wallet-state" class="wallet-state" aria-live="polite"></p>
+    </section>
+
+    <section id="btc-panel" class="permission-panel btc-panel" hidden>
+      <h2 class="panel-title">Bitcoin lane</h2>
+      <p class="panel-note">Actual BTC L1 + ordinals/runes via Satflow. Sign in wallet (Xverse / UniSat / Leather / OKX / Phantom). Magic Eden BTC marketplace is dead. Oracle never holds keys.</p>
+      <dl class="panel-grid">
+        <dt>Wallet</dt>
+        <dd id="btc-wallet-label">.</dd>
+        <dt>Address</dt>
+        <dd id="btc-address">.</dd>
+        <dt>Detected</dt>
+        <dd id="btc-detected">.</dd>
+      </dl>
+      <p id="btc-panel-status" class="panel-status" aria-live="polite"></p>
+    </section>
+
+    <section class="sequence" aria-label="connection sequence">
+      <div class="seq-step" id="step-connect" data-state="pending">
+        <span class="seq-index">1</span>
+        <span class="seq-label">Connect</span>
+      </div>
+      <div class="seq-arrow">-&gt;</div>
+      <div class="seq-step" id="step-bound" data-state="pending">
+        <span class="seq-index">2</span>
+        <span class="seq-label">Review</span>
+      </div>
+      <div class="seq-arrow">-&gt;</div>
+      <div class="seq-step" id="step-enforced" data-state="pending">
+        <span class="seq-index">3</span>
+        <span class="seq-label">Preview</span>
+      </div>
+    </section>
+
+    <section id="permission-panel" class="permission-panel" hidden>
+      <h2 class="panel-title">What this agent can do</h2>
+      <dl class="panel-grid">
+        <dt>Chain</dt>
+        <dd id="perm-chain">.</dd>
+
+        <dt>Actions</dt>
+        <dd id="perm-actions">.</dd>
+
+        <dt>Targets</dt>
+        <dd id="perm-targets">.</dd>
+
+        <dt>Max value</dt>
+        <dd id="perm-max-value">.</dd>
+
+        <dt>Expiry</dt>
+        <dd id="perm-expiry">.</dd>
+      </dl>
+      <button id="revoke-btn" class="revoke" type="button">Clear preview</button>
+      <p id="panel-status" class="panel-status" aria-live="polite"></p>
+    </section>
+
+    <footer class="custody-line">
+      <p>You keep custody. A preview is not an installed grant, session key, or revocation.</p>
+    </footer>
+  </main>
+
+  <script src="bitcoin-wallets.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

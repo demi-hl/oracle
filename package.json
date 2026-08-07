@@ -1,0 +1,41 @@
+{
+  "name": "oracle-monorepo",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/contract",
+    "packages/oracle",
+    "apps/oracle-app",
+    "apps/oracle-desktop"
+  ],
+  "overrides": {
+    "postcss": "^8.5.25",
+    "sharp": "^0.35.3",
+    "next": {
+      "postcss": "^8.5.25",
+      "sharp": "^0.35.3"
+    }
+  },
+  "scripts": {
+    "test": "npm --workspace @oracle-agent/oracle test",
+    "test:boundary": "npm --workspace @oracle-agent/oracle run test:boundary",
+    "test:count": "npm --workspace @oracle-agent/oracle run test:count",
+    "test:count:update": "npm --workspace @oracle-agent/oracle run test:count:update",
+    "gate:docs": "npm --workspace @oracle-agent/oracle run gate:docs",
+    "gate:release": "npm --workspace @oracle-agent/oracle run gate:release",
+    "typecheck": "npm --workspace @oracle-agent/contract run typecheck && npm --workspace @oracle-agent/app run typecheck",
+    "build": "npm --workspace @oracle-agent/contract run build && npm --workspace @oracle-agent/app run build",
+    "desktop:e2e": "npm --workspace @oracle-agent/desktop run e2e",
+    "desktop:build:linux": "npm --workspace @oracle-agent/desktop run build:linux",
+    "scan:secrets": "npm --workspace @oracle-agent/oracle run scan:secrets"
+  },
+  "allowScripts": {
+    "electron-winstaller@5.4.0": true,
+    "esbuild@0.28.1": true,
+    "unrs-resolver": true,
+    "electron@39.8.10": true
+  },
+  "dependencies": {
+    "electron": "^39.8.10"
+  }
+}

@@ -1,0 +1,154 @@
+{
+ "QQQ": {
+  "addr": "0xD5f3879160bc7c32ebb4dC785F8a4F505888de68",
+  "liq": 116323.1,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xEbD78dcfc8a6b3A696f1E191aD1ff321f9579f79"
+ },
+ "NFLX": {
+  "addr": "0xE0444EF8BF4eD74f74FD73686e2ddF4C1c5591E8",
+  "liq": 75447.48,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xeA75eA625d83aE276b9ae8B0A3dC205916EE65cF"
+ },
+ "USO": {
+  "addr": "0xa30FA36Db767ad9eD3f7a60fC79526fB4d56D344",
+  "liq": 109084.27,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0x6ED11C7DfD8e2ca5620eed29a7B9b53AE90dD0D2"
+ },
+ "ORCL": {
+  "addr": "0xb0992820E760d836549ba69BC7598b4af75dEE03",
+  "liq": 18665.22,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0x3a03bd306e0cbec0c0a33d5dee9c88e31c1ed46fd1d9a1e0350cd76260e2da73"
+ },
+ "SGOV": {
+  "addr": "0x92FD66527192E3e61d4DDd13322Aa222DE86F9B5",
+  "liq": 17032.33,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xfAb520051f96F4D2a32c22B6a3dD7fFfdf231bFe"
+ },
+ "MSTR": {
+  "addr": "0xec262a75e413fAfD0dF80480274532C79D42da09",
+  "liq": 87940.62,
+  "quote": "WETH",
+  "quoteAddr": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+  "dex": "uniswap",
+  "pair": "0x70504a6FafdbfB75fE971FAA4dD716e79aC5624c"
+ },
+ "PLTR": {
+  "addr": "0x894E1EC2D74FFE5AEF8Dc8A9e84686acCB964F2A",
+  "liq": 114965.42,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xee430ee1003e1985e1828a01b9a20dad67ad4302994fe2abb4a173de4ac54623"
+ },
+ "HOOD": {
+  "addr": "0x32aC8C1D7672667D5EbdEa22935F7B06fC8D496f",
+  "liq": 63478.43,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0x1c1F6e283a72A68c15C816324363c794151cf913"
+ },
+ "COIN": {
+  "addr": "0x6330D8C3178a418788dF01a47479c0ce7CCF450b",
+  "liq": 106110.52,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0x007a13fa152f6dc383cad20a8eaab4e1e2538b606936eae2a424f8aa47d6db31"
+ },
+ "AMD": {
+  "addr": "0x86923f96303D656E4aa86D9d42D1e57ad2023fdC",
+  "liq": 33356.95,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xde9f85fdd9e05a943a52f2c69ffafe3064a3287df03d02c9b431bc92d4781274"
+ },
+ "GOOGL": {
+  "addr": "0x2e0847E8910a9732eB3fb1bb4b70a580ADAD4FE3",
+  "liq": 403723.79,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xd4ecb79fdc521d7725d22b33ed43cb4e47aa96bfad76aa29577e3151f723ac5e"
+ },
+ "META": {
+  "addr": "0xc0D6457C16Cc70d6790Dd43521C899C87ce02f35",
+  "liq": 100217.76,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0x5875d407a42965b0e768c8925cea290e06fa50603ef34fc99eb92a1050e6ae36"
+ },
+ "AMZN": {
+  "addr": "0x12f190a9F9d7D37a250758b26824B97CE941bF54",
+  "liq": 77988.41,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xd32646872e6712af8cf778e34b6bbef1d2ae0bddd83764e1b07333518ad59333"
+ },
+ "MSFT": {
+  "addr": "0xe93237C50D904957Cf27E7B1133b510C669c2e74",
+  "liq": 136622.73,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0x9194a557b6a6bb2236b49ea7e2bbccec5d3eeb705aef00903be4b3de1d949579"
+ },
+ "SPY": {
+  "addr": "0x117cc2133c37B721F49dE2A7a74833232B3B4C0C",
+  "liq": 300688.01,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xfe2a80bb5618fd14984b92ca6d45bf5ba67443ddb1435e28b2e48df2fc1526cd"
+ },
+ "AAPL": {
+  "addr": "0xaF3D76f1834A1d425780943C99Ea8A608f8a93f9",
+  "liq": 317663.17,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xc748f4671a867db48b552f6b7650bf3255e05f80f00e3f7aad1b17ccb7898fdb"
+ },
+ "TSLA": {
+  "addr": "0x322F0929c4625eD5bAd873c95208D54E1c003b2d",
+  "liq": 309507.87,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0x8517f8071ae5b831b738052f12125e8e3d6c158b78728aa44ce3b25e5104d32e"
+ },
+ "GME": {
+  "addr": "0x1b0E319c6A659F002271B69dB8A7df2F911c153E",
+  "liq": 391967.06,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0xE9713f453aDB9245B19559790c96F470a18F2fDF"
+ },
+ "NVDA": {
+  "addr": "0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC",
+  "liq": 1732831.66,
+  "quote": "USDG",
+  "quoteAddr": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "dex": "uniswap",
+  "pair": "0x3bb34a44f1b2b5f32c034c38a53065a521a47b199700fa9bd19d60985ff24bf1"
+ }
+}

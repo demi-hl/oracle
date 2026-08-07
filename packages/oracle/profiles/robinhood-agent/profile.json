@@ -1,0 +1,41 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "robinhood-agent",
+  "label": "robinhood agent",
+  "role": "venue",
+  "color": "#d7ff4d",
+  "description": "Robinhood Chain tokens, NFTs, tokenized Robinhood-style assets, and capped NFT mint preparation.",
+  "model": {
+    "note": "Low-cap token research is adversarial; wants a model that stays skeptical under a good story.",
+    "suggested": "skeptical-reasoner"
+  },
+  "skills": [
+    "oracle-token-research",
+    "oracle-action-semantics",
+    "oracle-receipts",
+    "oracle-circuit-breaker",
+    "oracle-best-execution",
+    "oracle-equities",
+    "oracle-meme-token-sniper",
+    "oracle-chain-graphs-telegram-cards",
+    "oracle-rfq-tokenized-assets",
+    "oracle-nft-mint-gas-war"
+  ],
+  "mcp": [
+    "oracle-data"
+  ],
+  "chains": [
+    4663
+  ],
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": [
+      "read:chain",
+      "simulate:tx",
+      "prepare:swap",
+      "prepare:mint"
+    ],
+    "signing": "user-wallet",
+    "rationale": "Low-cap venues are where honeypots live. Sell-simulation is required before any buy is prepared."
+  }
+}

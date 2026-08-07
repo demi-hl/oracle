@@ -1,0 +1,769 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   iOS-native base layer — tap highlights, scroll momentum, overscroll
+   ============================================================================ */
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-overflow-scrolling: touch;
+  /* Prevent text selection on UI chrome (pane content can override) */
+  -webkit-user-select: none;
+  user-select: none;
+  /* Kill the 350ms tap delay */
+  touch-action: manipulation;
+}
+
+/* Restore text selection inside scrollable panes */
+main,
+[role="dialog"],
+[contenteditable],
+textarea,
+input {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* iOS scrollbar styling — thin, transparent track */
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--midground) 20%, transparent);
+  border-radius: 99px;
+}
+
+body {
+  /* Prevent rubber-band overscroll on the root — panes handle their own */
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================================
+   Oracle public app
+   Theme system and product UI tokens. No runtime font fetches.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   Self-hosted Oracle fonts, never fetched from the network.
+   --------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/CormorantGaramond-300.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/CormorantGaramond-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/CormorantGaramond-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/Outfit-300.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Outfit-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Outfit-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Outfit-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/IBMPlexMono-500.woff2") format("woff2");
+}
+
+/* Editorial stack. Variable faces, so one file covers the whole axis:
+   Hedvig carries an optical-size axis rather than weight, which is why the
+   display face is set at a single weight and sized by opsz. All three are
+   SIL Open Font License. */
+@font-face {
+  font-family: "Hedvig Letters Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/HedvigLettersSerif-var.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/InstrumentSans-var.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Fragment Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/FragmentMono-400.woff2") format("woff2");
+}
+
+/* ---------------------------------------------------------------------------
+   Oracle defaults. These are the defaults for the `default`
+   theme; ThemeProvider rewrites them as inline styles on <html> on switch.
+   Ported from the desktop dashboard's src/index.css.
+   --------------------------------------------------------------------------- */
+:root {
+  --foreground: color-mix(in srgb, #ffffff 0%, transparent);
+  --foreground-base: #ffffff;
+  --foreground-alpha: 0;
+  --midground: color-mix(in srgb, #7CC4FF 100%, transparent);
+  --midground-base: #7CC4FF;
+  --midground-alpha: 1;
+  --background: color-mix(in srgb, #0B1018 100%, transparent);
+  --background-base: #0B1018;
+  --background-alpha: 1;
+
+  /* Consumed by <Backdrop />; also theme-switchable. */
+  --warm-glow: rgba(124, 196, 255, 0.2);
+  --noise-opacity-mul: 0.28;
+  --component-backdrop-filler-opacity: 0.025;
+
+  /* Typography tokens, rewritten by ThemeProvider. Defaults mirror the Oracle
+     splash site: Outfit sans, Cormorant Garamond display, IBM Plex Mono. */
+  --theme-font-sans: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --theme-font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Mono",
+    "JetBrains Mono", Menlo, Consolas, monospace;
+  --theme-font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --theme-base-size: 16.5px;
+  --theme-line-height: 1.55;
+  --theme-letter-spacing: 0;
+
+  /* Compatibility aliases used by vendored UI classes. */
+  --font-mondwest: var(--theme-font-sans);
+  --font-neuebit: var(--theme-font-mono);
+  --font-rules-compressed: var(--theme-font-sans);
+  --font-rules-expanded: var(--theme-font-sans);
+
+  /* Layout tokens. */
+  --radius: 0.5rem;
+  --theme-radius: 0.5rem;
+  --theme-spacing-mul: 1;
+  --theme-density: comfortable;
+
+  /* Data-series accents (Analytics/Models token charts). */
+  --series-input-token: #7CC4FF;
+  --series-output-token: #BBDFFF;
+
+  --vsq: calc(0.5vw + 0.5vh);
+}
+
+/* ---------------------------------------------------------------------------
+   Tailwind v4 token mapping. `@theme inline` so each utility resolves to the
+   LIVE CSS var (ThemeProvider overrides them at runtime) rather than baking a
+   value at build time. Mirrors the desktop dashboard's shadcn-compat cascade.
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-background-base: var(--background-base);
+  --color-midground: var(--midground);
+  --color-midground-base: var(--midground-base);
+  --color-gesso: #eaeaea;
+
+  /* Remap foreground to midground so `text-foreground`/`bg-foreground` stay
+     visible — in LENS_0 `--foreground` itself has alpha 0. */
+  --color-foreground: var(--midground);
+  --color-foreground-base: var(--foreground-base);
+
+  /* Text hierarchy — WCAG-AA-targeted defaults derived from midground. */
+  --color-text-primary: var(--text-primary, var(--midground));
+  --color-text-secondary: var(
+    --text-secondary,
+    color-mix(in srgb, var(--midground-base) 80%, transparent)
+  );
+  --color-text-tertiary: var(
+    --text-tertiary,
+    color-mix(in srgb, var(--midground-base) 65%, transparent)
+  );
+  --color-text-disabled: var(
+    --text-disabled,
+    color-mix(in srgb, var(--midground-base) 60%, transparent)
+  );
+  --color-text-on-accent: var(--text-on-accent, var(--background));
+
+  /* Shadcn-compat tokens derived from the 3-layer palette via color-mix. */
+  --color-card: color-mix(in srgb, var(--midground-base) 4%, var(--background-base));
+  --color-card-foreground: var(--midground);
+  --color-primary: var(--midground);
+  --color-primary-foreground: var(--background-base);
+  --color-secondary: color-mix(in srgb, var(--midground-base) 6%, var(--background-base));
+  --color-secondary-foreground: var(--midground);
+  --color-muted: color-mix(in srgb, var(--midground-base) 8%, var(--background-base));
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-accent: color-mix(in srgb, var(--midground-base) 10%, var(--background-base));
+  --color-accent-foreground: var(--midground);
+  --color-destructive: var(--destructive, #fb2c36);
+  --color-destructive-foreground: var(--destructive-foreground, #ffffff);
+  --color-success: var(--success, #4ade80);
+  --color-warning: var(--warning, #ffbd38);
+  --color-border: color-mix(in srgb, var(--midground-base) 15%, transparent);
+  --color-input: color-mix(in srgb, var(--midground-base) 15%, transparent);
+  --color-ring: var(--midground);
+  --color-popover: color-mix(in srgb, var(--midground-base) 4%, var(--background-base));
+  --color-popover-foreground: var(--midground);
+
+  --color-current: currentColor;
+  --color-transparent: transparent;
+
+  /* Density: scale Tailwind's spacing scale by the theme multiplier. */
+  --spacing: calc(0.25rem * var(--theme-spacing-mul, 1));
+
+  --font-sans: var(--theme-font-sans);
+  --font-mono: var(--theme-font-mono);
+
+  --radius-sm: calc(var(--theme-radius) - 4px);
+  --radius-md: calc(var(--theme-radius) - 2px);
+  --radius-lg: var(--theme-radius);
+  --radius-xl: calc(var(--theme-radius) + 4px);
+}
+
+/* ---------------------------------------------------------------------------
+   Custom utilities (Tailwind v4 @utility). Match the DS so chrome can opt into
+   the brand typographic treatments.
+   --------------------------------------------------------------------------- */
+@utility font-mondwest {
+  font-family: var(--font-mondwest);
+}
+@utility font-neuebit {
+  font-family: var(--font-neuebit);
+}
+@utility font-compressed {
+  font-family: var(--font-rules-compressed);
+}
+@utility font-expanded {
+  font-family: var(--font-rules-expanded);
+}
+@utility font-mono-ui {
+  font-family: var(--theme-font-mono);
+  font-feature-settings: "tnum" 1;
+}
+@utility font-display-ui {
+  font-family: var(--theme-font-display);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}
+/* Brand display style — opt-in uppercase + tracking. Compose with a font
+   utility (e.g. `text-display font-mondwest`) on chrome only, never body. */
+@utility text-display {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+@utility scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Fable direction — "engraved ledger" token layer.
+
+   The home surface reads like an engraved financial instrument rather than a
+   dashboard: a deep slate well, a stacked surface ladder for depth, warm bone
+   engraving ink for display type, slate inks for body text, and Oracle blue
+   demoted to a SIGNAL color — live data, status, and the one primary action.
+   Hairline rules carry structure; boxes are the exception, not the default.
+   --------------------------------------------------------------------------- */
+:root {
+  /* Depth ladder, darkest (page well) to lightest (focused object). */
+  --fable-well: #060A10;
+  --fable-s0: #0A1017;
+  --fable-s1: #0E1520;
+  --fable-s2: #121B28;
+  --fable-s3: #182434;
+
+  /* Ink ladder. Display ink is warm bone — engraving ink on dark paper. */
+  --fable-ink-hi: #ECE7DA;
+  --fable-ink: #C3CDD9;
+  --fable-ink-mid: #8B98A8;
+  --fable-ink-low: #5C6878;
+
+  /* Oracle blue stays the brand hue but becomes a signal, not a wall color. */
+  --fable-signal: #7CC4FF;
+  --fable-signal-deep: #3E7FB8;
+
+  /* Hairline rules. */
+  --fable-line: rgba(124, 196, 255, 0.1);
+  --fable-line-strong: rgba(124, 196, 255, 0.24);
+
+  /* One easing curve for the whole surface. */
+  --fable-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Display voice: Cormorant at real display scale, engraved ink. */
+.fable-display {
+  font-family: var(--theme-font-display);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  color: var(--fable-ink-hi);
+}
+
+/* Running heads / eyebrows: the only place tracking gets loud. */
+.fable-eyebrow {
+  font-family: var(--theme-font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: color-mix(in srgb, var(--fable-signal) 66%, transparent);
+}
+
+/* ===========================================================================
+   Design-system keyframes — copied VERBATIM from
+   `@nous-research/ui/dist/ui/globals.css`. This is "the Hermes look": the
+   gradient-stroke arc, marching ants, cursor blink, slow spin, the fade /
+   slide entrances, and the toast transitions. Do not edit the timings.
+   =========================================================================== */
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.animate-slide-down {
+  animation: slide-down 0.6s ease-out both;
+}
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out both;
+}
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out both;
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+@keyframes caret-blink {
+  0%,
+  45% {
+    opacity: 0.85;
+  }
+  70%,
+  100% {
+    opacity: 0.12;
+  }
+}
+.animate-caret-blink {
+  animation: caret-blink 1.05s ease-in-out infinite alternate;
+}
+
+@keyframes march {
+  to {
+    background-position: 0.5rem 0;
+  }
+}
+/* Marching-ants dashed border for in-progress / streaming states. */
+.march {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--midground) 0 4px,
+    transparent 4px 8px
+  );
+  background-size: 0.5rem 1px;
+  background-repeat: repeat-x;
+  animation: march 0.6s linear infinite;
+}
+/* Cursor blink. */
+.blink {
+  animation: blink 1s step-end infinite;
+}
+.group:hover .blink {
+  animation: blink 1s step-end infinite;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+}
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+}
+@keyframes gradient-stroke {
+  0% {
+    background-position: 15% 15%;
+  }
+  100% {
+    background-position: 75% 75%;
+  }
+}
+
+/* The signature rotating-glow border. Drop <span class="arc-border" /> inside
+   a `position: relative` rounded element (active rows, focused inputs). */
+.arc-border {
+  --_t: clamp(0%, (0.5 - var(--foreground-alpha, 1)) * 99900%, 100%);
+  --arc-c0: color-mix(in srgb, var(--foreground) var(--_t), transparent);
+  --arc-c1: var(--midground);
+  --arc-c2: var(--background);
+  --arc-angle: 160deg;
+  --arc-width: 1.25px;
+  --arc-inset: -2px;
+  --arc-duration: 2.23s;
+  --arc-gradient: linear-gradient(
+    var(--arc-angle),
+    transparent 0%,
+    var(--arc-c0) 15%,
+    var(--arc-c1) 20%,
+    var(--arc-c2) 25%,
+    transparent 35%,
+    transparent 40%,
+    var(--arc-c0) 55%,
+    var(--arc-c1) 60%,
+    var(--arc-c2) 65%,
+    transparent 75%,
+    transparent 80%,
+    var(--arc-c0) 95%,
+    var(--arc-c1) 100%
+  );
+
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  inset: var(--arc-inset);
+  padding: var(--arc-width);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.arc-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--arc-gradient);
+  background-size: 300% 300%;
+  animation: gradient-stroke var(--arc-duration) linear infinite;
+}
+
+/* Animated film-grain shift for the Backdrop noise layer. The static SVG noise
+   tiles at 512px; nudging the position in steps gives the living TV-static
+   shimmer. Backdrop only mounts this layer when the GPU tier probe passes, so
+   it is already skipped under reduced-motion / software renderers; the media
+   query below is belt-and-braces. */
+@keyframes noise-shift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-3%, 2%, 0);
+  }
+  50% {
+    transform: translate3d(2%, -2%, 0);
+  }
+  75% {
+    transform: translate3d(-2%, -3%, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+.noise-grain {
+  animation: noise-shift 0.7s steps(3) infinite;
+}
+
+/* Subtle conic grain overlay for badges/chips. */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  pointer-events: none;
+  background: repeating-conic-gradient(currentColor 0% 25%, #0000 0% 50%) 0 0 /
+    2px 2px;
+  border-radius: inherit;
+}
+
+/* Plus-lighter blend used by the brand lockup for a subtle glow. */
+.blend-lighter {
+  mix-blend-mode: plus-lighter;
+}
+
+/* When a theme provides `assets.bg`, the backdrop renders it as a CSS bg and
+   the default filler <img> hides to avoid double-compositing. */
+:root:not([style*="--theme-asset-bg:"]) .theme-default-filler {
+  display: block;
+}
+:root[style*="--theme-asset-bg:"] .theme-default-filler {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Document shell. Mobile-first: lock the app to the dynamic viewport so the
+   tab bar / context bar stay pinned and panes scroll internally (native feel).
+   --------------------------------------------------------------------------- */
+@layer base {
+  html {
+    font-family: var(--theme-font-sans);
+    font-size: var(--theme-base-size);
+    line-height: var(--theme-line-height);
+    letter-spacing: var(--theme-letter-spacing);
+    /* Document base must be BLACK, not the theme teal: the Backdrop's z-1 layer
+       paints `--background-base` with mix-blend-mode:difference, so the base
+       behind it has to be black for difference(teal, black)=teal to render.
+       Painting teal here caused difference(teal,teal)=black (the dead middle). */
+    background-color: #000;
+    color: var(--midground);
+    height: 100dvh;
+    -webkit-text-size-adjust: 100%;
+    touch-action: pan-y pinch-zoom;
+  }
+  /* Desktop density: the IDE shell (>=1024px) reads at workstation distance,
+     not phone distance. Cap the themed base size so rem-scaled type/spacing
+     tighten to IDE density regardless of the mobile-tuned theme value. */
+  @media (min-width: 1024px) {
+    html {
+      font-size: min(var(--theme-base-size), 14px);
+      line-height: 1.5;
+    }
+  }
+  body {
+    font-family: var(--theme-font-sans);
+    margin: 0;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Disable the iOS tap-highlight flash; we render our own press states. */
+    -webkit-tap-highlight-color: transparent;
+  }
+  code,
+  kbd,
+  pre,
+  samp,
+  .font-mono {
+    font-family: var(--theme-font-mono);
+  }
+  ::selection {
+    background: var(--midground);
+    color: var(--background-base);
+  }
+  /* Thin themed scrollbars (desktop / hover devices). */
+  ::-webkit-scrollbar {
+    width: 0.3rem;
+    height: 0.3rem;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--midground) 22%, transparent);
+    border-radius: 1rem;
+  }
+}
+
+/* ===========================================================================
+   Oracle editorial layer.
+
+   The public app previously rendered every element in one hue at one size:
+   Oracle blue at a dozen near-identical opacities, type between 0.5rem and
+   0.68rem, and four consecutive equal-weight card grids. Uniformity reads as
+   unfinished because nothing tells the eye where to look. This layer supplies
+   the missing hierarchy — a contrast ladder, a warm counter-accent so blue
+   means "signal" instead of "everything", and a display scale with real
+   authority — without touching a single word of the custody copy.
+   =========================================================================== */
+:root {
+  /* Depth ladder. Three distinct planes, not one flat fill. */
+  --or-ink: #070A0F;
+  --or-surface: #0A1017;
+  --or-raised: #0E1620;
+
+  --or-line: rgba(126, 163, 199, 0.13);
+  --or-line-strong: rgba(126, 163, 199, 0.24);
+
+  /* Text ladder. Primary is near-white so headings actually carry. */
+  --or-paper: #EAF3FB;
+  --or-muted: #9CB4CB;
+  --or-faint: #6B87A2;
+
+  /* Blue is reserved for live signal. Bronze carries trust//boundary language
+     so the page stops reading as a single-hue wash. */
+  --or-blue: #7CC4FF;
+  --or-bronze: #D2AB74;
+}
+
+/* Editorial display type. Cormorant at 300 was too thin to hold a hero; 400
+   with tight tracking gives the headline weight without shouting. */
+@utility or-display {
+  font-family: var(--theme-font-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.94;
+  color: var(--or-paper);
+}
+
+/* Mono eyebrow. Wide tracking is what makes a small label look deliberate
+   rather than merely small. */
+@utility or-eyebrow {
+  font-family: var(--theme-font-mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  color: var(--or-faint);
+}
+
+/* Numbered section rule — the editorial spine that replaces four identical
+   card grids stacked on top of each other. */
+@utility or-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  border-top: 1px solid var(--or-line);
+  padding-top: 0.85rem;
+}
+
+/* Ledger row. A 34-item catalog rendered as 34 equal cards is a wall; as an
+   indexed list it becomes scannable and reads as a real register. */
+@utility or-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.4rem 1fr auto;
+  align-items: baseline;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem 0.85rem 0.75rem;
+  border-bottom: 1px solid var(--or-line);
+  transition:
+    background-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    padding-left 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.or-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: -1px;
+  width: 2px;
+  background: var(--or-bronze);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .or-row:hover {
+    background: rgba(124, 196, 255, 0.035);
+    padding-left: 1.1rem;
+  }
+  .or-row:hover::before {
+    transform: scaleY(1);
+  }
+}
+
+/* Top-edge highlight. One pixel of lift is the difference between a card that
+   sits ON the page and a rectangle that is merely drawn on it. */
+@utility or-raise {
+  background: var(--or-raised);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .or-row,
+  .or-row::before {
+    transition: none;
+  }
+}
+
+/* Respect reduced motion globally — kill the looping decorative animations.
+   (Backdrop's GPU probe already returns tier 0 under reduced-motion, so the
+   noise layer never mounts; this also stops the arc + march on cards.) */
+@media (prefers-reduced-motion: reduce) {
+  .arc-border::before,
+  .noise-grain,
+  .march,
+  .animate-spin-slow {
+    animation: none !important;
+  }
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-fade-in {
+    animation-duration: 0.01ms !important;
+  }
+}

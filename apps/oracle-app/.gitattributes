@@ -1,0 +1,3 @@
+# Keep platform launchers native while making diffs deterministic.
+*.bat text eol=crlf
+*.sh text eol=lf

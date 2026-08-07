@@ -1,0 +1,42 @@
+{
+  "name": "@oracle-agent/app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Public Oracle trading app for keyless reads and prepare-only actions.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --hostname ${ORACLE_APP_HOST:-127.0.0.1}",
+    "build": "next build",
+    "start": "next start --hostname ${ORACLE_APP_HOST:-127.0.0.1}",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --import tsx --test test/*.test.mjs",
+    "lint": "eslint --max-warnings=30",
+    "check:brand": "node scripts/check-oracle-brand.cjs",
+    "oracle:brand-check": "node scripts/check-oracle-brand.cjs",
+    "build:desktop": "node scripts/build-desktop.mjs"
+  },
+  "dependencies": {
+    "@oracle-agent/contract": "*",
+    "@oracle-agent/oracle": "*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.40.0",
+    "next": "16.2.12",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "sharp": "^0.35.3",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.1",
+    "@types/node": "20.19.41",
+    "@types/react": "19.2.16",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.12",
+    "tailwindcss": "^4.3.1",
+    "tsx": "^4.23.8",
+    "typescript": "5.9.3"
+  }
+}

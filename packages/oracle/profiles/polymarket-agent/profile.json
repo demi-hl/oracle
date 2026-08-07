@@ -1,0 +1,34 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "polymarket-agent",
+  "label": "polymarket agent",
+  "role": "venue",
+  "color": "#3B82F6",
+  "description": "Polymarket prediction markets: public event pricing/cards plus prepared order intents when user CLOB/API keys are configured.",
+  "model": {
+    "note": "Event pricing is narrative reasoning over news; a model with good world knowledge helps more than raw math.",
+    "suggested": "news-reasoner"
+  },
+  "skills": [
+    "oracle-polymarket",
+    "oracle-receipts",
+    "oracle-chain-graphs-telegram-cards",
+    "oracle-circuit-breaker"
+  ],
+  "mcp": [
+    "oracle-data"
+  ],
+  "chains": [
+    137
+  ],
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": [
+      "read:chain",
+      "simulate:tx",
+      "prepare:order"
+    ],
+    "signing": "user-wallet",
+    "rationale": "Reads markets and books freely. Any position change is prepared for the user's wallet."
+  }
+}

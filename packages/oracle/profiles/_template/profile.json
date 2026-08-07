@@ -1,0 +1,22 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "_template",
+  "label": "your lane",
+  "role": "venue",
+  "color": "#8892a0",
+  "description": "Copy this directory to add a lane. Rename the id, write the SOUL, list your chains.",
+  "template": true,
+  "model": {
+    "note": "Pick per workload. Heavy judgment -> strong reasoner. Many small tool calls -> fast model.",
+    "suggested": "balanced"
+  },
+  "skills": ["oracle-receipts"],
+  "mcp": ["oracle-data"],
+  "chains": [],
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": ["read:chain", "simulate:tx"],
+    "signing": "user-wallet",
+    "rationale": "Start read-only. Widen the grant only once the lane has proven it behaves."
+  }
+}

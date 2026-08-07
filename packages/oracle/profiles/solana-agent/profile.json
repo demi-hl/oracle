@@ -1,0 +1,38 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "solana-agent",
+  "label": "solana agent",
+  "role": "venue",
+  "color": "#9945FF",
+  "description": "Solana: token research, launch/meme-token scans, Jupiter routes, SPL accounts, Magic Eden NFT reads, unsigned swap and NFT buy/list/mint preparation.",
+  "model": {
+    "note": "Mixed research and route math; a balanced general model fits.",
+    "suggested": "balanced"
+  },
+  "skills": [
+    "oracle-solana",
+    "oracle-receipts",
+    "oracle-circuit-breaker",
+    "oracle-best-execution",
+    "oracle-equities",
+    "oracle-meme-token-sniper",
+    "oracle-chain-graphs-telegram-cards",
+    "oracle-rfq-tokenized-assets",
+    "oracle-solana-nft"
+  ],
+  "mcp": [
+    "oracle-data"
+  ],
+  "chains": [],
+  "nonEvm": "solana-mainnet",
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": [
+      "read:chain",
+      "simulate:tx",
+      "prepare:swap"
+    ],
+    "signing": "user-wallet",
+    "rationale": "Separate signing plane from EVM by design: a Solana grant must never be satisfiable by an EVM key."
+  }
+}

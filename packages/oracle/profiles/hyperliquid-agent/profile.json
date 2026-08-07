@@ -1,0 +1,38 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "hyperliquid-agent",
+  "label": "hyperliquid agent",
+  "role": "venue",
+  "color": "#50D2C1",
+  "description": "Hyperliquid perps/spot, HyperEVM, HIP-3 builder dexs, HIP-4 outcome markets, cards, and prepared orders when user keys are configured.",
+  "model": {
+    "note": "Many small numeric tool calls; favors a fast tool-heavy model over a slow deep reasoner.",
+    "suggested": "fast-tool-caller"
+  },
+  "skills": [
+    "oracle-hyperliquid",
+    "oracle-receipts",
+    "oracle-circuit-breaker",
+    "oracle-best-execution",
+    "oracle-equities",
+    "oracle-chain-graphs-telegram-cards",
+    "oracle-rfq-tokenized-assets",
+    "oracle-hypercore-staking"
+  ],
+  "mcp": [
+    "oracle-data"
+  ],
+  "chains": [
+    999
+  ],
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": [
+      "read:chain",
+      "simulate:tx",
+      "prepare:order"
+    ],
+    "signing": "user-wallet",
+    "rationale": "Leverage makes an unbounded grant genuinely dangerous. Orders are prepared and signed by the user."
+  }
+}

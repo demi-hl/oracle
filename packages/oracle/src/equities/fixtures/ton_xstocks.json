@@ -1,0 +1,35 @@
+{
+  "capturedAt": 1785959930,
+  "source": "dexscreener",
+  "chain": "ton",
+  "dexHint": "stonfi",
+  "tokens": {
+    "SPY": {
+      "symbolRaw": "SPYx",
+      "mint": "EQB1fyBAA9qQDP6LEGaF3cbU-Xbr-p6ESBZGnqlHkHIHAJZv",
+      "name": "SP500 xStock"
+    }
+  },
+  "pairs": {
+    "SPY": [
+      {
+        "pairAddress": "EQCln4lFQLk2IuVDwd6M7L4aj5smTJajk_yI5ZSKqccrHB9N",
+        "dexId": "stonfi",
+        "quote": "USD\u20ae",
+        "quoteAddress": "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs",
+        "priceUsd": 763.86,
+        "priceNative": "762.4664",
+        "liquidityUsd": 106828.72,
+        "volume24h": 1075.71,
+        "txns24h": 13,
+        "fdv": 28735559,
+        "url": "https://dexscreener.com/ton/eqcln4lfqlk2iuvdwd6m7l4aj5smtjajk_yi5zskqccrhb9n"
+      }
+    ]
+  },
+  "notes": [
+    "TON xStocks via DexScreener. liquidity.usd and priceUsd are third-party floats.",
+    "ston.fi is the primary TON dex in the brief; pairs may also appear on other TON dexs.",
+    "Impact at size is modeled, never measured from these fields alone."
+  ]
+}

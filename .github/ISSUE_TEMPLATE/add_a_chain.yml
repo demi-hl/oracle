@@ -1,0 +1,74 @@
+name: Add a chain
+description: Request or contribute support for an EVM chain
+labels: [chain]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding a chain is **config, not code** — see
+        [docs/adding-a-chain.md](../blob/main/docs/adding-a-chain.md). You may not
+        need this issue at all: `registerCustomChain()` works locally today without
+        any change to Oracle.
+
+        File this if you want the chain shipped as a built-in.
+
+  - type: input
+    id: name
+    attributes:
+      label: Chain name
+    validations:
+      required: true
+
+  - type: input
+    id: chainid
+    attributes:
+      label: Chain ID
+    validations:
+      required: true
+
+  - type: input
+    id: native
+    attributes:
+      label: Native currency
+      placeholder: "symbol + decimals, e.g. ETH / 18"
+    validations:
+      required: true
+
+  - type: input
+    id: rpcenv
+    attributes:
+      label: Proposed RPC env var name
+      description: A NAME, not a URL. Endpoints never go in the repo.
+      placeholder: MYCHAIN_RPC_URL
+    validations:
+      required: true
+
+  - type: input
+    id: dexslug
+    attributes:
+      label: DexScreener chain slug (if known)
+      description: |
+        Enables pool discovery. Leave BLANK if unsure — a wrong slug silently
+        returns another chain's pools, which is worse than reporting UNAVAILABLE.
+
+  - type: textarea
+    id: venues
+    attributes:
+      label: Venues (optional — only if you want routing, not just research)
+      description: |
+        Each venue needs provenance. For every address state: how you verified it
+        (bytecode check + the protocol's own API/docs), the source URL, and the date.
+        A venue without recorded verification will be refused by validation — an
+        allowlisted spoofed router defeats every other control in the system.
+      placeholder: |
+        router 0x... — verified via eth_getCode + https://li.quest/v1/chains — 2026-07-30
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmations
+      options:
+        - label: This chain exposes standard EVM JSON-RPC
+          required: true
+        - label: I have not included an RPC URL, API key, or private endpoint above
+          required: true

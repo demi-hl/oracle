@@ -1,0 +1,159 @@
+{
+  "schema": "oracle-equities/bridge-routes/1",
+  "label": "ESTIMATE",
+  "isQuote": false,
+  "live": false,
+  "note": "Static per-chain-pair reachability ESTIMATES. These are authored planning figures, not measured captures and not live quotes. No bridge was queried to produce them. They exist so a ranking can say what it costs and how long it takes to reach the chain a venue lives on. An unlisted directed pair is unknown and must never be guessed.",
+  "chainCoverage": {
+    "robinhood-4663": "live: arcus, arcus_spot, rh_uniswap, rh_chainlink_oracles (fixtures/venues.json)",
+    "hyperliquid": "live: hyperliquid_hip3 (fixtures/venues.json)",
+    "solana": "FORWARD LOOKING. No Solana venue exists in fixtures/venues.json. Unexercised by any captured venue.",
+    "ton": "FORWARD LOOKING. No TON venue exists in fixtures/venues.json. Unexercised by any captured venue."
+  },
+  "fields": {
+    "estBps": "Decimal string. Parsed through src/num.mjs into fixed point. Never a float.",
+    "estMinutes": "Nonnegative integer wall clock minutes to destination arrival, not to origin confirmation.",
+    "atomic": "Always false for a bridged leg. Origin confirmation is not destination arrival.",
+    "exercisedByLiveVenue": "True only when both chains host a venue present in fixtures/venues.json."
+  },
+  "routes": [
+    {
+      "from": "robinhood-4663",
+      "to": "robinhood-4663",
+      "estBps": "0",
+      "estMinutes": 0,
+      "atomic": true,
+      "exercisedByLiveVenue": true,
+      "note": "Funds already there. Nothing moves, so nothing can fail midway."
+    },
+    {
+      "from": "hyperliquid",
+      "to": "hyperliquid",
+      "estBps": "0",
+      "estMinutes": 0,
+      "atomic": true,
+      "exercisedByLiveVenue": true,
+      "note": "Funds already there. Nothing moves, so nothing can fail midway."
+    },
+    {
+      "from": "solana",
+      "to": "solana",
+      "estBps": "0",
+      "estMinutes": 0,
+      "atomic": true,
+      "exercisedByLiveVenue": false,
+      "note": "Funds already there. Forward looking chain, no captured venue."
+    },
+    {
+      "from": "ton",
+      "to": "ton",
+      "estBps": "0",
+      "estMinutes": 0,
+      "atomic": true,
+      "exercisedByLiveVenue": false,
+      "note": "Funds already there. Forward looking chain, no captured venue."
+    },
+
+    {
+      "from": "robinhood-4663",
+      "to": "hyperliquid",
+      "estBps": "5",
+      "estMinutes": 12,
+      "atomic": false,
+      "exercisedByLiveVenue": true
+    },
+    {
+      "from": "hyperliquid",
+      "to": "robinhood-4663",
+      "estBps": "5",
+      "estMinutes": 12,
+      "atomic": false,
+      "exercisedByLiveVenue": true
+    },
+
+    {
+      "from": "robinhood-4663",
+      "to": "solana",
+      "estBps": "8",
+      "estMinutes": 15,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+    {
+      "from": "solana",
+      "to": "robinhood-4663",
+      "estBps": "8",
+      "estMinutes": 15,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+
+    {
+      "from": "robinhood-4663",
+      "to": "ton",
+      "estBps": "12",
+      "estMinutes": 25,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+    {
+      "from": "ton",
+      "to": "robinhood-4663",
+      "estBps": "12",
+      "estMinutes": 25,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+
+    {
+      "from": "hyperliquid",
+      "to": "solana",
+      "estBps": "6",
+      "estMinutes": 10,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+    {
+      "from": "solana",
+      "to": "hyperliquid",
+      "estBps": "6",
+      "estMinutes": 10,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+
+    {
+      "from": "hyperliquid",
+      "to": "ton",
+      "estBps": "12",
+      "estMinutes": 25,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+    {
+      "from": "ton",
+      "to": "hyperliquid",
+      "estBps": "12",
+      "estMinutes": 25,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+
+    {
+      "from": "solana",
+      "to": "ton",
+      "estBps": "14",
+      "estMinutes": 30,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    },
+    {
+      "from": "ton",
+      "to": "solana",
+      "estBps": "14",
+      "estMinutes": 30,
+      "atomic": false,
+      "exercisedByLiveVenue": false
+    }
+  ]
+}

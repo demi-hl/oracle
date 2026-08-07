@@ -1,0 +1,121 @@
+name: desktop
+
+# Real installers on real runners. The `ci` workflow proves the desktop shell
+# boots on Linux and that the mac/Windows launch plans are correct, but neither
+# proves electron-builder can actually produce a .dmg or an .exe — that only
+# fails on the platform itself.
+#
+# NOT on every PR: this repo is private, so macOS runners bill 10x minutes and
+# Windows 2x. Runs on demand, on release tags, and weekly so rot surfaces before
+# a release rather than during one.
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+  schedule:
+    - cron: "0 7 * * 1"
+
+jobs:
+  installers:
+    name: ${{ matrix.os }} installer
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: build:linux
+            artifact: "*.AppImage"
+          - os: macos-latest
+            target: build:mac
+            artifact: "*.dmg"
+          - os: windows-latest
+            target: build:win
+            artifact: "*.exe"
+
+    env:
+      # The CLI is gated to Locals Only holders and CI has no wallet. Same
+      # rationale as the ci workflow: the bypass is env-only and mutation-tested.
+      ORACLE_GATE_BYPASS: "1"
+      # electron-builder tries to sign by default and fails the build when it
+      # cannot. Signing is a separate, deliberate step; unsigned beta artifacts
+      # are the honest current state.
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: fix electron sandbox helper (linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo chown root:root node_modules/electron/dist/chrome-sandbox
+          sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
+
+      # Linux runners are headless; mac and Windows runners have a real session,
+      # so the smoke launches Electron directly there.
+      - name: install xvfb (linux only)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      # build:<platform> runs the full e2e first (stage runtime, HTTP smoke,
+      # Electron smoke), packages, and THEN launches the packaged binary and
+      # demands a smoke receipt. A green artifact therefore means the installed
+      # app actually booted ON THIS OS — not merely that packaging exited 0.
+      # The Linux AppImage built clean and died with MODULE_NOT_FOUND for exactly
+      # that reason, with every upstream gate green.
+      - name: build installer and boot the packaged app
+        working-directory: apps/oracle-desktop
+        run: npm run ${{ matrix.target }}
+
+      - name: verify an installer was produced
+        shell: bash
+        working-directory: apps/oracle-desktop
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(release/${{ matrix.artifact }})
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "FAIL: no ${{ matrix.artifact }} in release/"
+            ls -la release/ || true
+            exit 1
+          fi
+          for f in "${files[@]}"; do
+            bytes=$(wc -c < "$f")
+            echo "$f ($bytes bytes)"
+            # A truncated or empty artifact is worse than a missing one: it
+            # uploads clean and fails on the user's machine.
+            if [ "$bytes" -lt 20000000 ]; then
+              echo "FAIL: $f is implausibly small for a bundled Electron app"
+              exit 1
+            fi
+          done
+
+      - name: checksums
+        shell: bash
+        working-directory: apps/oracle-desktop
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          for f in release/${{ matrix.artifact }}; do
+            if command -v sha256sum >/dev/null; then sha256sum "$f"; else shasum -a 256 "$f"; fi
+          done | tee release/SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: oracle-desktop-${{ matrix.os }}
+          path: |
+            apps/oracle-desktop/release/${{ matrix.artifact }}
+            apps/oracle-desktop/release/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14

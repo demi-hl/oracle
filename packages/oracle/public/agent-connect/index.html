@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Connect your agent harness to Oracle read tools without giving up custody." />
+  <title>Oracle Agent Connect</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <a class="wordmark" href="/">ORACLE</a>
+      <p class="eyebrow">AGENT CONNECT</p>
+      <h1>Give your agent market context.<br /><span>Keep custody local.</span></h1>
+      <p class="lede">Connect a read-only Oracle API to your preferred harness. The model proposes actions; you review and authorize them through your local operator.</p>
+    </header>
+
+    <section class="card setup" aria-labelledby="connection-title">
+      <div class="section-heading">
+        <span class="step">01</span>
+        <div>
+          <h2 id="connection-title">Your connection</h2>
+          <p>These values stay in this browser and are only used to build the config below.</p>
+        </div>
+      </div>
+      <div class="fields">
+        <label>Agent API URL
+          <input id="api-url" type="url" value="https://api.oracle-agent.dev" spellcheck="false" autocomplete="url" />
+        </label>
+        <label>Read API key
+          <input id="api-key" type="password" placeholder="Your read-only API key" spellcheck="false" autocomplete="off" />
+          <span class="hint">Use only a user-owned, read-only API credential.</span>
+        </label>
+        <label>Public wallet address <span class="optional">optional</span>
+          <input id="wallet-address" type="text" placeholder="0x... or a public Solana address" spellcheck="false" autocomplete="off" />
+          <span class="hint">Used to personalize portfolio reads. No wallet connection or signature.</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="card config" aria-labelledby="config-title">
+      <div class="section-heading">
+        <span class="step">02</span>
+        <div>
+          <h2 id="config-title">Choose your harness</h2>
+          <p>Copy a ready-to-paste cloud/read MCP configuration.</p>
+        </div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Agent harness">
+        <button role="tab" aria-selected="true" data-harness="hermes">Hermes</button>
+        <button role="tab" aria-selected="false" data-harness="claude">Claude Code</button>
+        <button role="tab" aria-selected="false" data-harness="codex">Codex</button>
+        <button role="tab" aria-selected="false" data-harness="cursor">Cursor</button>
+        <button role="tab" aria-selected="false" data-harness="mcp">Generic MCP</button>
+      </div>
+      <div class="code-wrap">
+        <div class="code-bar">
+          <span id="config-label">Hermes config</span>
+          <button id="copy-button" class="copy" type="button">Copy config</button>
+        </div>
+        <pre><code id="config-output"></code></pre>
+      </div>
+      <p id="copy-status" class="status" aria-live="polite"></p>
+    </section>
+
+    <section class="operator" aria-labelledby="operator-title">
+      <div class="operator-mark" aria-hidden="true">LOCAL</div>
+      <div>
+        <p class="eyebrow">SEPARATE EXECUTION LANE</p>
+        <h2 id="operator-title">Install the local operator to execute</h2>
+        <p>The cloud/read MCP can research, quote, simulate, and prepare. Execution belongs in a separate local process under your policy and approval controls.</p>
+        <div class="command"><code>npx @oracle-agent/oracle init</code><button id="copy-install" type="button">Copy</button></div>
+      </div>
+    </section>
+
+    <footer>
+      <p><strong>Custody stays local.</strong> The model proposes; the owner authorizes. This page never connects a wallet, requests a signature, or sends the values you enter.</p>
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+name: ci
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # The CLI is gated to Locals Only holders. CI has no wallet and must never
+    # hold one, so tests that spawn real CLI binaries need the operator bypass.
+    # This does not weaken the gate: holder-access.test.mjs asserts the bypass is
+    # env-only and off by default, and the enforcement path is mutation-tested.
+    env:
+      ORACLE_GATE_BYPASS: "1"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+
+      # npm ci installs exactly what package-lock.json pins. `npm install` would
+      # silently pick up a new minor of a dependency and turn an unrelated upstream
+      # release into a red build on a PR that did not touch it.
+      - run: npm ci --no-audit --no-fund
+
+      # Release gate runs before everything else. The 2026-08-01 four-model
+      # audit found two defect classes that shipped through green builds
+      # because no test could see them: shipped prose (including model-facing
+      # SOUL.md and skills) describing a narrower daemon contract than the code
+      # implemented, and an env flag whose polarity inverted so a disable word
+      # ENABLED a surface. Both are mechanical to check and neither is visible
+      # to a unit test of the module that contains them.
+      - name: release gate (doc drift + flag polarity)
+        run: npm run gate:release
+
+      # The custody boundary runs FIRST and separately. If the public plane can
+      # reach a signer, nothing else about this build matters.
+      - name: custody boundary
+        run: npm run test:boundary
+
+      - name: full suite
+        run: npm test
+
+      # Two agents push to this branch. A commit message once claimed "707
+      # tests" against a tree that ran 729 — written from a stale checkout and
+      # then permanent in the log. The count is committed, so adding or removing
+      # a test fails the build until test-baseline.json moves in the same diff.
+      - name: test count matches committed baseline
+        run: npm run test:count
+
+      - name: secret scan
+        run: npm run scan:secrets
+
+      # 0.12.0 shipped `oracle-data` and `oracle init` broken: both read assets
+      # relative to the source layout, which does not exist once the package is
+      # staged, so they died on ENOENT at module load. Every gate was green,
+      # because nothing ever started a bin from the layout a user installs.
+      # This builds the real publish stage and spawns all eight.
+      - name: staged bins start clean
+        working-directory: packages/oracle
+        run: |
+          set -euo pipefail
+          node scripts/build-dist.mjs
+          rm -rf .ci-stage && mkdir -p .ci-stage
+          cp -r dist .ci-stage/dist
+          rm -f .ci-stage/dist/package.publish.json
+          node -e "const{readFileSync,writeFileSync}=require('node:fs');writeFileSync('.ci-stage/package.json',readFileSync('dist/package.publish.json'))"
+          node scripts/smoke-dist-bins.mjs .ci-stage
+          rm -rf .ci-stage
+
+      # apps/oracle-app is the product surface a user actually clicks. Until
+      # 2026-08-03 CI never typechecked, linted, or built it, so a PR touching
+      # only app components got a green check that proved nothing about the app.
+      # A broken pane would have shipped past a passing build.
+      - name: app typecheck
+        run: npm --workspace @oracle-agent/app run typecheck
+
+      - name: app lint
+        run: npm --workspace @oracle-agent/app run lint
+
+      - name: app pane logic tests
+        run: npm --workspace @oracle-agent/app test
+
+      - name: app brand guard
+        run: npm --workspace @oracle-agent/app run check:brand
+
+      - name: app build
+        run: npm --workspace @oracle-agent/app run build
+
+      - name: desktop launch-plan (mac/windows paths, verified from linux)
+        run: npm --workspace @oracle-agent/desktop run check:platforms
+
+      - name: desktop runtime e2e
+        run: |
+          # Electron's SUID sandbox helper must be root-owned mode 4755, and npm
+          # unpacks it as the runner user. Rather than pass --no-sandbox (which
+          # would test a configuration we do not ship), fix the helper so the
+          # smoke exercises the same sandboxed renderer a user gets.
+          sudo chown root:root node_modules/electron/dist/chrome-sandbox
+          sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
+          npm run desktop:e2e
+
+      # The PUBLISHED artifact is @oracle-agent/oracle. That is what a stranger
+      # installs, so its prod tree is the blocking gate and must stay at zero.
+      - name: npm audit (published package, blocking)
+        working-directory: packages/oracle
+        run: npm audit --omit=dev --audit-level=high
+
+      # The monorepo also contains apps/oracle-app, a PRIVATE Next.js client that
+      # is never published. Its advisories (sharp/postcss reached through next)
+      # cannot be resolved without downgrading next itself, so they are reported
+      # but do not block a release of the package. Reassess on each next bump.
+      - name: npm audit (private app, advisory)
+        continue-on-error: true
+        run: npm audit --omit=dev --audit-level=high
+
+      # Publish surface: the tarball must never contain owner-local signer/vault.
+      # Packed from the workspace dir — the monorepo root is `private: true` and
+      # `npm pack` there emits nothing, which silently turned this gate into a no-op.
+      - name: pack excludes signer and vault
+        working-directory: packages/oracle
+        run: |
+          set -euo pipefail
+          tgz=$(npm pack --silent)
+          test -n "$tgz"
+          echo "packed $tgz"
+          if tar -tzf "$tgz" | grep -E 'hl-exec\.mjs|key-vault\.mjs|oracle-vault\.mjs'; then
+            echo "FAIL: signer/vault path present in npm pack tarball"
+            tar -tzf "$tgz" | grep -E 'hl-exec|key-vault|oracle-vault' || true
+            rm -f "$tgz"
+            exit 1
+          fi
+          echo "PASS: pack tarball clean of signer/vault"
+          rm -f "$tgz"

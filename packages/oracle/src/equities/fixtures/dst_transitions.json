@@ -1,0 +1,29 @@
+{
+ "dstTransitions": [
+  {
+   "year": 2026,
+   "startUtc": 1772953200,
+   "endUtc": 1793512800
+  },
+  {
+   "year": 2027,
+   "startUtc": 1805007600,
+   "endUtc": 1825567200
+  },
+  {
+   "year": 2028,
+   "startUtc": 1836457200,
+   "endUtc": 1857016800
+  },
+  {
+   "year": 2029,
+   "startUtc": 1867906800,
+   "endUtc": 1888466400
+  },
+  {
+   "year": 2030,
+   "startUtc": 1899356400,
+   "endUtc": 1919916000
+  }
+ ]
+}

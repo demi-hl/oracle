@@ -1,0 +1,40 @@
+node_modules/
+*.log
+.env
+.env.*
+
+# NEVER commit key material or passphrases
+*.keystore.json
+*.pass
+*.wif
+*.key
+*.vault
+*.vault.json
+*.plaintext.bak
+*.pem
+*.p12
+id_rsa*
+id_ed25519*
+keys/
+/data/
+/tmp-test-keys/
+
+# local build/scratch
+.DS_Store
+coverage/
+__pycache__/
+*.pyc
+
+# Foundry (protocol templates)
+protocols/templates/**/lib/
+protocols/templates/**/out/
+protocols/templates/**/cache/
+
+# bundled publish artifacts
+packages/oracle/dist/
+packages/oracle/.publish-stage/
+packages/oracle/.ci-stage/
+packages/oracle/*.tgz
+/*.tgz
+apps/oracle-desktop/runtime/
+apps/oracle-desktop/release/

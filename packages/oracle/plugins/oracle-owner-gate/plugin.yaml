@@ -1,0 +1,9 @@
+name: oracle-owner-gate
+version: "0.1.0"
+description: "Owner-identity and raw-turn intent gate for Oracle execution tools."
+author: "Oracle contributors"
+hooks:
+  - pre_llm_call
+  - pre_tool_call
+  - on_session_end
+  - on_session_reset

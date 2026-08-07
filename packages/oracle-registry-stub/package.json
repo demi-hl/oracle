@@ -1,0 +1,27 @@
+{
+  "name": "@oracle-agent/oracle",
+  "version": "0.13.0",
+  "description": "Oracle is distributed to Locals Only holders. This package is a pointer to the gate, not the product.",
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "bin": {
+    "oracle": "bin/oracle.mjs"
+  },
+  "files": [
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "oracle",
+    "locals-only"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/demi-hl/oracle.git"
+  },
+  "homepage": "https://oracle.demi.la"
+}

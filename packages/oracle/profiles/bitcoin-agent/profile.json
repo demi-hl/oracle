@@ -1,0 +1,32 @@
+{
+  "$schema": "./profile.schema.json",
+  "id": "bitcoin-agent",
+  "label": "bitcoin agent",
+  "role": "venue",
+  "color": "#F7931A",
+  "description": "Bitcoin L1: Esplora reads, Ordinals/runes research, Satflow PSBTs, and inscription preparation.",
+  "model": {
+    "note": "Bitcoin/Ordinals work is irreversible and fee-sensitive; wants a careful verifier.",
+    "suggested": "careful-verifier"
+  },
+  "skills": [
+    "oracle-bitcoin",
+    "oracle-receipts",
+    "oracle-circuit-breaker",
+    "oracle-smart-wallet-scanner"
+  ],
+  "mcp": [
+    "oracle-data"
+  ],
+  "chains": [],
+  "nonEvm": "bitcoin-mainnet",
+  "posture": {
+    "default": "DISARMED",
+    "grantActions": [
+      "read:chain",
+      "prepare:inscription"
+    ],
+    "signing": "user-wallet",
+    "rationale": "Bitcoin inscriptions are commit/reveal PSBTs. Oracle prepares and verifies; the user's Bitcoin wallet signs."
+  }
+}

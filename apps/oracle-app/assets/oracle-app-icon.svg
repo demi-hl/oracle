@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Oracle</title>
+  <desc id="desc">A flat orbital orb mark for Oracle.</desc>
+  <defs>
+    <clipPath id="orb-oracle"><circle cx="256.0" cy="256.0" r="117.8"/></clipPath>
+    <mask id="occ-oracle">
+      <rect width="512" height="512" fill="#fff"/>
+      <circle cx="256.0" cy="256.0" r="127.3" fill="#000"/>
+    </mask>
+  </defs>
+  <rect width="512" height="512" rx="114.9" fill="#0B1018"/>
+  <g transform="translate(256.0,256.0) rotate(-20)" mask="url(#occ-oracle)">
+    <path d="M -222.72,0 A 222.72,138.09 0 0 1 222.72,0" fill="none" stroke="#7CC4FF" stroke-opacity="0.52" stroke-width="16.4" stroke-linecap="round"/>
+  </g>
+  <circle cx="256.0" cy="256.0" r="117.8" fill="#0B1018"/>
+  <g clip-path="url(#orb-oracle)"><circle cx="298.4" cy="293.7" r="120.1" fill="#7CC4FF" fill-opacity="0.14"/></g>
+  <circle cx="256.0" cy="256.0" r="117.8" fill="none" stroke="#7CC4FF" stroke-width="16.4"/>
+  <circle cx="256.0" cy="256.0" r="37.7" fill="#A7D8FF"/>
+  <g transform="translate(256.0,256.0) rotate(-20)">
+    <path d="M 222.72,0 A 222.72,138.09 0 0 1 -222.72,0" fill="none" stroke="#A7D8FF" stroke-width="16.4" stroke-linecap="round"/>
+  </g>
+</svg>
