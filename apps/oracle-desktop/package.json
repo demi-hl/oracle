@@ -20,7 +20,7 @@
     "start": "electron ."
   },
   "dependencies": {
-    "@oracle-agent/oracle": "0.12.1",
+    "@oracle-agent/oracle": "*",
     "electron-store": "^10.1.0"
   },
   "devDependencies": {
@@ -30,7 +30,7 @@
   "build": {
     "appId": "la.demi.oracle.desktop",
     "productName": "Oracle",
-    "copyright": "Copyright \u00a9 demi.la",
+    "copyright": "Copyright © demi.la",
     "directories": {
       "output": "release"
     },
