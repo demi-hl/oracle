@@ -10,4 +10,8 @@ export {
 
 export { sma, ema, rsi, macd, bollinger, atr } from "./indicators.mjs";
 
-export { compileStrategy } from "./compiler.mjs";
+export {
+  STRATEGY_COMPILER_HASH,
+  STRATEGY_COMPILER_VERSION,
+  compileStrategy,
+} from "./compiler.mjs";

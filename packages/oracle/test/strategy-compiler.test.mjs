@@ -1,6 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { compileStrategy } from "../src/strategy/compiler.mjs";
+import {
+  STRATEGY_COMPILER_HASH,
+  STRATEGY_COMPILER_VERSION,
+  compileStrategy,
+} from "../src/strategy/compiler.mjs";
+import { strategyHash } from "../src/strategy/schema.mjs";
 
 function risk(extra = {}) {
   return {
@@ -315,4 +320,32 @@ test("optional fundingRate and openInterest inputs", () => {
   assert.equal(r.values.fr, 0.01);
   assert.equal(r.values.oi, 100);
   assert.equal(r.signals.entryLong, true);
+});
+
+test("compiled strategy carries stable strategy and compiler identities", () => {
+  const compiled = compileStrategy(emaCrossStrategy);
+  assert.equal(STRATEGY_COMPILER_VERSION, 1);
+  assert.match(STRATEGY_COMPILER_HASH, /^[a-f0-9]{64}$/);
+  assert.equal(compiled.compilerVersion, STRATEGY_COMPILER_VERSION);
+  assert.equal(compiled.compilerHash, STRATEGY_COMPILER_HASH);
+  assert.equal(compiled.strategyHash, strategyHash(emaCrossStrategy));
+  assert.deepEqual(compiled.requiredSeries, ["close"]);
+});
+
+test("evaluateAll matches per-bar evaluation without future leakage", () => {
+  const compiled = compileStrategy(emaCrossStrategy);
+  const bars = emaCrossBars();
+  const all = compiled.evaluateAll(bars);
+  assert.equal(all.length, bars.length);
+  for (let i = 0; i < bars.length; i++) {
+    assert.deepEqual(all[i], compiled.evaluate(bars, i));
+  }
+  const mutated = bars.map((entry) => ({ ...entry }));
+  mutated[mutated.length - 1].c += 1000;
+  mutated[mutated.length - 1].h += 1000;
+  const beforeLast = bars.length - 2;
+  assert.deepEqual(
+    compiled.evaluateAll(mutated)[beforeLast],
+    all[beforeLast],
+  );
 });

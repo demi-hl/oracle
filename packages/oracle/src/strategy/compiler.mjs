@@ -1,7 +1,22 @@
 // Deterministic strategy compiler. No network, keys, clock, or I/O.
 
-import { applyParameterOverrides, normalizeStrategy } from "./schema.mjs";
+import { createHash } from "node:crypto";
+import {
+  applyParameterOverrides,
+  normalizeStrategy,
+  strategyHash,
+} from "./schema.mjs";
 import { sma, ema, rsi, macd, bollinger, atr } from "./indicators.mjs";
+
+export const STRATEGY_COMPILER_VERSION = 1;
+export const STRATEGY_COMPILER_HASH = createHash("sha256")
+  .update(JSON.stringify({
+    version: STRATEGY_COMPILER_VERSION,
+    nodeTypes: ["input", "constant", "indicator", "compare", "logic", "cross"],
+    indicators: ["sma", "ema", "rsi", "macd", "bollinger", "atr"],
+    rules: ["entryLong", "entryShort", "exitLong", "exitShort"],
+  }))
+  .digest("hex");
 
 const FIELD_MAP = Object.freeze({
   open: "o",
@@ -287,39 +302,67 @@ export function compileStrategy(input, parameterOverrides = {}) {
   const nodesById = new Map(strategy.nodes.map((n) => [n.id, n]));
   const nodeOrder = Object.freeze(topoOrder(strategy.nodes));
   const params = strategy.parameters;
+  const required = new Set(
+    strategy.nodes
+      .filter((node) => node.type === "input")
+      .map((node) => node.field),
+  );
+  if (strategy.nodes.some((node) => node.type === "indicator" && node.indicator === "atr")) {
+    for (const field of ["open", "high", "low", "close"]) required.add(field);
+  }
+  const requiredSeries = Object.freeze([...required].sort());
+  const compiledStrategyHash = strategyHash(strategy);
 
-  function evaluate(bars, index) {
+  function resultAt(cache, index) {
+    const values = {};
+    for (const id of nodeOrder) {
+      const series = cache.get(id);
+      values[id] = series[index];
+    }
+    const signalOf = (ruleId) => ruleId != null && values[ruleId] === true;
+    return {
+      values,
+      signals: {
+        entryLong: signalOf(strategy.rules.entryLong),
+        entryShort: signalOf(strategy.rules.entryShort),
+        exitLong: signalOf(strategy.rules.exitLong),
+        exitShort: signalOf(strategy.rules.exitShort),
+      },
+    };
+  }
+
+  function buildCache(bars, index) {
     assertBars(bars, index);
     const cache = new Map();
-    // Evaluate all nodes in topo order so values is complete.
     for (const id of nodeOrder) {
       seriesFor(id, nodesById, params, bars, index, cache);
     }
-    const values = {};
-    for (const id of nodeOrder) {
-      const s = cache.get(id);
-      values[id] = s[index];
+    return cache;
+  }
+
+  function evaluate(bars, index) {
+    return resultAt(buildCache(bars, index), index);
+  }
+
+  function evaluateAll(bars) {
+    if (!Array.isArray(bars) || bars.length === 0) {
+      throw new TypeError("bars must be a non-empty array");
     }
-
-    const signalOf = (ruleId) => {
-      if (ruleId == null) return false;
-      const v = values[ruleId];
-      return v === true;
-    };
-
-    const signals = {
-      entryLong: signalOf(strategy.rules.entryLong),
-      entryShort: signalOf(strategy.rules.entryShort),
-      exitLong: signalOf(strategy.rules.exitLong),
-      exitShort: signalOf(strategy.rules.exitShort),
-    };
-
-    return { values, signals };
+    const last = bars.length - 1;
+    const cache = buildCache(bars, last);
+    return Object.freeze(
+      bars.map((_, index) => Object.freeze(resultAt(cache, index))),
+    );
   }
 
   return Object.freeze({
     strategy,
+    strategyHash: compiledStrategyHash,
+    compilerVersion: STRATEGY_COMPILER_VERSION,
+    compilerHash: STRATEGY_COMPILER_HASH,
+    requiredSeries,
     nodeOrder,
     evaluate,
+    evaluateAll,
   });
 }
