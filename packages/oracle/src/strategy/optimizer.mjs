@@ -10,7 +10,7 @@ import {
   normalizeStrategy,
   strategyHash,
 } from "./schema.mjs";
-import { backtestStrategy } from "./backtest.mjs";
+import { backtestStrategy, strategyBarsHash } from "./backtest.mjs";
 
 export const MAX_OPTIMIZER_TRIALS = 256;
 
@@ -195,10 +195,12 @@ export function optimizeStrategy(strategyInput, trainBars, options = {}) {
   const limited = allCombos.slice(0, maxTrials);
   const candidates = [];
   let best = null;
+  let normalizedBacktestConfig = null;
 
   for (const parameters of limited) {
     const candidateStrategy = applyParameterOverrides(base, parameters);
     const bt = backtestStrategy(candidateStrategy, trainBars, backtestOptions);
+    if (normalizedBacktestConfig == null) normalizedBacktestConfig = bt.config;
     const metrics = {
       netPnlUsd: bt.metrics.netPnlUsd,
       netPnlPct: bt.metrics.netPnlPct,
@@ -229,9 +231,11 @@ export function optimizeStrategy(strategyInput, trainBars, options = {}) {
   const bestParameters = { ...best.parameters };
   const bestStrategy = applyParameterOverrides(base, bestParameters);
 
-  const result = {
+  const core = {
     strategyHash: strategyHash(base),
     compilerHash: STRATEGY_COMPILER_HASH,
+    trainBarsHash: strategyBarsHash(trainBars),
+    backtestConfig: normalizedBacktestConfig,
     objective,
     maxTrials,
     trialsRun: candidates.length,
@@ -239,10 +243,14 @@ export function optimizeStrategy(strategyInput, trainBars, options = {}) {
     bestParameters,
     bestStrategy,
   };
+  const result = {
+    id: createHash("sha256")
+      .update(JSON.stringify(sortKeysDeep(core)), "utf8")
+      .digest("hex"),
+    ...core,
+  };
 
   // touch compile once for hash consistency side-effect free
   void compileStrategy;
-  void createHash;
-
   return deepFreeze(sortKeysDeep(JSON.parse(JSON.stringify(result))));
 }

@@ -161,6 +161,31 @@ test("rejects holdout test oos option keys", () => {
   }
 });
 
+test("optimizer identity binds exact training bars and backtest configuration", () => {
+  const strategy = paramStrategy();
+  const bars = trainBars();
+  const options = {
+    maxTrials: 8,
+    objective: "netPnlUsd",
+    backtestOptions: { takerFeeBps: 0, builderFeeBps: 0, slippageBps: 0 },
+  };
+  const a = optimizeStrategy(strategy, bars, options);
+  const changedBars = bars.map((bar) => ({ ...bar }));
+  changedBars[0].v += 1;
+  const b = optimizeStrategy(strategy, changedBars, options);
+  const c = optimizeStrategy(strategy, bars, {
+    ...options,
+    backtestOptions: { ...options.backtestOptions, takerFeeBps: 1 },
+  });
+  assert.match(a.id, /^[a-f0-9]{64}$/);
+  assert.match(a.trainBarsHash, /^[a-f0-9]{64}$/);
+  assert.notEqual(a.trainBarsHash, b.trainBarsHash);
+  assert.notEqual(a.id, b.id);
+  assert.notEqual(a.id, c.id);
+  assert.equal(a.backtestConfig.takerFeeBps, 0);
+  assert.equal(c.backtestConfig.takerFeeBps, 1);
+});
+
 test("objective supports netPnlUsd profitFactor sharpe maxDrawdownPct", () => {
   const strategy = paramStrategy();
   const bars = trainBars();

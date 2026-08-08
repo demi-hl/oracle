@@ -15,7 +15,7 @@ test("strategy is a public prepare-only package subpath", () => {
 
 test("oracle CLI advertises the deterministic strategy workflow", () => {
   const kernel = read("src/cli/kernel.mjs");
-  assert.match(kernel, /oracle strategy\s+validate\|backtest\|optimize\|evidence/);
+  assert.match(kernel, /oracle strategy\s+(?:draft\|)?validate\|backtest\|optimize\|evidence/);
   assert.match(kernel, /prepare-only/i);
   assert.doesNotMatch(kernel, /oracle strategy\s+(?:execute|sign|submit|broadcast|arm)/i);
   const command = read("src/cli/commands/strategy.mjs");
@@ -38,6 +38,19 @@ test("strategy MCP tools expose compute, shadow and prepare without execution ve
     assert.match(source, new RegExp(`name:\\s*["']${tool}["']`), tool);
   }
   assert.doesNotMatch(source, /name:\s*["']strategy_(?:execute|sign|submit|broadcast|arm)/);
+});
+
+test("strategy prepare surfaces require the exact active shadow runner id", () => {
+  const command = read("src/cli/commands/strategy.mjs");
+  assert.match(command, /prepare strategy\.json --evidence evidence\.json --shadow-id <id>/);
+  assert.match(command, /input\.shadowId\s*=\s*flags\["shadow-id"\]/);
+
+  const source = read("bin/oracle-data-mcp.mjs");
+  const start = source.indexOf('name: "strategy_prepare_live"');
+  const end = source.indexOf("\n  },", start);
+  const block = source.slice(start, end);
+  assert.match(block, /required:\s*\[[^\]]*["']shadowId["']/);
+  assert.match(block, /shadowId:\s*\{\s*type:\s*["']string["']/);
 });
 
 test("strategy desk routes are loopback compute and prepare surfaces", () => {

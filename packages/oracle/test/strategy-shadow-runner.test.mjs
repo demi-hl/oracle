@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { createShadowRunner } from "../src/strategy/shadow-runner.mjs";
+import { createShadowRunner, shadowStateHash } from "../src/strategy/shadow-runner.mjs";
 import { compileStrategy, STRATEGY_COMPILER_HASH } from "../src/strategy/compiler.mjs";
 import { strategyHash } from "../src/strategy/schema.mjs";
 
@@ -30,7 +30,8 @@ function risk(extra = {}) {
 function bar(t, c, o = c, h, l, v = 100) {
   const hi = h != null ? h : Math.max(o, c) + 1;
   const lo = l != null ? l : Math.min(o, c) - 1;
-  return { t, o, h: hi, l: lo, c, v };
+  const index = t >= 1_000 && t % 1_000 === 0 ? t / 1_000 : t;
+  return { t: t < 100_000 ? index * 60_000 : t, o, h: hi, l: lo, c, v };
 }
 
 /** Close-threshold long: entry when close > 10, exit when close < 8. */
@@ -108,14 +109,47 @@ test("start validates compiles and persists runner snapshot", () => {
   assert.equal(runner.list().length, 1);
 });
 
-test("runner id is deterministic for injected clock and strategy hash", () => {
+test("step rejects unordered bars before mutating persisted state", () => {
+  const storePath = tmpStore();
+  const runner = createShadowRunner({ storePath, clock: () => 1_700_000_000_000 });
+  const { id } = runner.start({ strategy: thresholdStrategy(), evidenceId: "ev-order" });
+  const before = runner.get(id);
+  assert.throws(
+    () => runner.step(id, [bar(2_000, 11), bar(1_000, 9)]),
+    /strictly increasing|timestamp/i,
+  );
+  assert.deepEqual(runner.get(id), before);
+});
+
+test("runner id deterministically binds clock strategy compiler and evidence", () => {
   const strategy = thresholdStrategy();
   const clock = () => 42;
-  const a = createShadowRunner({ storePath: tmpStore(), clock }).start({ strategy });
-  const b = createShadowRunner({ storePath: tmpStore(), clock }).start({ strategy });
+  const a = createShadowRunner({ storePath: tmpStore(), clock }).start({ strategy, evidenceId: "ev-1" });
+  const b = createShadowRunner({ storePath: tmpStore(), clock }).start({ strategy, evidenceId: "ev-1" });
   assert.equal(a.id, b.id);
-  const c = createShadowRunner({ storePath: tmpStore(), clock: () => 43 }).start({ strategy });
+  const c = createShadowRunner({ storePath: tmpStore(), clock: () => 43 }).start({ strategy, evidenceId: "ev-1" });
   assert.notEqual(a.id, c.id);
+  const d = createShadowRunner({ storePath: tmpStore(), clock }).start({ strategy, evidenceId: "ev-2" });
+  assert.notEqual(a.id, d.id);
+  const expected = createHash("sha256")
+    .update(`shadow|42|${a.strategyHash}|${a.compilerHash}|ev-1`)
+    .digest("hex");
+  assert.equal(a.id, expected);
+});
+
+test("start retries reuse the active runner across clock changes", () => {
+  const storePath = tmpStore();
+  let now = 42;
+  const runner = createShadowRunner({ storePath, clock: () => now });
+  const strategy = thresholdStrategy();
+  const first = runner.start({ strategy, evidenceId: "ev-1" });
+  now = 43;
+  const retry = createShadowRunner({ storePath, clock: () => now }).start({
+    strategy,
+    evidenceId: "ev-1",
+  });
+  assert.equal(retry.id, first.id);
+  assert.equal(runner.list().length, 1);
 });
 
 test("closed-bar signals create intended orders for the NEXT bar never same bar", () => {
@@ -134,17 +168,17 @@ test("closed-bar signals create intended orders for the NEXT bar never same bar"
   assert.ok(snap.intendedOrders.length >= 1);
   const entry = snap.intendedOrders.find((o) => o.action === "entry" || o.side === "buy" || o.type === "entryLong");
   assert.ok(entry, "expected entry intended order");
-  // Signal bar is the closed bar with entryLong true (t=2000), fill on next open (t=3000)
-  assert.equal(entry.signalBarT, 2_000);
+  // Signal bar is the closed bar with entryLong true, fill is on the next open.
+  assert.equal(entry.signalBarT, 120_000);
   assert.notEqual(entry.signalBarT, entry.fillBarT);
-  assert.equal(entry.fillBarT, 3_000);
-  const fill = snap.fills.find((f) => f.orderId === entry.id || f.signalBarT === 2_000);
+  assert.equal(entry.fillBarT, 180_000);
+  const fill = snap.fills.find((f) => f.orderId === entry.id || f.signalBarT === 120_000);
   assert.ok(fill, "expected theoretical next-open fill");
   assert.equal(fill.price, 12);
-  assert.equal(fill.barT, 3_000);
+  assert.equal(fill.barT, 180_000);
 });
 
-test("deterministic order id from runner id strategyHash signal bar t and side", () => {
+test("deterministic order id binds runner strategy signal timestamp side and action", () => {
   const storePath = tmpStore();
   const runner = createShadowRunner({ storePath, clock: () => 7 });
   const strategy = thresholdStrategy({ cooldownBars: 0 });
@@ -153,13 +187,20 @@ test("deterministic order id from runner id strategyHash signal bar t and side",
   const snap = runner.step(id, bars);
   const order = snap.intendedOrders[0];
   assert.ok(order.id);
-  const material = `${id}|${sh}|${order.signalBarT}|${order.side || order.action}`;
-  // id must be a stable hash digest-like string derived from those inputs
+  const material = `${id}|${sh}|${order.signalBarT}|${order.side}|${order.action}`;
   const digest = createHash("sha256").update(material).digest("hex");
-  assert.ok(
-    order.id === digest || order.id === digest.slice(0, order.id.length) || digest.startsWith(order.id) || order.id.includes(digest.slice(0, 16)),
-    `order id should derive from runner/strategy/signal/side; got ${order.id}`,
-  );
+  assert.equal(order.id, digest);
+});
+
+test("conflicting entry signals create no shadow order", () => {
+  const storePath = tmpStore();
+  const runner = createShadowRunner({ storePath, clock: () => 8 });
+  const strategy = thresholdStrategy({ cooldownBars: 0 });
+  strategy.rules.entryShort = "enter";
+  const { id } = runner.start({ strategy });
+  const snap = runner.step(id, [bar(1_000, 11), bar(2_000, 12)]);
+  assert.equal(snap.intendedOrders.length, 0);
+  assert.equal(snap.fills.length, 0);
 });
 
 test("repeat step and process restart do not duplicate orders fills markouts", () => {
@@ -192,6 +233,10 @@ test("repeat step and process restart do not duplicate orders fills markouts", (
   assert.equal(b.fills.length, a.fills.length);
   assert.equal(b.markouts.length, a.markouts.length);
   assert.equal(b.missedFills.length, a.missedFills.length);
+  assert.equal(b.updatedAt, a.updatedAt);
+  assert.equal(shadowStateHash(b), shadowStateHash(a));
+  const empty = runner.step(id, []);
+  assert.equal(shadowStateHash(empty), shadowStateHash(a));
   const orderIds = b.intendedOrders.map((o) => o.id);
   assert.equal(new Set(orderIds).size, orderIds.length);
 
@@ -201,6 +246,7 @@ test("repeat step and process restart do not duplicate orders fills markouts", (
   assert.equal(c.intendedOrders.length, a.intendedOrders.length);
   assert.equal(c.fills.length, a.fills.length);
   assert.equal(c.markouts.length, a.markouts.length);
+  assert.equal(shadowStateHash(c), shadowStateHash(a));
 });
 
 test("missedFills when no next bar remain reconcilable without duplication", () => {
@@ -223,6 +269,23 @@ test("missedFills when no next bar remain reconcilable without duplication", () 
   const third = runner.step(id, [bar(1_000, 9), bar(2_000, 11), bar(3_000, 15, 14)]);
   assert.equal(third.fills.filter((f) => (f.orderId || f.id) === orderId).length, 1);
   assert.equal(third.missedFills.filter((m) => (m.orderId || m.id) === orderId).length, 0);
+});
+
+test("missed fills never retro-fill after the cursor passed their fill bar", () => {
+  const runner = createShadowRunner({ storePath: tmpStore(), clock: () => 10 });
+  const { id } = runner.start({ strategy: thresholdStrategy({ cooldownBars: 0 }) });
+  const first = runner.step(id, [bar(1_000, 9), bar(2_000, 11)]);
+  const orderId = first.intendedOrders[0].id;
+  runner.step(id, [bar(3_000, 9), bar(4_000, 9)]);
+  const late = runner.step(id, [
+    bar(2_000, 11),
+    bar(3_000, 9),
+    bar(4_000, 9),
+    bar(5_000, 9),
+  ]);
+  assert.equal(late.fills.some((fill) => fill.orderId === orderId), false);
+  assert.equal(late.missedFills.some((missed) => missed.orderId === orderId), true);
+  assert.equal(late.position, null);
 });
 
 test("one paper position max with cooldownBars after exit", () => {
@@ -255,6 +318,35 @@ test("one paper position max with cooldownBars after exit", () => {
   // No duplicate concurrent position: fills should alternate entry/exit
   const entryFills = snap.fills.filter((f) => f.action === "entry" || f.side === "buy" && f.action !== "exit");
   assert.ok(entryFills.length <= 2);
+});
+
+test("cooldown remains correct when the next step uses a shifted overlapping window", () => {
+  const storePath = tmpStore();
+  const runner = createShadowRunner({ storePath, clock: () => 12 });
+  const strategy = thresholdStrategy({ cooldownBars: 2 });
+  const { id } = runner.start({ strategy });
+  runner.step(id, [
+    bar(1_000, 9),
+    bar(2_000, 11),
+    bar(3_000, 12),
+    bar(4_000, 13),
+    bar(5_000, 14),
+    bar(6_000, 7),
+    bar(7_000, 7),
+  ]);
+  const shifted = runner.step(id, [
+    bar(4_000, 13),
+    bar(5_000, 14),
+    bar(6_000, 7),
+    bar(7_000, 7),
+    bar(8_000, 11),
+    bar(9_000, 11),
+    bar(10_000, 11),
+    bar(11_000, 12),
+  ]);
+  const entries = shifted.intendedOrders.filter((order) => order.action === "entryLong");
+  assert.equal(entries.length, 2);
+  assert.equal(entries[1].signalBarT, 540_000);
 });
 
 test("markouts for filled entries at horizons; later step fills pending exactly once", () => {
@@ -305,13 +397,12 @@ test("future bars cannot cause an order at an earlier signal timestamp before th
   assert.equal(snap.intendedOrders.length, 0);
   // Now include signal bar alone -> intended order, missed fill
   snap = runner.step(id, [bar(1_000, 9), bar(2_000, 11)]);
-  assert.ok(snap.intendedOrders.some((o) => o.signalBarT === 2_000));
-  // Cursor must not jump past unprocessed bars: after first step cursor is 1000
-  // After second, cursor is 2000
-  assert.equal(snap.cursor, 2_000);
+  assert.ok(snap.intendedOrders.some((o) => o.signalBarT === 120_000));
+  // Cursor must not jump past unprocessed bars.
+  assert.equal(snap.cursor, 120_000);
   // Providing a future-only batch without history should only process t > cursor
   snap = runner.step(id, [bar(1_000, 9), bar(2_000, 11), bar(3_000, 12, 12), bar(4_000, 5)]);
-  assert.ok(snap.cursor >= 3_000);
+  assert.ok(snap.cursor >= 180_000);
   // No order should claim a signalBarT that is after cursor from a previous incomplete view incorrectly backdated
   for (const o of snap.intendedOrders) {
     assert.ok(o.signalBarT <= snap.cursor || o.fillBarT != null);

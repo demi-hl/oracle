@@ -173,6 +173,26 @@ test("missing node refs reject", () => {
   assert.ok(r.errors.some((e) => /missing|unknown|ref/i.test(e.message)));
 });
 
+test("frozen invalid strategies cannot bypass canonical hash validation", () => {
+  const invalid = Object.freeze({ version: 1, privateKey: "not-hashable" });
+  assert.throws(() => canonicalStrategyJson(invalid), StrategyValidationError);
+  assert.throws(() => strategyHash(invalid), StrategyValidationError);
+});
+
+test("numeric and boolean graph operands are type checked", () => {
+  const s = baseStrategy();
+  s.nodes = [
+    { id: "c", type: "input", field: "close" },
+    { id: "k", type: "constant", value: 1 },
+    { id: "cmp", type: "compare", op: "gt", left: "c", right: "k" },
+    { id: "bad", type: "cross", direction: "above", left: "cmp", right: "k" },
+  ];
+  s.rules = { entryLong: "bad", entryShort: null, exitLong: null, exitShort: null };
+  const result = validateStrategy(s);
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some((error) => /numeric/i.test(error.message)));
+});
+
 test("cycles reject", () => {
   const s = baseStrategy();
   s.nodes = [
@@ -183,6 +203,22 @@ test("cycles reject", () => {
   const r = validateStrategy(s);
   assert.equal(r.ok, false);
   assert.ok(r.errors.some((e) => /cycle/i.test(e.message)));
+});
+
+test("indicator period parameters require positive integer value min max and step", () => {
+  for (const definition of [
+    { value: 0, min: 0, max: 50, step: 1 },
+    { value: 2.5, min: 1, max: 50, step: 0.5 },
+    { value: 2, min: 1.5, max: 50, step: 1 },
+    { value: 2, min: 1, max: 50.5, step: 1 },
+    { value: 2, min: 1, max: 50, step: 0.5 },
+  ]) {
+    const s = baseStrategy();
+    s.parameters.fast = definition;
+    const r = validateStrategy(s);
+    assert.equal(r.ok, false, JSON.stringify(definition));
+    assert.ok(r.errors.some((e) => e.path === "nodes.1.period.param"));
+  }
 });
 
 test("invalid parameter grid rejects", () => {

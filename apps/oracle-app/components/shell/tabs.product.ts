@@ -16,6 +16,7 @@ import { CampaignsPane } from "@/components/oracle/CampaignsPane";
 import { ConnectPane } from "@/components/oracle/ConnectPane";
 import { CrossbookPane } from "@/components/oracle/CrossbookPane";
 import { OracleHomePane } from "@/components/oracle/OracleHomePane";
+import { StrategyPane } from "@/components/oracle/StrategyPane";
 import { PortfolioPane } from "@/components/oracle/PortfolioPane";
 import { ReceiptsPane } from "@/components/oracle/ReceiptsPane";
 import { SwapPane } from "@/components/oracle/SwapPane";
@@ -35,6 +36,7 @@ export const PRODUCT_TABS: TabDef[] = [
   { id: "portfolio", label: "Portfolio", shortLabel: "Portfolio", Icon: PortfolioIcon, Pane: PortfolioPane },
   { id: "approvals", label: "Approvals", shortLabel: "Approvals", Icon: ShieldIcon, Pane: ApprovalsPane },
   { id: "swap", label: "Prepare", shortLabel: "Prepare", Icon: SwapIcon, Pane: SwapPane },
+  { id: "strategy", label: "Strategy", shortLabel: "Strategy", Icon: AutomationIcon, Pane: StrategyPane },
   { id: "equities", label: "Crossbook", shortLabel: "Crossbook", Icon: RouterIcon, Pane: CrossbookPane },
   { id: "cli", label: "CLI", shortLabel: "CLI", Icon: TerminalIcon, Pane: CliRuntimePane },
   { id: "farming", label: "Farming Methods", shortLabel: "Farming", Icon: ChartIcon, Pane: FarmingMethodsPane },
@@ -49,8 +51,8 @@ export const PRODUCT_PRIMARY_TAB_IDS: TabId[] = [
   "portfolio",
   "approvals",
   "swap",
+  "strategy",
   "equities",
-  "cli",
 ];
 
 export const PRODUCT_HIDDEN_FROM_MORE: TabId[] = [];

@@ -82,14 +82,24 @@ test("shadow labels stay STOPPED SHADOWING ERROR and never LIVE", () => {
   assert.doesNotMatch(pane, /label:\s*["']LIVE["']/);
 });
 
-test("prepare local handoff is gated on live-eligible evidence and non-error shadow", () => {
+test("prepare local handoff is gated on bound live-eligible evidence and active matching shadow", () => {
   assert.match(pane, /prepare-live/);
   assert.match(pane, /pass_live_eligible/);
+  assert.match(pane, /evidenceArtifact\s*!=\s*null/);
+  assert.match(pane, /evidence:\s*evidenceArtifact/);
+  assert.match(pane, /setEvidenceArtifact\(null\)/);
   assert.match(pane, /Prepare local handoff/i);
   assert.match(pane, /PREPARE ONLY/);
-  // Gate should mention shadow error exclusion.
-  assert.match(pane, /shadow/i);
-  assert.match(pane, /ERROR/);
+  assert.match(pane, /shadowMatchesEvidence\(shadowRunner,\s*evidenceArtifact\)/);
+  assert.match(pane, /runner\.evidenceId\s*===\s*evidence\.id/);
+  assert.match(pane, /runner\.strategyHash\s*===\s*evidence\.strategyHash/);
+  assert.match(pane, /runner\.compilerHash\s*===\s*evidence\.compilerHash/);
+  assert.match(pane, /shadowId/);
+});
+
+test("DSL is valid only after explicit deterministic validation success", () => {
+  assert.match(pane, /if\s*\(\s*!ok\s*\)\s*\{[\s\S]{0,240}setDslState\(["']invalid["']\)/);
+  assert.doesNotMatch(pane, /setDslState\(\s*ok\s*\|\|\s*res\.ok/);
 });
 
 test("StrategyStatus tracks four independent states", () => {

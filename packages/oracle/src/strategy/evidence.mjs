@@ -4,7 +4,7 @@
 import { createHash } from "node:crypto";
 import { STRATEGY_COMPILER_HASH } from "./compiler.mjs";
 import { normalizeStrategy, strategyHash } from "./schema.mjs";
-import { backtestStrategy } from "./backtest.mjs";
+import { backtestStrategy, strategyBarsHash } from "./backtest.mjs";
 
 export const EVIDENCE_STATUSES = Object.freeze([
   "fail",
@@ -51,6 +51,7 @@ function metricsSlice(bt) {
     tradeCount: bt.metrics.tradeCount,
     sharpe: bt.metrics.sharpe,
     turnoverUsd: bt.metrics.turnoverUsd,
+    exposurePct: bt.metrics.exposurePct,
   };
 }
 
@@ -88,6 +89,190 @@ function windowPass(metrics, risk, minTrades) {
   return true;
 }
 
+function evidenceFacts(evidence) {
+  if (!isPlainObject(evidence)) throw new TypeError("evidence artifact must be a plain object");
+  if (!EVIDENCE_STATUSES.includes(evidence.status)) {
+    throw new TypeError("evidence artifact status is invalid");
+  }
+  for (const key of ["strategyHash", "compilerHash", "barsHash"]) {
+    if (typeof evidence[key] !== "string" || !/^[0-9a-f]{64}$/.test(evidence[key])) {
+      throw new TypeError(`evidence artifact ${key} must be a sha256 hash`);
+    }
+  }
+  if (!isPlainObject(evidence.split)) throw new TypeError("evidence artifact split required");
+  if (!Array.isArray(evidence.flags)) throw new TypeError("evidence artifact flags must be an array");
+  if (!isPlainObject(evidence.walkForward) || !Array.isArray(evidence.walkForward.windows)) {
+    throw new TypeError("evidence artifact walkForward windows required");
+  }
+  if (
+    evidence.status === "pass_live_eligible" &&
+    (!isPlainObject(evidence.train) || !isPlainObject(evidence.holdout))
+  ) {
+    throw new TypeError("live-eligible evidence artifact requires train and holdout facts");
+  }
+  return sortKeysDeep({
+    barsHash: evidence.barsHash,
+    compilerHash: evidence.compilerHash,
+    flags: evidence.flags.map((flag) => sortKeysDeep(flag)),
+    holdout: evidence.holdout ?? null,
+    split: evidence.split,
+    status: evidence.status,
+    strategyHash: evidence.strategyHash,
+    train: evidence.train ?? null,
+    walkForward: {
+      passRate: evidence.walkForward.passRate,
+      windowsRun:
+        evidence.walkForward.windowsRun ?? evidence.walkForward.windows.length,
+      windows: evidence.walkForward.windows.map((window) => ({
+        index: window.index,
+        trainStartIndex: window.trainStartIndex,
+        trainEndIndex: window.trainEndIndex,
+        passed: window.passed,
+        reason: window.reason,
+        evalStartIndex: window.evalStartIndex,
+        evalEndIndex: window.evalEndIndex,
+        metrics: window.metrics,
+      })),
+    },
+  });
+}
+
+export function computeEvidenceArtifactId(evidence) {
+  return createHash("sha256")
+    .update(JSON.stringify(evidenceFacts(evidence)), "utf8")
+    .digest("hex");
+}
+
+function integer(value, label, minimum = 0) {
+  if (!Number.isInteger(value) || value < minimum) {
+    throw new Error(`${label} must be an integer >= ${minimum}`);
+  }
+  return value;
+}
+
+function metricFacts(section, label) {
+  if (!isPlainObject(section) || !isPlainObject(section.metrics)) {
+    throw new Error(`${label} metrics required`);
+  }
+  const tradeCount = integer(section.tradeCount, `${label}.tradeCount`);
+  if (section.metrics.tradeCount !== tradeCount) {
+    throw new Error(`${label} tradeCount contradicts metrics.tradeCount`);
+  }
+  for (const key of ["netPnlUsd", "profitFactor", "maxDrawdownPct"]) {
+    if (!isFiniteNumber(section.metrics[key])) {
+      throw new Error(`${label}.metrics.${key} must be finite`);
+    }
+  }
+  if (section.metrics.maxDrawdownPct < 0) {
+    throw new Error(`${label}.metrics.maxDrawdownPct must be >= 0`);
+  }
+  return section.metrics;
+}
+
+function assertLiveEligibleConsistency(evidence, { maxDailyLossPct } = {}) {
+  const split = evidence.split;
+  const trainStart = integer(split.trainStartIndex, "split.trainStartIndex");
+  const trainEnd = integer(split.trainEndIndex, "split.trainEndIndex");
+  const trainCount = integer(split.trainBarCount, "split.trainBarCount", 1);
+  const holdoutStart = integer(split.holdoutStartIndex, "split.holdoutStartIndex");
+  const holdoutEnd = integer(split.holdoutEndIndex, "split.holdoutEndIndex");
+  const holdoutCount = integer(split.holdoutBarCount, "split.holdoutBarCount", 1);
+  if (
+    trainStart !== 0 ||
+    trainEnd - trainStart + 1 !== trainCount ||
+    holdoutStart !== trainEnd + 1 ||
+    holdoutEnd - holdoutStart + 1 !== holdoutCount
+  ) {
+    throw new Error("evidence split must be contiguous, chronological, and count-consistent");
+  }
+  if (!isFiniteNumber(split.trainFraction) || split.trainFraction <= 0 || split.trainFraction >= 1) {
+    throw new Error("split.trainFraction must be in (0,1)");
+  }
+
+  metricFacts(evidence.train, "train");
+  const holdoutMetrics = metricFacts(evidence.holdout, "holdout");
+  if (
+    holdoutMetrics.tradeCount < 1 ||
+    holdoutMetrics.netPnlUsd <= 0 ||
+    holdoutMetrics.profitFactor <= 1
+  ) {
+    throw new Error("live-eligible holdout metrics do not pass");
+  }
+  if (isFiniteNumber(maxDailyLossPct) && holdoutMetrics.maxDrawdownPct > maxDailyLossPct) {
+    throw new Error("live-eligible holdout drawdown exceeds strategy risk");
+  }
+  if (evidence.flags.length > 0) {
+    throw new Error("live-eligible evidence cannot contain failure flags");
+  }
+
+  const walkForward = evidence.walkForward;
+  const windows = walkForward.windows;
+  if (windows.length < 1 || walkForward.windowsRun !== windows.length) {
+    throw new Error("live-eligible walk-forward windowsRun must match nonempty windows");
+  }
+  let passed = 0;
+  let priorEvalEnd = -1;
+  for (let index = 0; index < windows.length; index++) {
+    const window = windows[index];
+    if (!isPlainObject(window) || window.index !== index || typeof window.passed !== "boolean") {
+      throw new Error("walk-forward windows must be ordered and structurally valid");
+    }
+    const windowTrainStart = integer(window.trainStartIndex, `walkForward.windows[${index}].trainStartIndex`);
+    const windowTrainEnd = integer(window.trainEndIndex, `walkForward.windows[${index}].trainEndIndex`);
+    const evalStart = integer(window.evalStartIndex, `walkForward.windows[${index}].evalStartIndex`);
+    const evalEnd = integer(window.evalEndIndex, `walkForward.windows[${index}].evalEndIndex`);
+    if (
+      windowTrainStart !== 0 ||
+      windowTrainEnd >= evalStart ||
+      evalStart > evalEnd ||
+      evalStart <= priorEvalEnd
+    ) {
+      throw new Error("walk-forward windows must be chronological and disjoint");
+    }
+    priorEvalEnd = evalEnd;
+    if (window.passed) {
+      passed += 1;
+      if (window.reason !== "pass") throw new Error("passed walk-forward window reason must be pass");
+      const metrics = metricFacts({ metrics: window.metrics, tradeCount: window.metrics?.tradeCount }, `walkForward.windows[${index}]`);
+      if (metrics.tradeCount < 1 || metrics.netPnlUsd <= 0 || metrics.profitFactor <= 1) {
+        throw new Error("passed walk-forward window metrics do not pass");
+      }
+      if (isFiniteNumber(maxDailyLossPct) && metrics.maxDrawdownPct > maxDailyLossPct) {
+        throw new Error("passed walk-forward drawdown exceeds strategy risk");
+      }
+    } else if (window.reason === "pass") {
+      throw new Error("failed walk-forward window cannot have pass reason");
+    }
+  }
+  const passRate = passed / windows.length;
+  if (
+    !isFiniteNumber(walkForward.passRate) ||
+    Math.abs(walkForward.passRate - passRate) > Number.EPSILON ||
+    passRate < 0.6
+  ) {
+    throw new Error("walk-forward passRate contradicts concrete windows or is below live threshold");
+  }
+}
+
+export function assertEvidenceArtifact(evidence, options = {}) {
+  if (typeof evidence?.id !== "string" || !/^[0-9a-f]{64}$/.test(evidence.id)) {
+    throw new Error("evidence.id must be a sha256 evidence artifact hash");
+  }
+  const facts = evidenceFacts(evidence);
+  const canonical = sortKeysDeep({ id: evidence.id, ...facts });
+  if (JSON.stringify(sortKeysDeep(evidence)) !== JSON.stringify(canonical)) {
+    throw new Error("evidence artifact contains fields unbound from its deterministic identity");
+  }
+  const expected = computeEvidenceArtifactId(evidence);
+  if (evidence.id !== expected) {
+    throw new Error("evidence.id does not match its deterministic artifact facts digest");
+  }
+  if (evidence.status === "pass_live_eligible") {
+    assertLiveEligibleConsistency(evidence, options);
+  }
+  return evidence;
+}
+
 /**
  * Evaluate strategy evidence on chronological bars.
  * Train and holdout are disjoint; holdout starts strictly after train.
@@ -122,6 +307,7 @@ export function evaluateEvidence({
 
   const strategy = normalizeStrategy(strategyInput);
   const sHash = strategyHash(strategy);
+  const barsHash = strategyBarsHash(bars);
   const n = bars.length;
 
   const fail = (extraFlags = [], partial = {}) => {
@@ -129,6 +315,7 @@ export function evaluateEvidence({
       status: "fail",
       strategy,
       sHash,
+      barsHash,
       split: partial.split || {
         trainStartIndex: 0,
         trainEndIndex: -1,
@@ -370,6 +557,7 @@ export function evaluateEvidence({
     status,
     strategy,
     sHash,
+    barsHash,
     split,
     train,
     holdout,
@@ -378,42 +566,19 @@ export function evaluateEvidence({
   });
 }
 
-function buildResult({ status, strategy, sHash, split, train, holdout, walkForward, flags }) {
-  const facts = sortKeysDeep({
-    compilerHash: STRATEGY_COMPILER_HASH,
-    flags: flags.map((f) => sortKeysDeep(f)),
-    holdout,
-    split,
-    status,
-    strategyHash: sHash,
-    train,
-    walkForward: {
-      passRate: walkForward.passRate,
-      windowsRun: walkForward.windowsRun ?? (walkForward.windows ? walkForward.windows.length : 0),
-      windows: (walkForward.windows || []).map((w) => ({
-        index: w.index,
-        passed: w.passed,
-        reason: w.reason,
-        evalStartIndex: w.evalStartIndex,
-        evalEndIndex: w.evalEndIndex,
-        metrics: w.metrics,
-      })),
-    },
-  });
-
-  const id = createHash("sha256").update(JSON.stringify(facts), "utf8").digest("hex");
-
+function buildResult({ status, strategy, sHash, barsHash, split, train, holdout, walkForward, flags }) {
   const result = {
-    id,
     status,
     strategyHash: sHash,
     compilerHash: STRATEGY_COMPILER_HASH,
+    barsHash,
     split,
     train,
     holdout,
     walkForward,
     flags,
   };
+  result.id = computeEvidenceArtifactId(result);
 
   return deepFreeze(sortKeysDeep(JSON.parse(JSON.stringify(result))));
 }

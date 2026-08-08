@@ -1,5 +1,6 @@
 // Deterministic Hyperliquid strategy backtester. No network, keys, clock, I/O, or randomness.
 
+import { createHash } from "node:crypto";
 import {
   STRATEGY_COMPILER_HASH,
   STRATEGY_COMPILER_VERSION,
@@ -13,6 +14,7 @@ const DEFAULTS = Object.freeze({
   builderFeeBps: 2,
   slippageBps: 2,
   latencyBars: 1,
+  maxVolumeParticipationPct: 100,
 });
 
 function isPlainObject(v) {
@@ -44,6 +46,21 @@ function sortKeysDeep(value) {
   return value;
 }
 
+function assertFiniteNumbers(value, path = "result") {
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) throw new Error(`non-finite backtest result at ${path}`);
+    return;
+  }
+  if (value == null || typeof value !== "object") return;
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => assertFiniteNumbers(item, `${path}[${index}]`));
+    return;
+  }
+  for (const [key, item] of Object.entries(value)) {
+    assertFiniteNumbers(item, `${path}.${key}`);
+  }
+}
+
 function assertBars(bars) {
   if (!Array.isArray(bars) || bars.length === 0) {
     throw new TypeError("bars must be a non-empty array");
@@ -65,6 +82,10 @@ function assertBars(bars) {
     ]) {
       if (!isFiniteNumber(val)) throw new TypeError(`bars[${i}].${k} must be a finite number`);
     }
+    for (const [k, val] of [["o", o], ["h", h], ["l", l], ["c", c]]) {
+      if (!(val > 0)) throw new TypeError(`bars[${i}].${k} price must be positive`);
+    }
+    if (v < 0) throw new TypeError(`bars[${i}].v volume must be non-negative`);
     if (h < Math.max(o, c, l)) {
       throw new TypeError(`bars[${i}] high must be >= max(open, close, low)`);
     }
@@ -78,10 +99,25 @@ function assertBars(bars) {
     if ("fundingRate" in b && b.fundingRate != null && !isFiniteNumber(b.fundingRate)) {
       throw new TypeError(`bars[${i}].fundingRate must be finite when present`);
     }
+    if (
+      "fundingPaymentRate" in b &&
+      b.fundingPaymentRate != null &&
+      !isFiniteNumber(b.fundingPaymentRate)
+    ) {
+      throw new TypeError(`bars[${i}].fundingPaymentRate must be finite when present`);
+    }
     if ("openInterest" in b && b.openInterest != null && !isFiniteNumber(b.openInterest)) {
       throw new TypeError(`bars[${i}].openInterest must be finite when present`);
     }
   }
+}
+
+export function strategyBarsHash(bars) {
+  if (!Array.isArray(bars)) throw new TypeError("bars must be an array");
+  if (bars.length > 0) assertBars(bars);
+  return createHash("sha256")
+    .update(JSON.stringify(sortKeysDeep(bars)), "utf8")
+    .digest("hex");
 }
 
 function parseOptions(options) {
@@ -95,6 +131,7 @@ function parseOptions(options) {
     "builderFeeBps",
     "slippageBps",
     "latencyBars",
+    "maxVolumeParticipationPct",
     "nowMs",
   ]);
   for (const key of Object.keys(options)) {
@@ -113,6 +150,9 @@ function parseOptions(options) {
       if (!isFiniteNumber(v) || v < 0) {
         throw new TypeError(`${feeKey} must be a finite number >= 0`);
       }
+      if (feeKey === "slippageBps" ? v >= 10_000 : v > 10_000) {
+        throw new TypeError(`${feeKey} exceeds its safe basis-point bound`);
+      }
       out[feeKey] = v;
     }
   }
@@ -122,6 +162,13 @@ function parseOptions(options) {
       throw new TypeError("latencyBars must be an integer >= 1");
     }
     out.latencyBars = v;
+  }
+  if ("maxVolumeParticipationPct" in options) {
+    const v = options.maxVolumeParticipationPct;
+    if (!isFiniteNumber(v) || v <= 0 || v > 100) {
+      throw new TypeError("maxVolumeParticipationPct must be in (0,100]");
+    }
+    out.maxVolumeParticipationPct = v;
   }
   if ("nowMs" in options) {
     if (!Number.isInteger(options.nowMs)) {
@@ -167,9 +214,12 @@ function takePrice(entry, side, takeProfitPct) {
   return side === "long" ? entry * (1 + f) : entry * (1 - f);
 }
 
-function liqPrice(entry, side, leverage) {
+function liqPrice(entry, side, leverage, feeBps) {
   if (!(leverage > 0)) return side === "long" ? 0 : Number.POSITIVE_INFINITY;
-  return side === "long" ? entry * (1 - 1 / leverage) : entry * (1 + 1 / leverage);
+  const maintenanceRate = Math.min(0.99, 1 / (2 * leverage) + feeBps / 10_000);
+  return side === "long"
+    ? (entry * (1 - 1 / leverage)) / (1 - maintenanceRate)
+    : (entry * (1 + 1 / leverage)) / (1 + maintenanceRate);
 }
 
 function touchesStop(bar, side, stop) {
@@ -182,6 +232,15 @@ function touchesTake(bar, side, take) {
 
 function touchesLiq(bar, side, liq) {
   return side === "long" ? bar.l <= liq : bar.h >= liq;
+}
+
+export function assertStrategyRequiredSeries(compiled, bars) {
+  for (const field of compiled.requiredSeries) {
+    if (!["fundingRate", "openInterest"].includes(field)) continue;
+    if (!bars.every((bar) => isFiniteNumber(bar?.[field]))) {
+      throw new Error(`strategy required series is absent: ${field}`);
+    }
+  }
 }
 
 function sharpeFromCurve(equityCurve) {
@@ -225,12 +284,14 @@ function maxDrawdownPct(equityCurve) {
 export function backtestStrategy(strategyInput, bars, options = {}) {
   const opts = parseOptions(options);
   assertBars(bars);
+  const barsHash = strategyBarsHash(bars);
 
   if (opts.nowMs !== undefined) {
     normalizeStrategy(strategyInput, { nowMs: opts.nowMs });
   }
 
   const compiled = compileStrategy(strategyInput);
+  assertStrategyRequiredSeries(compiled, bars);
   if (opts.nowMs !== undefined && compiled.strategy.risk.expiresAt <= opts.nowMs) {
     throw new Error("strategy is expired: risk.expiresAt must be strictly greater than nowMs");
   }
@@ -251,22 +312,59 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
 
   const trades = [];
   const liquidations = [];
+  const missedFills = [];
   const flags = [];
   const equityCurve = [];
 
   let position = null;
+  let exposureBars = 0;
+  let dayKey = null;
+  let dayStartEquity = equity;
+  let dayLossBlocked = false;
   let cooldownUntil = 0;
+  let lifecycleEpoch = 0;
   const pending = [];
+  const filledVolumeByBar = new Array(bars.length).fill(0);
 
   function schedule(item) {
     pending.push(item);
   }
 
-  function openPosition(i, side, rawOpen) {
+  function remainingFillVolume(i) {
+    const limit = bars[i].v * (opts.maxVolumeParticipationPct / 100);
+    return Math.max(0, limit - filledVolumeByBar[i]);
+  }
+
+  function markedEquityAt(price) {
+    if (!position) return equity;
+    const unrealized =
+      position.side === "long"
+        ? (price - position.entryPrice) * position.qty
+        : (position.entryPrice - price) * position.qty;
+    return equity + unrealized;
+  }
+
+  function openPosition(i, side, fillBar) {
+    const rawOpen = fillBar.o;
     const notional = computeNotional(equity, risk);
     if (!(notional > 0) || !(rawOpen > 0)) return;
     const fill = applyEntrySlippage(rawOpen, side, slipBps);
     const qty = notional / fill;
+    const remainingVolume = remainingFillVolume(i);
+    const maxFillNotional = fill * remainingVolume;
+    if (qty > remainingVolume) {
+      missedFills.push({
+        kind: "entry",
+        barIndex: i,
+        time: fillBar.t,
+        side,
+        requestedNotionalUsd: notional,
+        maxFillNotionalUsd: maxFillNotional,
+        reason: "volume_participation",
+      });
+      return;
+    }
+    filledVolumeByBar[i] += qty;
     const slipCost = Math.abs(fill - rawOpen) * qty;
     const fees = feeOnNotional(notional, takerBps, builderBps);
 
@@ -276,15 +374,18 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
     slippageUsd += slipCost;
     turnoverUsd += notional;
 
+    const positionEpoch = ++lifecycleEpoch;
     position = {
+      lifecycleEpoch: positionEpoch,
       side,
       entryBarIndex: i,
+      entryReferencePrice: rawOpen,
       entryPrice: fill,
       qty,
       notionalUsd: notional,
       stop: stopPrice(fill, side, risk.stopLossPct),
       take: takePrice(fill, side, risk.takeProfitPct),
-      liq: liqPrice(fill, side, risk.maxLeverage),
+      liq: liqPrice(fill, side, risk.maxLeverage, takerBps + builderBps),
       entryFees: fees.taker,
       entryBuilderFees: fees.builder,
       entrySlippageUsd: slipCost,
@@ -293,34 +394,50 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
   }
 
   function closePosition(i, rawPrice, reason, applySlip) {
-    if (!position) return;
+    if (!position) return false;
     const side = position.side;
-    let reference = rawPrice;
-    if (reason === "liquidation") reference = position.liq;
-    else if (reason === "stop_loss") reference = position.stop;
-    else if (reason === "take_profit") reference = position.take;
+    const reference = rawPrice;
 
     let fillPrice = reference;
-    if (reason === "liquidation") {
-      fillPrice = position.liq;
-    } else if (applySlip) {
+    if (reason !== "liquidation" && applySlip) {
       fillPrice = applyExitSlippage(reference, side, slipBps);
     }
 
     const qty = position.qty;
     const exitNotional = qty * fillPrice;
+    if (reason !== "liquidation") {
+      const remainingVolume = remainingFillVolume(i);
+      const maxFillNotional = fillPrice * remainingVolume;
+      if (qty > remainingVolume) {
+        missedFills.push({
+          kind: "exit",
+          barIndex: i,
+          time: bars[i].t,
+          side,
+          requestedNotionalUsd: exitNotional,
+          maxFillNotionalUsd: maxFillNotional,
+          reason: "volume_participation",
+          triggerReason: reason,
+        });
+        return false;
+      }
+      filledVolumeByBar[i] += qty;
+    }
     const fees = feeOnNotional(exitNotional, takerBps, builderBps);
     const slipCost =
       reason === "liquidation" ? 0 : Math.abs(fillPrice - reference) * qty;
 
     let grossPnl;
+    let actualPnl;
     if (side === "long") {
-      grossPnl = (fillPrice - position.entryPrice) * qty;
+      grossPnl = (reference - position.entryReferencePrice) * qty;
+      actualPnl = (fillPrice - position.entryPrice) * qty;
     } else {
-      grossPnl = (position.entryPrice - fillPrice) * qty;
+      grossPnl = (position.entryReferencePrice - reference) * qty;
+      actualPnl = (position.entryPrice - fillPrice) * qty;
     }
 
-    equity += grossPnl;
+    equity += actualPnl;
     equity -= fees.total;
     feesUsd += fees.taker;
     builderFeesUsd += fees.builder;
@@ -365,7 +482,22 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
     }
 
     position = null;
+    lifecycleEpoch += 1;
     cooldownUntil = i + 1 + (risk.cooldownBars || 0);
+    return true;
+  }
+
+  function scheduleExitRetry(i, side, reason, epoch) {
+    const fillBar = i + 1;
+    if (fillBar >= bars.length) return;
+    const exists = pending.some(
+      (item) =>
+        item.kind === "exit" &&
+        item.side === side &&
+        item.fillBar === fillBar &&
+        item.epoch === epoch,
+    );
+    if (!exists) schedule({ kind: "exit", side, signalBar: i, fillBar, reason, epoch });
   }
 
   function consumePendingAt(i) {
@@ -379,21 +511,31 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
     });
     for (const item of due) {
       if (item.kind === "exit") {
-        if (!position || position.side !== item.side) continue;
-        closePosition(i, bars[i].o, item.reason || "rule", true);
+        if (
+          !position ||
+          position.side !== item.side ||
+          position.lifecycleEpoch !== item.epoch
+        ) continue;
+        const reason = item.reason || "rule";
+        if (!closePosition(i, bars[i].o, reason, true)) {
+          scheduleExitRetry(i, item.side, reason, item.epoch);
+        }
       } else if (item.kind === "entry") {
         if (position) continue;
+        if (item.epoch !== lifecycleEpoch) continue;
         if (i < cooldownUntil) continue;
-        openPosition(i, item.side, bars[i].o);
+        openPosition(i, item.side, bars[i]);
       }
     }
   }
 
   function applyFunding(i) {
     if (!position) return;
-    const fr = bars[i].fundingRate;
-    if (fr == null || !isFiniteNumber(fr)) return;
-    const payment = fr * position.notionalUsd;
+    const bar = bars[i];
+    const fr = bar.fundingPaymentRate;
+    if (fr == null || !isFiniteNumber(fr) || fr === 0) return;
+    const markedNotionalUsd = Math.abs(position.qty * bar.c);
+    const payment = fr * markedNotionalUsd;
     if (position.side === "long") {
       equity -= payment;
       position.fundingAccrued += payment;
@@ -405,36 +547,72 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
     }
   }
 
+  function checkOpenLiquidation(i) {
+    if (!position) return;
+    const open = bars[i].o;
+    const hit = position.side === "long" ? open <= position.liq : open >= position.liq;
+    if (hit) closePosition(i, open, "liquidation", false);
+  }
+
   function checkIntrabarExits(i) {
     if (!position) return;
-    if (i === position.entryBarIndex) return;
     const bar = bars[i];
     const side = position.side;
     const liqHit = touchesLiq(bar, side, position.liq);
     const stopHit = touchesStop(bar, side, position.stop);
     const takeHit = touchesTake(bar, side, position.take);
+    const adverseGap = (trigger) =>
+      side === "long" ? Math.min(trigger, bar.o) : Math.max(trigger, bar.o);
 
     if (liqHit) {
-      closePosition(i, position.liq, "liquidation", false);
+      closePosition(i, adverseGap(position.liq), "liquidation", false);
       return;
     }
     if (stopHit && takeHit) {
-      closePosition(i, position.stop, "stop_loss", true);
+      if (!closePosition(i, adverseGap(position.stop), "stop_loss", true)) {
+        scheduleExitRetry(i, side, "stop_loss", position.lifecycleEpoch);
+      }
       return;
     }
     if (stopHit) {
-      closePosition(i, position.stop, "stop_loss", true);
+      if (!closePosition(i, adverseGap(position.stop), "stop_loss", true)) {
+        scheduleExitRetry(i, side, "stop_loss", position.lifecycleEpoch);
+      }
       return;
     }
     if (takeHit) {
-      closePosition(i, position.take, "take_profit", true);
+      if (!closePosition(i, position.take, "take_profit", true)) {
+        scheduleExitRetry(i, side, "take_profit", position.lifecycleEpoch);
+      }
     }
   }
 
   for (let i = 0; i < bars.length; i++) {
+    const nextDayKey = Math.floor(bars[i].t / 86_400_000);
+    if (nextDayKey !== dayKey) {
+      dayKey = nextDayKey;
+      dayStartEquity = markedEquityAt(bars[i].o);
+      dayLossBlocked = false;
+    }
+
+    checkOpenLiquidation(i);
     consumePendingAt(i);
     checkIntrabarExits(i);
     applyFunding(i);
+
+    if (
+      !dayLossBlocked &&
+      markedEquityAt(bars[i].c) <=
+        dayStartEquity * (1 - risk.maxDailyLossPct / 100)
+    ) {
+      dayLossBlocked = true;
+      flags.push({
+        type: "daily_loss_limit",
+        barIndex: i,
+        time: bars[i].t,
+        message: "daily loss limit reached; new entries blocked for UTC day",
+      });
+    }
 
     const signals = evaluated[i].signals;
     const fillBar = i + latency;
@@ -445,7 +623,11 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
         (position.side === "short" && signals.exitShort === true);
       if (wantExit && fillBar < bars.length) {
         const exists = pending.some(
-          (p) => p.kind === "exit" && p.side === position.side && p.fillBar === fillBar,
+          (p) =>
+            p.kind === "exit" &&
+            p.side === position.side &&
+            p.fillBar === fillBar &&
+            p.epoch === position.lifecycleEpoch,
         );
         if (!exists) {
           schedule({
@@ -454,6 +636,7 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
             signalBar: i,
             fillBar,
             reason: "rule",
+            epoch: position.lifecycleEpoch,
           });
         }
       }
@@ -467,36 +650,71 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
           time: bars[i].t,
           message: "conflicting entry signals; no position opened",
         });
-      } else if ((longSig || shortSig) && fillBar < bars.length && i >= cooldownUntil) {
+      } else if (
+        !dayLossBlocked &&
+        (longSig || shortSig) &&
+        fillBar < bars.length &&
+        i >= cooldownUntil
+      ) {
         schedule({
           kind: "entry",
           side: longSig ? "long" : "short",
           signalBar: i,
           fillBar,
+          epoch: lifecycleEpoch,
         });
       }
     }
 
+    let markedEquity = equity;
+    if (position) {
+      exposureBars += 1;
+      markedEquity = markedEquityAt(bars[i].c);
+    }
     equityCurve.push({
       barIndex: i,
       time: bars[i].t,
-      equity,
+      equity: markedEquity,
       positionSide: position ? position.side : null,
     });
   }
 
+  let openPositionAtEnd = null;
   if (position) {
     const i = bars.length - 1;
-    closePosition(i, bars[i].c, "end_of_data", true);
-    equityCurve[i] = {
-      barIndex: i,
-      time: bars[i].t,
-      equity,
-      positionSide: null,
-    };
+    const closed = closePosition(i, bars[i].c, "end_of_data", true);
+    if (closed) {
+      equityCurve[i] = {
+        barIndex: i,
+        time: bars[i].t,
+        equity,
+        positionSide: null,
+      };
+    } else {
+      const markedEquityUsd = markedEquityAt(bars[i].c);
+      openPositionAtEnd = {
+        side: position.side,
+        entryBarIndex: position.entryBarIndex,
+        entryTime: bars[position.entryBarIndex].t,
+        entryPrice: position.entryPrice,
+        qty: position.qty,
+        notionalUsd: position.notionalUsd,
+        markPrice: bars[i].c,
+        markedEquityUsd,
+      };
+      flags.push({
+        type: "open_position_at_end",
+        barIndex: i,
+        time: bars[i].t,
+        message: "end-of-data exit missed; position remains open and marked",
+      });
+    }
   }
 
-  const netPnlUsd = equity - opts.initialEquityUsd;
+  const finalEquity = position
+    ? markedEquityAt(bars[bars.length - 1].c)
+    : equity;
+  const netPnlUsd = finalEquity - opts.initialEquityUsd;
   const netPnlPct = (netPnlUsd / opts.initialEquityUsd) * 100;
   let wins = 0;
   let grossWin = 0;
@@ -524,6 +742,7 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
     tradeCount,
     sharpe: sharpeFromCurve(equityCurve),
     turnoverUsd,
+    exposurePct: (exposureBars / bars.length) * 100,
   };
 
   const config = {
@@ -532,9 +751,11 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
     builderFeeBps: opts.builderFeeBps,
     slippageBps: opts.slippageBps,
     latencyBars: opts.latencyBars,
+    maxVolumeParticipationPct: opts.maxVolumeParticipationPct,
   };
 
   const result = {
+    barsHash,
     strategyHash: compiled.strategyHash,
     compilerHash: STRATEGY_COMPILER_HASH,
     compilerVersion: STRATEGY_COMPILER_VERSION,
@@ -549,8 +770,11 @@ export function backtestStrategy(strategyInput, bars, options = {}) {
       slippageUsd,
     },
     liquidations,
+    missedFills,
+    openPositionAtEnd,
     flags,
   };
 
-  return deepFreeze(sortKeysDeep(JSON.parse(JSON.stringify(result))));
+  assertFiniteNumbers(result);
+  return deepFreeze(sortKeysDeep(result));
 }

@@ -12,8 +12,10 @@ const LIVE = "#7CFFB2";
 export type EvidenceStatusCode = "fail" | "pass_paper_only" | "pass_live_eligible" | "unknown";
 
 export interface EvidenceMetrics {
-  netPnl?: number | null;
+  netPnlUsd?: number | null;
   maxDrawdownPct?: number | null;
+  sharpe?: number | null;
+  exposurePct?: number | null;
   tradeCount?: number | null;
   winRate?: number | null;
   profitFactor?: number | null;
@@ -118,8 +120,10 @@ export function EvidenceCard({ status, train, holdout, walkForward, flags }: Evi
           <p className="mb-1 font-mono-ui text-[0.5rem] uppercase tracking-[0.14em]" style={{ color: ORACLE_BLUE }}>
             Train
           </p>
-          <MetricRow label="netPnl" value={readMetric(train, "netPnl")} />
+          <MetricRow label="netPnlUsd" value={readMetric(train, "netPnlUsd")} />
           <MetricRow label="maxDrawdownPct" value={readMetric(train, "maxDrawdownPct")} />
+          <MetricRow label="sharpe" value={readMetric(train, "sharpe")} />
+          <MetricRow label="exposurePct" value={readMetric(train, "exposurePct")} />
           <MetricRow label="tradeCount" value={readMetric(train, "tradeCount")} />
           <MetricRow label="winRate" value={readMetric(train, "winRate")} />
           <MetricRow label="profitFactor" value={readMetric(train, "profitFactor")} />
@@ -128,8 +132,10 @@ export function EvidenceCard({ status, train, holdout, walkForward, flags }: Evi
           <p className="mb-1 font-mono-ui text-[0.5rem] uppercase tracking-[0.14em]" style={{ color: ORACLE_BLUE }}>
             Holdout
           </p>
-          <MetricRow label="netPnl" value={readMetric(holdout, "netPnl")} />
+          <MetricRow label="netPnlUsd" value={readMetric(holdout, "netPnlUsd")} />
           <MetricRow label="maxDrawdownPct" value={readMetric(holdout, "maxDrawdownPct")} />
+          <MetricRow label="sharpe" value={readMetric(holdout, "sharpe")} />
+          <MetricRow label="exposurePct" value={readMetric(holdout, "exposurePct")} />
           <MetricRow label="tradeCount" value={readMetric(holdout, "tradeCount")} />
           <MetricRow label="winRate" value={readMetric(holdout, "winRate")} />
           <MetricRow label="profitFactor" value={readMetric(holdout, "profitFactor")} />

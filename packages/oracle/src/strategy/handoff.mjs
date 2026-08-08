@@ -2,19 +2,31 @@
 // Never signs, broadcasts, or evaluates execution enable flags.
 
 import { compileStrategy, STRATEGY_COMPILER_VERSION } from "./compiler.mjs";
+import { assertEvidenceArtifact } from "./evidence.mjs";
 import { normalizeStrategy } from "./schema.mjs";
 import { stampPrepared } from "../prepare-envelope.mjs";
 
-const SECRET_KEYS = new Set([
+const SECRET_KEYS = [
   "privatekey",
   "secretkey",
   "seed",
   "mnemonic",
+  "passphrase",
   "password",
+  "keystore",
+  "keymaterial",
+  "apikey",
+  "authtoken",
+  "accesstoken",
+  "refreshtoken",
   "credential",
   "bearer",
   "signature",
-]);
+  "authorization",
+  "xprv",
+  "xpriv",
+  "wif",
+];
 
 function isPlainObject(v) {
   return v != null && typeof v === "object" && !Array.isArray(v);
@@ -32,7 +44,7 @@ function assertNoSecrets(value, at = "value") {
   if (!isPlainObject(value)) return;
   for (const [key, child] of Object.entries(value)) {
     const norm = normalizeKey(key);
-    if (SECRET_KEYS.has(norm)) {
+    if (SECRET_KEYS.some((token) => norm.includes(token))) {
       throw new Error(`handoff: forbidden secret-like field at ${at}.${key}`);
     }
     assertNoSecrets(child, `${at}.${key}`);
@@ -50,24 +62,40 @@ function isPositiveNumber(v) {
 export function prepareStrategyLiveHandoff({
   strategy,
   evidence,
+  shadow,
   caps,
   nowMs = Date.now(),
   env = process.env,
 } = {}) {
-  assertNoSecrets({ strategy, evidence, caps }, "handoff");
+  assertNoSecrets({ strategy, evidence, shadow, caps }, "handoff");
 
   if (!isPlainObject(strategy)) throw new Error("handoff: strategy required");
   if (!isPlainObject(evidence)) throw new Error("handoff: evidence required");
+  if (!isPlainObject(shadow)) throw new Error("handoff: shadow required");
   if (!isPlainObject(caps)) throw new Error("handoff: caps required");
+
+  if (typeof shadow.id !== "string" || !shadow.id.trim()) {
+    throw new Error("handoff: shadow.id required");
+  }
+  if (typeof shadow.stateHash !== "string" || !/^[0-9a-f]{64}$/.test(shadow.stateHash)) {
+    throw new Error("handoff: shadow.stateHash must be a sha256 hash");
+  }
+  if (shadow.status !== "running") {
+    throw new Error("handoff: shadow.status must be running");
+  }
+  if (!Number.isInteger(shadow.cursor) || shadow.cursor <= 0) {
+    throw new Error("handoff: shadow.cursor must be a positive integer");
+  }
+  if (!Number.isInteger(shadow.updatedAt) || shadow.updatedAt <= 0 || shadow.updatedAt > nowMs) {
+    throw new Error("handoff: shadow.updatedAt must be a positive integer <= nowMs");
+  }
 
   // Validate with nowMs then compile.
   const normalized = normalizeStrategy(strategy, { nowMs });
   const compiled = compileStrategy(normalized);
 
   // Evidence
-  if (typeof evidence.id !== "string" || evidence.id.length === 0) {
-    throw new Error("handoff: evidence.id must be a non-empty string");
-  }
+  assertEvidenceArtifact(evidence, { maxDailyLossPct: normalized.risk.maxDailyLossPct });
   if (evidence.status !== "pass_live_eligible") {
     throw new Error("handoff: evidence.status must be pass_live_eligible");
   }
@@ -111,6 +139,12 @@ export function prepareStrategyLiveHandoff({
   if (!isPositiveNumber(caps.dailyLossCapUsd)) {
     throw new Error("handoff: caps.dailyLossCapUsd must be positive");
   }
+  const strategyDailyLossCeiling =
+    compiled.strategy.risk.maxNotionalUsd *
+    (compiled.strategy.risk.maxDailyLossPct / 100);
+  if (caps.dailyLossCapUsd > strategyDailyLossCeiling) {
+    throw new Error("handoff: caps.dailyLossCapUsd exceeds strategy daily loss ceiling");
+  }
 
   if (!Array.isArray(caps.chainAllowlist) || caps.chainAllowlist.length === 0) {
     throw new Error("handoff: caps.chainAllowlist must be a non-empty array");
@@ -125,8 +159,11 @@ export function prepareStrategyLiveHandoff({
   if (!Array.isArray(caps.assetAllowlist) || caps.assetAllowlist.length === 0) {
     throw new Error("handoff: caps.assetAllowlist must be a non-empty array");
   }
-  if (!caps.assetAllowlist.includes(compiled.strategy.market.coin)) {
-    throw new Error("handoff: caps.assetAllowlist must include strategy market coin");
+  if (
+    caps.assetAllowlist.length !== 1 ||
+    caps.assetAllowlist[0] !== compiled.strategy.market.coin
+  ) {
+    throw new Error("handoff: caps.assetAllowlist must contain only the strategy market coin");
   }
 
   if (!Number.isInteger(caps.expiresAt) || !(caps.expiresAt > nowMs)) {
@@ -153,11 +190,13 @@ export function prepareStrategyLiveHandoff({
   const payload = {
     strategyHash: compiled.strategyHash,
     compilerHash: compiled.compilerHash,
-    evidence: {
-      id: evidence.id,
-      status: "pass_live_eligible",
-      strategyHash: compiled.strategyHash,
-      compilerHash: compiled.compilerHash,
+    evidence: JSON.parse(JSON.stringify(evidence)),
+    shadow: {
+      id: shadow.id,
+      stateHash: shadow.stateHash,
+      status: shadow.status,
+      cursor: shadow.cursor,
+      updatedAt: shadow.updatedAt,
     },
     compiled: {
       strategyHash: compiled.strategyHash,
@@ -166,6 +205,7 @@ export function prepareStrategyLiveHandoff({
       venue: "hyperliquid",
       market: {
         coin: compiled.strategy.market.coin,
+        kind: "perp",
         interval: compiled.strategy.market.interval,
       },
       risk: { ...compiled.strategy.risk },

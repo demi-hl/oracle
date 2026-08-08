@@ -127,6 +127,28 @@ function extractNodes(strategy: unknown): { nodes: StrategyGraphNode[]; error: s
   return { nodes, error: null };
 }
 
+function evidenceMetrics(value: unknown): EvidenceMetrics | null {
+  if (!isRecord(value)) return null;
+  return isRecord(value.metrics)
+    ? (value.metrics as EvidenceMetrics)
+    : (value as EvidenceMetrics);
+}
+
+function evidenceFlags(value: unknown): string[] | null {
+  if (!Array.isArray(value)) return null;
+  const normalized = value
+    .map((flag) => {
+      if (typeof flag === "string") return flag;
+      if (!isRecord(flag)) return null;
+      const type = typeof flag.type === "string" ? flag.type : null;
+      const message = typeof flag.message === "string" ? flag.message : null;
+      if (type && message) return `${type}: ${message}`;
+      return message ?? type;
+    })
+    .filter((flag): flag is string => Boolean(flag));
+  return normalized;
+}
+
 function extractEvidence(body: unknown): {
   status: EvidenceStatusCode;
   train: EvidenceMetrics | null;
@@ -137,16 +159,8 @@ function extractEvidence(body: unknown): {
   const root = isRecord(body) ? body : {};
   const evidence = isRecord(root.evidence) ? root.evidence : root;
   const status = normalizeEvidenceStatus(evidence.status ?? root.status);
-  const train = isRecord(evidence.train)
-    ? (evidence.train as EvidenceMetrics)
-    : isRecord(root.train)
-      ? (root.train as EvidenceMetrics)
-      : null;
-  const holdout = isRecord(evidence.holdout)
-    ? (evidence.holdout as EvidenceMetrics)
-    : isRecord(root.holdout)
-      ? (root.holdout as EvidenceMetrics)
-      : null;
+  const train = evidenceMetrics(evidence.train ?? root.train);
+  const holdout = evidenceMetrics(evidence.holdout ?? root.holdout);
   const wfRaw = isRecord(evidence.walkForward)
     ? evidence.walkForward
     : isRecord(root.walkForward)
@@ -162,14 +176,7 @@ function extractEvidence(body: unknown): {
               : null,
       }
     : null;
-  const flagsRaw = Array.isArray(evidence.flags)
-    ? evidence.flags
-    : Array.isArray(root.flags)
-      ? root.flags
-      : null;
-  const flags = flagsRaw
-    ? flagsRaw.filter((f): f is string => typeof f === "string")
-    : null;
+  const flags = evidenceFlags(evidence.flags ?? root.flags);
   return { status, train, holdout, walkForward, flags };
 }
 
@@ -180,6 +187,48 @@ function normalizeShadowLabel(raw: unknown): ShadowStatusLabel {
   if (s === "error" || s === "failed" || s === "crashed") return "ERROR";
   if (s === "stopped" || s === "idle" || s === "stop") return "STOPPED";
   return "STOPPED";
+}
+
+type ShadowRunnerView = {
+  id: string;
+  status: ShadowStatusLabel;
+  evidenceId: string;
+  strategyHash: string;
+  compilerHash: string;
+};
+
+function toShadowRunnerView(value: unknown): ShadowRunnerView | null {
+  if (!isRecord(value)) return null;
+  const status = normalizeShadowLabel(value.status ?? value.state);
+  if (
+    typeof value.id !== "string" ||
+    typeof value.evidenceId !== "string" ||
+    typeof value.strategyHash !== "string" ||
+    typeof value.compilerHash !== "string"
+  ) {
+    return null;
+  }
+  return {
+    id: value.id,
+    status,
+    evidenceId: value.evidenceId,
+    strategyHash: value.strategyHash,
+    compilerHash: value.compilerHash,
+  };
+}
+
+function shadowMatchesEvidence(runner: ShadowRunnerView | null, evidence: unknown): boolean {
+  return (
+    runner != null &&
+    runner.status === "SHADOWING" &&
+    isRecord(evidence) &&
+    typeof evidence.id === "string" &&
+    typeof evidence.strategyHash === "string" &&
+    typeof evidence.compilerHash === "string" &&
+    runner.evidenceId === evidence.id &&
+    runner.strategyHash === evidence.strategyHash &&
+    runner.compilerHash === evidence.compilerHash
+  );
 }
 
 function buttonClass(primary = false): string {
@@ -207,9 +256,10 @@ export function StrategyPane() {
   const [holdout, setHoldout] = useState<EvidenceMetrics | null>(null);
   const [walkForward, setWalkForward] = useState<{ passRate?: number | null } | null>(null);
   const [flags, setFlags] = useState<string[] | null>(null);
+  const [evidenceArtifact, setEvidenceArtifact] = useState<unknown>(null);
 
-  const [shadow, setShadow] = useState<ShadowStatusLabel>("STOPPED");
-  const [shadowId, setShadowId] = useState<string | null>(null);
+  const [shadowRunner, setShadowRunner] = useState<ShadowRunnerView | null>(null);
+  const [shadowFailed, setShadowFailed] = useState(false);
   const [prepared, setPrepared] = useState<unknown>(null);
   const [graphParseError, setGraphParseError] = useState<string | null>(null);
 
@@ -237,9 +287,17 @@ export function StrategyPane() {
   }, [graph.error]);
 
   const evidenceLabel = evidenceStatusLabel(evidenceStatus);
+  const shadow: ShadowStatusLabel = shadowFailed
+    ? "ERROR"
+    : shadowRunner?.status ?? "STOPPED";
+  const shadowId = shadowRunner?.id ?? null;
 
   const canPrepare =
-    evidenceStatus === "pass_live_eligible" && shadow !== "ERROR" && parsed.error == null && parsed.strategy != null;
+    evidenceStatus === "pass_live_eligible" &&
+    evidenceArtifact != null &&
+    shadowMatchesEvidence(shadowRunner, evidenceArtifact) &&
+    parsed.error == null &&
+    parsed.strategy != null;
 
   const postJson = useCallback(async (path: string, body: unknown) => {
     const res = await fetch(path, {
@@ -269,6 +327,10 @@ export function StrategyPane() {
       setDsl(strategyToDslText(strategy));
       setDraftSaved(false);
       setDslState("unknown");
+      setEvidenceStatus("unknown");
+      setEvidenceArtifact(null);
+      setShadowRunner(null);
+      setShadowFailed(false);
       setPrepared(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Draft unavailable");
@@ -306,8 +368,12 @@ export function StrategyPane() {
         setError(asErrorMessage(json, "DSL INVALID"));
         return;
       }
-      setDslState(ok || res.ok ? "valid" : "invalid");
-      if (!ok && !res.ok) setError(asErrorMessage(json, "DSL INVALID"));
+      if (!ok) {
+        setDslState("invalid");
+        setError(asErrorMessage(json, "DSL INVALID"));
+        return;
+      }
+      setDslState("valid");
     } catch (e) {
       setDslState("invalid");
       setError(e instanceof Error ? e.message : "Validate failed");
@@ -332,11 +398,16 @@ export function StrategyPane() {
 
   const applyEvidenceBody = useCallback((json: unknown) => {
     const ev = extractEvidence(json);
+    setShadowRunner(null);
+    setShadowFailed(false);
     setEvidenceStatus(ev.status);
     setTrain(ev.train);
     setHoldout(ev.holdout);
     setWalkForward(ev.walkForward);
     setFlags(ev.flags);
+    setEvidenceArtifact(
+      isRecord(json) && isRecord(json.evidence) ? json.evidence : json,
+    );
   }, []);
 
   const runBacktest = useCallback(async () => {
@@ -393,32 +464,33 @@ export function StrategyPane() {
   }, [applyEvidenceBody, dsl, postJson]);
 
   const loadShadow = useCallback(async () => {
+    if (!isRecord(evidenceArtifact)) {
+      setShadowRunner(null);
+      setShadowFailed(false);
+      return;
+    }
     try {
       const res = await fetch("/api/oracle/strategy/shadow", { cache: "no-store" });
       const json = await readJson(res);
       if (!res.ok) return;
-      if (!isRecord(json)) return;
-      const list = Array.isArray(json.runners)
-        ? json.runners
-        : Array.isArray(json.shadows)
-          ? json.shadows
-          : Array.isArray(json.items)
-            ? json.items
-            : null;
-      if (list && list.length > 0 && isRecord(list[0])) {
-        const first = list[0];
-        if (typeof first.id === "string") setShadowId(first.id);
-        setShadow(normalizeShadowLabel(first.status ?? first.state));
-        return;
-      }
-      if (typeof json.id === "string") setShadowId(json.id);
-      if (json.status != null || json.state != null) {
-        setShadow(normalizeShadowLabel(json.status ?? json.state));
-      }
+      const list = Array.isArray(json)
+        ? json
+        : isRecord(json) && Array.isArray(json.runners)
+          ? json.runners
+          : isRecord(json) && Array.isArray(json.shadows)
+            ? json.shadows
+            : isRecord(json) && Array.isArray(json.items)
+              ? json.items
+              : [];
+      const matching = list
+        .map((item) => toShadowRunnerView(item))
+        .find((runner) => shadowMatchesEvidence(runner, evidenceArtifact));
+      setShadowRunner(matching ?? null);
+      setShadowFailed(false);
     } catch {
-      // list/load is optional chrome
+      setShadowRunner(null);
     }
-  }, []);
+  }, [evidenceArtifact]);
 
   useEffect(() => {
     void loadShadow();
@@ -437,27 +509,35 @@ export function StrategyPane() {
       const { res, json } = await postJson("/api/oracle/strategy/shadow", {
         action: "start",
         strategy,
+        evidenceId:
+          isRecord(evidenceArtifact) && typeof evidenceArtifact.id === "string"
+            ? evidenceArtifact.id
+            : null,
       });
       if (!res.ok) {
-        setShadow("ERROR");
+        setShadowRunner(null);
+        setShadowFailed(true);
         setError(asErrorMessage(json, `Start shadow failed (${res.status})`));
         return;
       }
-      if (isRecord(json) && typeof json.id === "string") setShadowId(json.id);
-      else if (isRecord(json) && isRecord(json.runner) && typeof json.runner.id === "string") {
-        setShadowId(json.runner.id);
+      const rawRunner = isRecord(json) && isRecord(json.runner) ? json.runner : json;
+      const nextRunner = toShadowRunnerView(rawRunner);
+      if (!shadowMatchesEvidence(nextRunner, evidenceArtifact)) {
+        setShadowRunner(null);
+        setShadowFailed(true);
+        setError("Start shadow failed: runner identity does not match current evidence");
+        return;
       }
-      const label = isRecord(json)
-        ? normalizeShadowLabel(json.status ?? json.state ?? "shadowing")
-        : "SHADOWING";
-      setShadow(label === "STOPPED" ? "SHADOWING" : label);
+      setShadowRunner(nextRunner);
+      setShadowFailed(false);
     } catch (e) {
-      setShadow("ERROR");
+      setShadowRunner(null);
+      setShadowFailed(true);
       setError(e instanceof Error ? e.message : "Start shadow failed");
     } finally {
       setBusy("idle");
     }
-  }, [dsl, postJson]);
+  }, [dsl, evidenceArtifact, postJson]);
 
   const stopShadow = useCallback(async () => {
     setBusy("shadow-stop");
@@ -468,13 +548,14 @@ export function StrategyPane() {
         id: shadowId,
       });
       if (!res.ok) {
-        setShadow("ERROR");
+        setShadowFailed(true);
         setError(asErrorMessage(json, `Stop shadow failed (${res.status})`));
         return;
       }
-      setShadow("STOPPED");
+      setShadowRunner(null);
+      setShadowFailed(false);
     } catch (e) {
-      setShadow("ERROR");
+      setShadowFailed(true);
       setError(e instanceof Error ? e.message : "Stop shadow failed");
     } finally {
       setBusy("idle");
@@ -484,7 +565,7 @@ export function StrategyPane() {
   const prepareHandoff = useCallback(async () => {
     if (!canPrepare) {
       setError(
-        "Prepare local handoff requires pass_live_eligible evidence and shadow not in ERROR",
+        "Prepare local handoff requires pass_live_eligible evidence and its active shadow runner",
       );
       return;
     }
@@ -497,7 +578,11 @@ export function StrategyPane() {
       return;
     }
     try {
-      const { res, json } = await postJson("/api/oracle/strategy/prepare-live", { strategy });
+      const { res, json } = await postJson("/api/oracle/strategy/prepare-live", {
+        strategy,
+        evidence: evidenceArtifact,
+        shadowId,
+      });
       if (!res.ok) {
         setError(asErrorMessage(json, `Prepare local handoff failed (${res.status})`));
         return;
@@ -514,7 +599,7 @@ export function StrategyPane() {
     } finally {
       setBusy("idle");
     }
-  }, [canPrepare, dsl, postJson]);
+  }, [canPrepare, dsl, evidenceArtifact, postJson, shadowId]);
 
   return (
     <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-3 py-4 sm:px-5" style={{ background: PANEL }}>
@@ -583,6 +668,11 @@ export function StrategyPane() {
                 setDsl(e.target.value);
                 setDraftSaved(false);
                 setDslState("unknown");
+                setEvidenceStatus("unknown");
+                setEvidenceArtifact(null);
+                setShadowRunner(null);
+                setShadowFailed(false);
+                setPrepared(null);
               }}
               rows={14}
               className="min-h-[220px] w-full resize-y border bg-transparent px-3 py-2 font-mono-ui text-[0.68rem] leading-relaxed outline-none"

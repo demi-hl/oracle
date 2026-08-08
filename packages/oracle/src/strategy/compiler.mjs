@@ -1,22 +1,15 @@
 // Deterministic strategy compiler. No network, keys, clock, or I/O.
 
-import { createHash } from "node:crypto";
 import {
   applyParameterOverrides,
   normalizeStrategy,
   strategyHash,
 } from "./schema.mjs";
 import { sma, ema, rsi, macd, bollinger, atr } from "./indicators.mjs";
+import { COMPILER_HASH, COMPILER_VERSION } from "./compiler-identity.mjs";
 
-export const STRATEGY_COMPILER_VERSION = 1;
-export const STRATEGY_COMPILER_HASH = createHash("sha256")
-  .update(JSON.stringify({
-    version: STRATEGY_COMPILER_VERSION,
-    nodeTypes: ["input", "constant", "indicator", "compare", "logic", "cross"],
-    indicators: ["sma", "ema", "rsi", "macd", "bollinger", "atr"],
-    rules: ["entryLong", "entryShort", "exitLong", "exitShort"],
-  }))
-  .digest("hex");
+export const STRATEGY_COMPILER_VERSION = COMPILER_VERSION;
+export const STRATEGY_COMPILER_HASH = COMPILER_HASH;
 
 const FIELD_MAP = Object.freeze({
   open: "o",
@@ -26,6 +19,20 @@ const FIELD_MAP = Object.freeze({
   volume: "v",
   fundingRate: "fundingRate",
   openInterest: "openInterest",
+});
+
+const INTERVAL_MS = Object.freeze({
+  "1m": 60_000,
+  "3m": 180_000,
+  "5m": 300_000,
+  "15m": 900_000,
+  "30m": 1_800_000,
+  "1h": 3_600_000,
+  "2h": 7_200_000,
+  "4h": 14_400_000,
+  "8h": 28_800_000,
+  "12h": 43_200_000,
+  "1d": 86_400_000,
 });
 
 function isFiniteNumber(v) {
@@ -82,7 +89,7 @@ function resolveNum(spec, params) {
   return spec;
 }
 
-function assertBars(bars, index) {
+function assertBars(bars, index, interval) {
   if (!Array.isArray(bars) || bars.length === 0) {
     throw new TypeError("bars must be a non-empty array");
   }
@@ -109,21 +116,33 @@ function assertBars(bars, index) {
     ]) {
       if (!isFiniteNumber(val)) throw new TypeError(`bars[${i}].${k} must be a finite number`);
     }
+    for (const [k, val] of [["o", o], ["h", h], ["l", l], ["c", c]]) {
+      if (!(val > 0)) throw new TypeError(`bars[${i}].${k} price must be positive`);
+    }
+    if (v < 0) throw new TypeError(`bars[${i}].v volume must be non-negative`);
     if (h < Math.max(o, c, l)) {
       throw new TypeError(`bars[${i}] high must be >= max(open, close, low)`);
     }
     if (l > Math.min(o, c, h)) {
       throw new TypeError(`bars[${i}] low must be <= min(open, close, high)`);
     }
-    if (prevT != null && !(t > prevT)) {
-      throw new TypeError("bars t must be strictly increasing");
+    if (prevT != null) {
+      if (!(t > prevT)) throw new TypeError("bars t must be strictly increasing");
+      if (t - prevT !== INTERVAL_MS[interval]) {
+        throw new TypeError(`bars t must match ${interval} cadence`);
+      }
     }
     prevT = t;
     if ("fundingRate" in b && b.fundingRate != null && !isFiniteNumber(b.fundingRate)) {
       throw new TypeError(`bars[${i}].fundingRate must be finite when present`);
     }
-    if ("openInterest" in b && b.openInterest != null && !isFiniteNumber(b.openInterest)) {
-      throw new TypeError(`bars[${i}].openInterest must be finite when present`);
+    if ("openInterest" in b && b.openInterest != null) {
+      if (!isFiniteNumber(b.openInterest)) {
+        throw new TypeError(`bars[${i}].openInterest must be finite when present`);
+      }
+      if (b.openInterest < 0) {
+        throw new TypeError(`bars[${i}].openInterest must be non-negative`);
+      }
     }
   }
 }
@@ -332,7 +351,7 @@ export function compileStrategy(input, parameterOverrides = {}) {
   }
 
   function buildCache(bars, index) {
-    assertBars(bars, index);
+    assertBars(bars, index, strategy.market.interval);
     const cache = new Map();
     for (const id of nodeOrder) {
       seriesFor(id, nodesById, params, bars, index, cache);

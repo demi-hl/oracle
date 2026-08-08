@@ -167,6 +167,10 @@ test("never stores credential key mnemonic seed signature fields at any depth", 
   const store = openShadowStore({ path: storePath(dir) });
   const secrets = [
     { privateKey: "x" },
+    { privateKeyHex: "x" },
+    { userPrivateKeyBackup: "x" },
+    { apiKey: "x" },
+    { authToken: "x" },
     { secretKey: "x" },
     { seed: "x" },
     { mnemonic: "x" },

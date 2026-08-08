@@ -8,14 +8,35 @@ function deepClone(v) {
   return v == null ? v : JSON.parse(JSON.stringify(v));
 }
 
-function orderId(runnerId, strategyHash, signalBarT, side) {
+function sortKeysDeep(value) {
+  if (Array.isArray(value)) return value.map(sortKeysDeep);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.keys(value).sort().map((key) => [key, sortKeysDeep(value[key])]),
+    );
+  }
+  return value;
+}
+
+export function shadowStateHash(record) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) {
+    throw new TypeError("shadow-runner: record must be an object");
+  }
   return createHash("sha256")
-    .update(`${runnerId}|${strategyHash}|${signalBarT}|${side}`)
+    .update(JSON.stringify(sortKeysDeep(record)))
     .digest("hex");
 }
 
-function runnerIdFor(clockMs, strategyHash) {
-  return createHash("sha256").update(`shadow|${clockMs}|${strategyHash}`).digest("hex");
+function orderId(runnerId, strategyHash, signalBarT, side, action) {
+  return createHash("sha256")
+    .update(`${runnerId}|${strategyHash}|${signalBarT}|${side}|${action}`)
+    .digest("hex");
+}
+
+function runnerIdFor(clockMs, strategyHash, compilerHash, evidenceId) {
+  return createHash("sha256")
+    .update(`shadow|${clockMs}|${strategyHash}|${compilerHash}|${evidenceId ?? ""}`)
+    .digest("hex");
 }
 
 function sideForAction(action) {
@@ -43,8 +64,25 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
 
   function start({ strategy, evidenceId = null } = {}) {
     const compiled = compileStrategy(strategy);
+    const normalizedEvidenceId = evidenceId == null ? null : String(evidenceId);
+    const active = store
+      .list()
+      .filter(
+        (record) =>
+          record.status === "running" &&
+          record.strategyHash === compiled.strategyHash &&
+          record.compilerHash === compiled.compilerHash &&
+          record.evidenceId === normalizedEvidenceId,
+      )
+      .sort((a, b) => a.createdAt - b.createdAt || a.id.localeCompare(b.id))[0];
+    if (active) return deepClone(active);
     const now = clock();
-    const id = runnerIdFor(now, compiled.strategyHash);
+    const id = runnerIdFor(
+      now,
+      compiled.strategyHash,
+      compiled.compilerHash,
+      normalizedEvidenceId,
+    );
     const existing = store.get(id);
     if (existing) {
       return deepClone(existing);
@@ -54,7 +92,7 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
       strategy: deepClone(compiled.strategy),
       strategyHash: compiled.strategyHash,
       compilerHash: compiled.compilerHash,
-      evidenceId: evidenceId == null ? null : String(evidenceId),
+      evidenceId: normalizedEvidenceId,
       status: "running",
       cursor: null,
       intendedOrders: [],
@@ -65,7 +103,8 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
       updatedAt: now,
       // Internal paper state (persisted for restart continuity)
       position: null,
-      cooldownUntilBarIndex: null,
+      cooldownBarsRemaining: 0,
+      cooldownStartT: null,
       lastProcessedBarIndex: -1,
     };
     return store.create(record);
@@ -90,7 +129,6 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
         throw new Error("shadow-runner: runner is stopped");
       }
       if (bars.length === 0) {
-        rec.updatedAt = clock();
         return rec;
       }
 
@@ -108,6 +146,7 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
         const t = bars[i].t;
         if (cursor == null || t > cursor) processIndexes.push(i);
       }
+      if (processIndexes.length === 0) return rec;
 
       const orderById = new Map(rec.intendedOrders.map((o) => [o.id, o]));
       const fillOrderIds = new Set(rec.fills.map((f) => f.orderId));
@@ -116,13 +155,15 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
       const markoutByKey = new Map(rec.markouts.map((m) => [markoutKey(m.orderId, m.horizon), m]));
 
       let position = rec.position ? { ...rec.position } : null;
-      let cooldownUntilBarIndex =
-        rec.cooldownUntilBarIndex == null ? null : rec.cooldownUntilBarIndex;
+      let cooldownBarsRemaining = Number.isInteger(rec.cooldownBarsRemaining)
+        ? Math.max(0, rec.cooldownBarsRemaining)
+        : 0;
+      let cooldownStartT = Number.isFinite(rec.cooldownStartT) ? rec.cooldownStartT : null;
 
       // Helper: ensure intended order exists once
       function ensureOrder({ action, signalBarT, signalIndex }) {
         const side = sideForAction(action);
-        const oid = orderId(rec.id, rec.strategyHash, signalBarT, side);
+        const oid = orderId(rec.id, rec.strategyHash, signalBarT, side, action);
         if (orderById.has(oid)) return orderById.get(oid);
         const fillIndex = signalIndex + 1;
         const hasNext = fillIndex < bars.length;
@@ -187,8 +228,8 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
           }
         } else {
           position = null;
-          const cd = Number(rec.strategy?.risk?.cooldownBars) || 0;
-          cooldownUntilBarIndex = fillIndex + cd;
+          cooldownBarsRemaining = Number(rec.strategy?.risk?.cooldownBars) || 0;
+          cooldownStartT = fillBar.t;
         }
       }
 
@@ -213,8 +254,7 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
         const sigIdx = indexByT.get(order.signalBarT);
         if (sigIdx == null) continue;
         const fillIndex = sigIdx + 1;
-        if (fillIndex < bars.length) {
-          // Only fill if that fill bar is in the processable set or already at/before new bars
+        if (fillIndex < bars.length && (cursor == null || bars[fillIndex].t > cursor)) {
           recordFill(order, bars[fillIndex], fillIndex);
         }
       }
@@ -223,18 +263,17 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
       for (const i of processIndexes) {
         const bar = bars[i];
         const signals = evaluated[i].signals;
-
-        // Cooldown: cannot enter until bar index > cooldownUntilBarIndex
-        const inCooldown =
-          cooldownUntilBarIndex != null && i <= cooldownUntilBarIndex;
+        const positionAtBarStart = position;
 
         const tryEntry = (action) => {
           if (position) return;
+          const inCooldown =
+            cooldownBarsRemaining > 0 &&
+            (cooldownStartT == null || bar.t >= cooldownStartT);
           if (inCooldown) return;
           const order = ensureOrder({ action, signalBarT: bar.t, signalIndex: i });
           const fillIndex = i + 1;
           if (fillIndex < bars.length) {
-            // Fill happens on next bar; if next bar is also being processed later, fill now
             recordFill(order, bars[fillIndex], fillIndex);
           } else {
             recordMissed(order);
@@ -254,11 +293,22 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
           }
         };
 
-        // Exits first on the signal bar, then entries (still one position max)
-        if (signals.exitLong) tryExit("exitLong");
-        if (signals.exitShort) tryExit("exitShort");
-        if (signals.entryLong) tryEntry("entryLong");
-        if (signals.entryShort) tryEntry("entryShort");
+        if (positionAtBarStart) {
+          if (signals.exitLong) tryExit("exitLong");
+          if (signals.exitShort) tryExit("exitShort");
+        } else if (!(signals.entryLong && signals.entryShort)) {
+          if (signals.entryLong) tryEntry("entryLong");
+          if (signals.entryShort) tryEntry("entryShort");
+        }
+
+        if (
+          cooldownBarsRemaining > 0 &&
+          cooldownStartT != null &&
+          bar.t >= cooldownStartT
+        ) {
+          cooldownBarsRemaining -= 1;
+          if (cooldownBarsRemaining === 0) cooldownStartT = null;
+        }
 
         rec.cursor = bar.t;
         rec.lastProcessedBarIndex = i;
@@ -285,7 +335,8 @@ export function createShadowRunner({ storePath, clock = Date.now } = {}) {
       }
 
       rec.position = position;
-      rec.cooldownUntilBarIndex = cooldownUntilBarIndex;
+      rec.cooldownBarsRemaining = cooldownBarsRemaining;
+      rec.cooldownStartT = cooldownStartT;
       rec.updatedAt = clock();
       return rec;
     });

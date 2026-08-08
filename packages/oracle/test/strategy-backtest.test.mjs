@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { backtestStrategy } from "../src/strategy/backtest.mjs";
 import { strategyHash } from "../src/strategy/schema.mjs";
 import { STRATEGY_COMPILER_HASH, STRATEGY_COMPILER_VERSION } from "../src/strategy/compiler.mjs";
@@ -21,7 +22,8 @@ function risk(extra = {}) {
 function bar(t, o, h, l, c, v = 100, extra = {}) {
   const hi = Math.max(h, o, c, l);
   const lo = Math.min(l, o, c, h);
-  return { t, o, h: hi, l: lo, c, v, ...extra };
+  const index = t >= 1_000 && t <= 10_000 && t % 1_000 === 0 ? t / 1_000 : t;
+  return { t: t <= 10_000 ? index * 60_000 : t, o, h: hi, l: lo, c, v, ...extra };
 }
 
 function thresholdStrategy(opts = {}) {
@@ -77,6 +79,17 @@ function assertFrozenDeep(value, path = "root") {
   for (const [k, v] of Object.entries(value)) assertFrozenDeep(v, `${path}.${k}`);
 }
 
+function canonicalHash(value) {
+  const sort = (item) => {
+    if (Array.isArray(item)) return item.map(sort);
+    if (item != null && typeof item === "object") {
+      return Object.fromEntries(Object.keys(item).sort().map((key) => [key, sort(item[key])]));
+    }
+    return item;
+  };
+  return createHash("sha256").update(JSON.stringify(sort(value))).digest("hex");
+}
+
 test("backtestStrategy returns required shape with hashes and frozen output", () => {
   const strategy = thresholdStrategy();
   const bars = [
@@ -90,6 +103,7 @@ test("backtestStrategy returns required shape with hashes and frozen output", ()
   assert.equal(result.strategyHash, strategyHash(strategy));
   assert.equal(result.compilerHash, STRATEGY_COMPILER_HASH);
   assert.equal(result.compilerVersion, STRATEGY_COMPILER_VERSION);
+  assert.equal(result.barsHash, canonicalHash(bars));
   assert.ok(result.config);
   assert.ok(Array.isArray(result.trades));
   assert.ok(Array.isArray(result.equityCurve));
@@ -103,6 +117,7 @@ test("backtestStrategy returns required shape with hashes and frozen output", ()
     "tradeCount",
     "sharpe",
     "turnoverUsd",
+    "exposurePct",
   ]) {
     assert.equal(typeof result.metrics[k], "number", k);
   }
@@ -110,8 +125,24 @@ test("backtestStrategy returns required shape with hashes and frozen output", ()
     assert.equal(typeof result.costs[k], "number", k);
   }
   assert.ok(Array.isArray(result.liquidations));
+  assert.ok(Array.isArray(result.missedFills));
   assert.ok(Array.isArray(result.flags));
   assertFrozenDeep(result);
+});
+
+test("replay identity binds the exact canonical input bars", () => {
+  const strategy = thresholdStrategy();
+  const bars = Array.from({ length: 8 }, (_, i) =>
+    bar((i + 1) * 1_000, 90, 91, 89, 90, 100),
+  );
+  const changed = bars.map((item, index) =>
+    index === 4 ? { ...item, openInterest: 123_456 } : { ...item },
+  );
+  const a = backtestStrategy(strategy, bars);
+  const b = backtestStrategy(strategy, changed);
+  assert.deepEqual(a.metrics, b.metrics);
+  assert.match(a.barsHash, /^[a-f0-9]{64}$/);
+  assert.notEqual(a.barsHash, b.barsHash);
 });
 
 test("defaults match required fee latency equity values", () => {
@@ -150,6 +181,305 @@ test("signal fills at next bar open never same bar close", () => {
   assert.notEqual(t0.entryPrice, 101);
 });
 
+test("risk exits can trigger on the same bar as the next-open entry fill", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    risk: { stopLossPct: 2, takeProfitPct: 20 },
+  });
+  const bars = [
+    bar(1, 100, 102, 99, 101),
+    bar(2, 100, 101, 95, 100),
+    bar(3, 100, 101, 99, 100),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.ok(result.trades.length >= 1);
+  assert.equal(result.trades[0].entryBarIndex, 1);
+  assert.equal(result.trades[0].exitBarIndex, 1);
+  assert.equal(result.trades[0].exitReason, "stop_loss");
+});
+
+test("gap-through stop and liquidation fills never improve beyond the bar open", () => {
+  const stopStrategy = thresholdStrategy({ threshold: 100, risk: { maxLeverage: 2, stopLossPct: 2, takeProfitPct: 50 } });
+  const stopBars = [
+    bar(1, 100, 102, 99, 101),
+    bar(2, 100, 102, 99, 101),
+    bar(3, 60, 61, 55, 58),
+  ];
+  const stopResult = backtestStrategy(stopStrategy, stopBars, { takerFeeBps: 0, builderFeeBps: 0, slippageBps: 0 });
+  assert.equal(stopResult.trades[0].exitPrice, 60);
+
+  const liqStrategy = thresholdStrategy({ threshold: 100, risk: { maxLeverage: 5, stopLossPct: 50, takeProfitPct: 50 } });
+  const liqBars = [
+    bar(1, 100, 102, 99, 101),
+    bar(2, 100, 102, 99, 101),
+    bar(3, 40, 41, 35, 38),
+  ];
+  const liqResult = backtestStrategy(liqStrategy, liqBars, { takerFeeBps: 0, builderFeeBps: 0, slippageBps: 0 });
+  assert.equal(liqResult.trades[0].exitReason, "liquidation");
+  assert.equal(liqResult.trades[0].exitPrice, 40);
+});
+
+test("take-profit gaps never improve beyond the configured trigger", () => {
+  const longStrategy = thresholdStrategy({
+    threshold: 100,
+    side: "long",
+    risk: { maxLeverage: 1, stopLossPct: 50, takeProfitPct: 4 },
+  });
+  const longResult = backtestStrategy(longStrategy, [
+    bar(1, 100, 102, 99, 101, 1_000),
+    bar(2, 100, 102, 99, 101, 1_000),
+    bar(3, 120, 121, 119, 120, 1_000),
+  ], { takerFeeBps: 0, builderFeeBps: 0, slippageBps: 0 });
+  assert.equal(longResult.trades[0].exitReason, "take_profit");
+  assert.equal(longResult.trades[0].exitPrice, 104);
+
+  const shortStrategy = thresholdStrategy({
+    threshold: 100,
+    side: "short",
+    risk: { maxLeverage: 1, stopLossPct: 50, takeProfitPct: 4 },
+  });
+  const shortResult = backtestStrategy(shortStrategy, [
+    bar(1, 100, 101, 98, 99, 1_000),
+    bar(2, 100, 101, 98, 99, 1_000),
+    bar(3, 80, 81, 79, 80, 1_000),
+  ], { takerFeeBps: 0, builderFeeBps: 0, slippageBps: 0 });
+  assert.equal(shortResult.trades[0].exitReason, "take_profit");
+  assert.equal(shortResult.trades[0].exitPrice, 96);
+});
+
+test("direct backtest fails closed when a required external series is absent", () => {
+  const s = thresholdStrategy();
+  s.nodes = [
+    { id: "oi", type: "input", field: "openInterest" },
+    { id: "k", type: "constant", value: 1 },
+    { id: "gt", type: "compare", op: "gt", left: "oi", right: "k" },
+  ];
+  s.rules = { entryLong: "gt", entryShort: null, exitLong: null, exitShort: null };
+  assert.throws(
+    () => backtestStrategy(s, [bar(1, 100, 101, 99, 100), bar(2, 100, 101, 99, 100)]),
+    /required series.*openInterest/i,
+  );
+});
+
+test("trade net pnl reconciles to realized equity without double-counting slippage", () => {
+  const strategy = thresholdStrategy({ threshold: 100, risk: { stopLossPct: 20, takeProfitPct: 20 } });
+  const bars = [
+    bar(1, 100, 102, 99, 101),
+    bar(2, 100, 102, 99, 101),
+    bar(3, 100, 101, 98, 99),
+    bar(4, 99, 100, 98, 99),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    initialEquityUsd: 10_000,
+    takerFeeBps: 3.5,
+    builderFeeBps: 2,
+    slippageBps: 25,
+  });
+  const tradeNet = result.trades.reduce((sum, trade) => sum + trade.netPnlUsd, 0);
+  assert.ok(Math.abs(tradeNet - result.metrics.netPnlUsd) < 1e-8);
+  assert.ok(result.costs.slippageUsd > 0);
+});
+
+test("equity curve marks open positions to market and reports exposure", () => {
+  const strategy = thresholdStrategy({ threshold: 100, risk: { stopLossPct: 40, takeProfitPct: 40 } });
+  const bars = [
+    bar(1, 100, 102, 99, 101),
+    bar(2, 100, 102, 99, 101),
+    bar(3, 100, 100, 80, 80),
+    bar(4, 80, 81, 79, 80),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    initialEquityUsd: 10_000,
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.ok(result.equityCurve[2].equity < 10_000);
+  assert.ok(result.metrics.maxDrawdownPct > 0);
+  assert.ok(result.metrics.exposurePct > 0);
+});
+
+test("volume participation can deterministically record a missed entry fill", () => {
+  const strategy = thresholdStrategy({ threshold: 100 });
+  const bars = [
+    bar(1, 100, 102, 99, 101, 1),
+    bar(2, 100, 101, 99, 100, 1),
+    bar(3, 100, 101, 99, 100, 1),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    maxVolumeParticipationPct: 1,
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.trades.length, 0);
+  assert.equal(result.missedFills.length, 1);
+  assert.equal(result.missedFills[0].side, "long");
+});
+
+test("same-bar fills share one aggregate volume participation allowance", () => {
+  const strategy = thresholdStrategy({
+    risk: {
+      maxLeverage: 1,
+      maxNotionalUsd: 1_000,
+      positionSizePct: 10,
+      stopLossPct: 2,
+      takeProfitPct: 50,
+    },
+  });
+  const bars = [
+    bar(1, 100, 102, 99, 101, 100),
+    bar(2, 100, 102, 97, 99, 100),
+    bar(3, 97, 98, 96, 97, 1_000),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    maxVolumeParticipationPct: 10,
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.trades.length, 1);
+  assert.equal(result.trades[0].exitBarIndex, 2);
+  assert.equal(result.trades[0].exitReason, "stop_loss");
+  assert.ok(result.missedFills.some((fill) =>
+    fill.kind === "exit" && fill.barIndex === 1 && fill.maxFillNotionalUsd === 0
+  ));
+});
+
+test("short entry participation uses the actual adverse fill price", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    side: "short",
+    risk: { maxLeverage: 1, maxNotionalUsd: 1_000, positionSizePct: 10 },
+  });
+  const bars = [
+    bar(1, 100, 101, 98, 99, 100),
+    bar(2, 100, 101, 49, 99, 100),
+    bar(3, 99, 100, 98, 99, 100),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    maxVolumeParticipationPct: 10,
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 5_000,
+  });
+  assert.equal(result.trades.length, 0);
+  assert.equal(result.missedFills[0].kind, "entry");
+  assert.equal(result.missedFills[0].side, "short");
+  assert.equal(result.missedFills[0].maxFillNotionalUsd, 500);
+});
+
+test("volume participation records missed exits and retries at the next open", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    risk: { maxLeverage: 1, stopLossPct: 50, takeProfitPct: 50 },
+  });
+  const bars = [
+    bar(1, 100, 102, 99, 101, 1_000),
+    bar(2, 100, 102, 99, 101, 1_000),
+    bar(3, 100, 101, 98, 99, 1_000),
+    bar(4, 99, 100, 98, 99, 0.1),
+    bar(5, 98, 99, 97, 98, 1_000),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    maxVolumeParticipationPct: 1,
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.trades.length, 1);
+  assert.equal(result.trades[0].exitBarIndex, 4);
+  assert.ok(result.missedFills.some((fill) =>
+    fill.kind === "exit" && fill.barIndex === 3 && fill.reason === "volume_participation"
+  ));
+});
+
+test("exit participation uses the actual fill price instead of candle open", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    risk: { maxLeverage: 1, stopLossPct: 10, takeProfitPct: 50 },
+  });
+  const bars = [
+    bar(1, 101, 102, 100, 101, 1_000),
+    bar(2, 100, 102, 99, 101, 1_000),
+    bar(3, 200, 200, 80, 110, 90),
+    bar(4, 90, 91, 89, 90, 1_000),
+    bar(5, 90, 91, 89, 90, 1_000),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+    maxVolumeParticipationPct: 10,
+  });
+  assert.equal(result.missedFills[0].kind, "exit");
+  assert.equal(result.missedFills[0].barIndex, 2);
+  assert.equal(result.missedFills[0].triggerReason, "stop_loss");
+  assert.equal(result.trades[0].exitBarIndex, 3);
+});
+
+test("daily loss limit blocks new entries for the rest of the UTC day", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    risk: {
+      maxLeverage: 1,
+      maxNotionalUsd: 10_000,
+      positionSizePct: 100,
+      stopLossPct: 6,
+      takeProfitPct: 40,
+      maxDailyLossPct: 5,
+      cooldownBars: 0,
+    },
+  });
+  const bars = [
+    bar(1_000, 100, 102, 99, 101, 1_000),
+    bar(2_000, 100, 102, 93, 101, 1_000),
+    bar(3_000, 100, 102, 99, 101, 1_000),
+    bar(4_000, 100, 102, 99, 101, 1_000),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.trades.length, 1);
+  assert.ok(result.flags.some((flag) => flag.type === "daily_loss_limit"));
+});
+
+test("daily loss limit latches on marked equity before a later breakeven exit", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    risk: {
+      maxLeverage: 1,
+      maxNotionalUsd: 10_000,
+      positionSizePct: 100,
+      stopLossPct: 50,
+      takeProfitPct: 50,
+      maxDailyLossPct: 2,
+      cooldownBars: 0,
+    },
+  });
+  const bars = [
+    bar(1_000, 100, 102, 99, 101, 1_000),
+    bar(2_000, 100, 102, 99, 101, 1_000),
+    bar(3_000, 100, 101, 96, 97, 1_000),
+    bar(4_000, 100, 102, 99, 101, 1_000),
+    bar(5_000, 100, 102, 99, 101, 1_000),
+    bar(6_000, 100, 102, 99, 101, 1_000),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.trades.length, 1);
+  assert.ok(result.flags.some((flag) => flag.type === "daily_loss_limit" && flag.barIndex === 2));
+});
+
 test("latencyBars minimum is 1 and default is 1", () => {
   const strategy = thresholdStrategy({ threshold: 100 });
   const bars = [
@@ -172,6 +502,29 @@ test("latencyBars minimum is 1 and default is 1", () => {
   });
   assert.equal(JSON.stringify(a), JSON.stringify(b));
   assert.throws(() => backtestStrategy(strategy, bars, { latencyBars: 0 }), /latency/i);
+});
+
+test("queued entries are bound to the flat lifecycle that created them", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    risk: { maxLeverage: 1, stopLossPct: 2, takeProfitPct: 50 },
+  });
+  const bars = [
+    bar(1, 101, 102, 100, 101, 1_000),
+    bar(2, 101, 102, 100, 101, 1_000),
+    bar(3, 101, 102, 90, 90, 1_000),
+    bar(4, 90, 91, 89, 90, 1_000),
+    bar(5, 90, 91, 89, 90, 1_000),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+    latencyBars: 2,
+  });
+  assert.equal(result.trades.length, 1);
+  assert.equal(result.trades[0].exitReason, "stop_loss");
+  assert.equal(result.equityCurve[3].positionSide, null);
 });
 
 test("adverse slippage on entries and exits", () => {
@@ -335,6 +688,25 @@ test("simultaneous stop and take chooses adverse stop first", () => {
   assert.ok(t.exitPrice <= 98 + 1e-9);
 });
 
+test("maintenance margin liquidates before bankruptcy", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    risk: { maxLeverage: 5, stopLossPct: 50, takeProfitPct: 50 },
+  });
+  const bars = [
+    bar(1, 100, 102, 99, 101),
+    bar(2, 100, 102, 99, 101),
+    bar(3, 90, 91, 85, 90),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.trades[0]?.exitReason, "liquidation");
+  assert.ok(result.trades[0].exitPrice > 80);
+});
+
 test("liquidation at high leverage dominates take profit", () => {
   const strategy = {
     version: 1,
@@ -385,7 +757,27 @@ test("liquidation at high leverage dominates take profit", () => {
   assert.ok(result.liquidations.length >= 1);
 });
 
-test("funding applies while held positive funding charges longs", () => {
+test("gap-open liquidation dominates a queued rule exit", () => {
+  const strategy = thresholdStrategy({
+    risk: { maxLeverage: 2, stopLossPct: 50, takeProfitPct: 50 },
+  });
+  const bars = [
+    bar(1, 109, 111, 108, 110),
+    bar(2, 110, 111, 89, 90),
+    bar(3, 50, 55, 49, 50),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.trades.length, 1);
+  assert.equal(result.trades[0].exitReason, "liquidation");
+  assert.equal(result.liquidations.length, 1);
+  assert.equal(result.liquidations[0].barIndex, 2);
+});
+
+test("quoted funding rates alone do not create payment events", () => {
   const strategy = thresholdStrategy({
     threshold: 50,
     risk: {
@@ -419,8 +811,37 @@ test("funding applies while held positive funding charges longs", () => {
     builderFeeBps: 0,
     slippageBps: 0,
   });
-  assert.ok(withFr.costs.fundingUsd > 0);
-  assert.ok(withFr.metrics.netPnlUsd < noFr.metrics.netPnlUsd);
+  assert.equal(withFr.costs.fundingUsd, 0);
+  assert.equal(withFr.metrics.netPnlUsd, noFr.metrics.netPnlUsd);
+});
+
+test("funding payment events use current marked notional", () => {
+  const strategy = thresholdStrategy({
+    threshold: 50,
+    risk: {
+      maxLeverage: 1,
+      maxNotionalUsd: 1_000,
+      positionSizePct: 10,
+      stopLossPct: 90,
+      takeProfitPct: 90,
+      cooldownBars: 0,
+      maxDailyLossPct: 90,
+      expiresAt: 1_900_000_000_000,
+    },
+  });
+  const bars = [
+    bar(1, 60, 61, 59, 60, 100, { fundingRate: 0.001, fundingPaymentRate: 0 }),
+    bar(2, 60, 61, 59, 60, 100, { fundingRate: 0.001, fundingPaymentRate: 0 }),
+    bar(3, 90, 91, 89, 90, 100, { fundingRate: 0.001, fundingPaymentRate: 0.001 }),
+    bar(4, 90, 91, 89, 90, 100, { fundingRate: 0.001, fundingPaymentRate: 0 }),
+    bar(5, 90, 91, 89, 90, 100, { fundingRate: 0.001, fundingPaymentRate: 0 }),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.costs.fundingUsd, 1.5);
 });
 
 test("fee funding slippage monotonicity reduces net pnl", () => {
@@ -522,6 +943,71 @@ test("close remaining position at final bar close with end_of_data", () => {
   assert.equal(result.trades.length, 1);
   assert.equal(result.trades[0].exitReason, "end_of_data");
   assert.equal(result.trades[0].exitBarIndex, bars.length - 1);
+});
+
+test("end-of-data exit obeys volume participation and leaves an explicit marked position", () => {
+  const strategy = thresholdStrategy({
+    threshold: 100,
+    risk: {
+      maxLeverage: 1,
+      maxNotionalUsd: 5_000,
+      positionSizePct: 10,
+      stopLossPct: 90,
+      takeProfitPct: 90,
+    },
+  });
+  const bars = [
+    bar(1, 100, 101, 99, 101, 1_000),
+    bar(2, 100, 101, 99, 101, 1_000),
+    bar(3, 100, 101, 99, 101, 0),
+  ];
+  const result = backtestStrategy(strategy, bars, {
+    takerFeeBps: 0,
+    builderFeeBps: 0,
+    slippageBps: 0,
+  });
+  assert.equal(result.trades.length, 0);
+  assert.ok(result.missedFills.some((fill) =>
+    fill.kind === "exit" && fill.triggerReason === "end_of_data"
+  ));
+  assert.equal(result.openPositionAtEnd.side, "long");
+  assert.equal(result.openPositionAtEnd.markPrice, 101);
+  assert.equal(result.equityCurve.at(-1).positionSide, "long");
+  assert.equal(result.metrics.turnoverUsd, 1_000);
+});
+
+test("cost and slippage bps reject unsafe bounds before non-finite math", () => {
+  const strategy = thresholdStrategy();
+  const bars = [bar(1, 100, 101, 99, 100), bar(2, 100, 101, 99, 100)];
+  assert.throws(() => backtestStrategy(strategy, bars, { slippageBps: 10_000 }), /slippage/i);
+  assert.throws(() => backtestStrategy(strategy, bars, { takerFeeBps: 10_001 }), /taker/i);
+  assert.throws(() => backtestStrategy(strategy, bars, { builderFeeBps: 10_001 }), /builder/i);
+});
+
+test("non-finite derived results fail closed instead of serializing null", () => {
+  const strategy = thresholdStrategy({ threshold: 100 });
+  const bars = [
+    bar(1, 100, 102, 99, 101, 1_000, { fundingPaymentRate: 0 }),
+    bar(2, 100, 102, 99, 101, 1_000, { fundingPaymentRate: Number.MAX_VALUE }),
+    bar(3, 100, 102, 99, 101, 1_000, { fundingPaymentRate: 0 }),
+  ];
+  assert.throws(
+    () => backtestStrategy(strategy, bars, { takerFeeBps: 0, builderFeeBps: 0, slippageBps: 0 }),
+    /non-finite|finite result/i,
+  );
+});
+
+test("bars require positive OHLC prices and non-negative volume", () => {
+  const strategy = thresholdStrategy();
+  const valid = bar(2, 100, 101, 99, 100, 1);
+  assert.throws(
+    () => backtestStrategy(strategy, [{ t: 1, o: 0, h: 101, l: 0, c: 100, v: 1 }, valid]),
+    /positive|price|open/i,
+  );
+  assert.throws(
+    () => backtestStrategy(strategy, [{ t: 1, o: 100, h: 101, l: 99, c: 100, v: -1 }, valid]),
+    /volume|non-negative/i,
+  );
 });
 
 test("rejects empty bars malformed options expired strategy non-finite", () => {

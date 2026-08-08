@@ -1,6 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { EVIDENCE_STATUSES, evaluateEvidence } from "../src/strategy/evidence.mjs";
+import {
+  EVIDENCE_STATUSES,
+  assertEvidenceArtifact,
+  evaluateEvidence,
+} from "../src/strategy/evidence.mjs";
 import { strategyHash } from "../src/strategy/schema.mjs";
 import { STRATEGY_COMPILER_HASH } from "../src/strategy/compiler.mjs";
 
@@ -131,6 +135,19 @@ test("deterministic chronological split no shuffle", () => {
   assert.equal(a.id, b.id);
 });
 
+test("evidence rejects fields omitted from its deterministic identity", () => {
+  const evidence = evaluateEvidence({
+    strategy: longThresholdStrategy(100),
+    bars: profitableBars(40),
+    backtestOptions: { takerFeeBps: 0, builderFeeBps: 0, slippageBps: 0 },
+    minTrades: 1,
+  });
+  assert.throws(
+    () => assertEvidenceArtifact({ ...evidence, executionReady: true }),
+    /unbound|unknown|identity/i,
+  );
+});
+
 test("fail on insufficient bars or absent OOS", () => {
   const strategy = longThresholdStrategy(100);
   const few = profitableBars(4);
@@ -253,4 +270,24 @@ test("id is stable sha256 over canonical evidence facts", () => {
   });
   assert.equal(a.id, b.id);
   assert.match(a.id, /^[a-f0-9]{64}$/);
+});
+
+test("evidence identity binds exact bar provenance even when metrics are unchanged", () => {
+  const strategy = longThresholdStrategy(100);
+  const bars = profitableBars(40);
+  const changed = bars.map((item, index) =>
+    index === 10 ? { ...item, openInterest: 123_456 } : { ...item },
+  );
+  const options = {
+    strategy,
+    backtestOptions: { takerFeeBps: 0, builderFeeBps: 0, slippageBps: 0 },
+    minTrades: 1,
+  };
+  const a = evaluateEvidence({ ...options, bars });
+  const b = evaluateEvidence({ ...options, bars: changed });
+  assert.deepEqual(a.train, b.train);
+  assert.deepEqual(a.holdout, b.holdout);
+  assert.match(a.barsHash, /^[a-f0-9]{64}$/);
+  assert.notEqual(a.barsHash, b.barsHash);
+  assert.notEqual(a.id, b.id);
 });

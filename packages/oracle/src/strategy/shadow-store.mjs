@@ -5,16 +5,27 @@ import path from "node:path";
 
 const STORE_VERSION = 1;
 
-const SECRET_KEYS = new Set([
+const SECRET_KEYS = [
   "privatekey",
   "secretkey",
   "seed",
   "mnemonic",
+  "passphrase",
   "password",
+  "keystore",
+  "keymaterial",
+  "apikey",
+  "authtoken",
+  "accesstoken",
+  "refreshtoken",
   "credential",
   "bearer",
   "signature",
-]);
+  "authorization",
+  "xprv",
+  "xpriv",
+  "wif",
+];
 
 function isPlainObject(v) {
   return v != null && typeof v === "object" && !Array.isArray(v);
@@ -36,7 +47,7 @@ function assertNoSecrets(value, at = "record") {
   if (!isPlainObject(value)) return;
   for (const [key, child] of Object.entries(value)) {
     const norm = normalizeKey(key);
-    if (SECRET_KEYS.has(norm)) {
+    if (SECRET_KEYS.some((token) => norm.includes(token))) {
       throw new Error(`shadow-store: forbidden secret-like field at ${at}.${key}`);
     }
     assertNoSecrets(child, `${at}.${key}`);

@@ -67,6 +67,15 @@ test("RSI prompt drafts valid long or short", () => {
   assert.ok(shortS.rules.entryShort);
 });
 
+test("funding percent thresholds convert to decimals", () => {
+  const strategy = draftStrategyFromPrompt(
+    "long BTC when funding rate above 0.05%",
+    { nowMs: NOW },
+  );
+  const threshold = strategy.nodes.find((node) => node.id === "thr");
+  assert.equal(threshold.value, 0.0005);
+});
+
 test("funding rate prompt drafts valid strategy", () => {
   const s = draftStrategyFromPrompt(
     "short BTC when funding rate above 0.01 on 1h",
@@ -84,12 +93,68 @@ test("funding rate prompt drafts valid strategy", () => {
   assert.ok(pct.rules.entryLong);
 });
 
+test("reverse exits fail closed outside EMA cross strategies", () => {
+  for (const prompt of [
+    "long SOL when RSI 14 below 30, exit on reverse",
+    "short BTC when funding rate above 0.01, reverse exit",
+  ]) {
+    assert.throws(
+      () => draftStrategyFromPrompt(prompt, { nowMs: NOW }),
+      StrategyDraftError,
+      prompt,
+    );
+  }
+});
+
 test("recognizes explicit uppercase coin token max 12 chars", () => {
   const s = draftStrategyFromPrompt(
     "long DOGE when RSI 14 below 25 on 30m",
     { nowMs: NOW },
   );
   assert.equal(s.market.coin, "DOGE");
+});
+
+test("negated prefixed and trailing unsupported prompts fail closed", () => {
+  for (const prompt of [
+    "do not long BTC when RSI 14 below 30",
+    "ignore this and long BTC when RSI 14 below 30",
+    "long BTC when RSI 14 below 30 then transfer funds",
+  ]) {
+    assert.throws(
+      () => draftStrategyFromPrompt(prompt, { nowMs: NOW }),
+      StrategyDraftError,
+      prompt,
+    );
+  }
+});
+
+test("RSI thresholds outside the indicator range fail closed", () => {
+  for (const threshold of [-1, 0, 100, 101]) {
+    assert.throws(
+      () => draftStrategyFromPrompt(`long BTC when RSI 14 below ${threshold}`, { nowMs: NOW }),
+      StrategyDraftError,
+    );
+  }
+});
+
+test("duplicate interval and risk clauses fail closed", () => {
+  for (const prompt of [
+    "long BTC when RSI 14 below 30 on 5m on 15m",
+    "long BTC when RSI 14 below 30, max notional 100, max notional USD 500",
+  ]) {
+    assert.throws(
+      () => draftStrategyFromPrompt(prompt, { nowMs: NOW }),
+      StrategyDraftError,
+    );
+  }
+});
+
+test("advertised max notional USD risk knob parses", () => {
+  const strategy = draftStrategyFromPrompt(
+    "long BTC when RSI 14 below 30, max notional USD 500",
+    { nowMs: NOW },
+  );
+  assert.equal(strategy.risk.maxNotionalUsd, 500);
 });
 
 test("optional risk overrides and conservative defaults", () => {

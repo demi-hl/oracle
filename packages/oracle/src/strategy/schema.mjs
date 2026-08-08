@@ -144,6 +144,14 @@ function resolvePeriodLike(raw, path, parameters, errors) {
       push(errors, `${path}.param`, `unknown parameter "${raw.param}"`);
       return null;
     }
+    const definition = parameters[raw.param];
+    if (
+      !isPlainObject(definition) ||
+      ![definition.value, definition.min, definition.max, definition.step].every(isPositiveInt)
+    ) {
+      push(errors, `${path}.param`, "referenced period parameter value min max and step must be positive integers");
+      return null;
+    }
     return { param: raw.param };
   }
   if (!isPositiveInt(raw)) {
@@ -476,7 +484,7 @@ function validateRisk(raw, errors, opts) {
 
 /**
  * Validate a strategy. Never throws.
- * opts.nowMs — when provided, risk.expiresAt must be strictly greater.
+ * opts.nowMs: when provided, risk.expiresAt must be strictly greater.
  */
 export function validateStrategy(input, opts = {}) {
   const errors = [];
@@ -560,6 +568,22 @@ export function validateStrategy(input, opts = {}) {
           push(errors, path, `unknown node ref "${dep}"`);
         }
       }
+      if (n.type === "indicator" || n.type === "compare" || n.type === "cross") {
+        for (const dep of nodeDeps(n)) {
+          const target = nodesById.get(dep);
+          if (target && BOOLEAN_NODE_TYPES.has(target.type)) {
+            push(errors, path, `node ref "${dep}" must be numeric`);
+          }
+        }
+      }
+      if (n.type === "logic") {
+        for (const dep of nodeDeps(n)) {
+          const target = nodesById.get(dep);
+          if (target && !BOOLEAN_NODE_TYPES.has(target.type)) {
+            push(errors, path, `node ref "${dep}" must be boolean`);
+          }
+        }
+      }
     }
 
     if (detectCycle(nodesById)) {
@@ -627,9 +651,7 @@ export function normalizeStrategy(input, opts = {}) {
 }
 
 export function canonicalStrategyJson(input) {
-  const strategy = typeof input?.version === "number" && Object.isFrozen(input)
-    ? input
-    : normalizeStrategy(input);
+  const strategy = normalizeStrategy(input);
   return JSON.stringify(sortKeysDeep(strategy));
 }
 

@@ -107,9 +107,21 @@ function parseRisk(text) {
   if (lev) risk.maxLeverage = Number(lev[1]);
   const pos = text.match(/position\s*size\s*(\d+(?:\.\d+)?)\s*%?/i);
   if (pos) risk.positionSizePct = Number(pos[1]);
-  const notion = text.match(/max\s*notional\s*\$?\s*(\d+(?:\.\d+)?)/i);
+  const notion = text.match(/max\s*notional\s*(?:usd\s*)?\$?\s*(\d+(?:\.\d+)?)/i);
   if (notion) risk.maxNotionalUsd = Number(notion[1]);
   return risk;
+}
+
+function hasDuplicateClauses(text) {
+  const clauses = [
+    /\bon\s+(?:1m|3m|5m|15m|30m|1h|2h|4h|8h|12h|1d)\b/gi,
+    /\bstop\s*loss\s*\d+(?:\.\d+)?\s*%?/gi,
+    /\btake\s*profit\s*\d+(?:\.\d+)?\s*%?/gi,
+    /\bleverage\s*\d+(?:\.\d+)?/gi,
+    /\bposition\s*size\s*\d+(?:\.\d+)?\s*%?/gi,
+    /\bmax\s*notional\s*(?:usd\s*)?\$?\s*\d+(?:\.\d+)?/gi,
+  ];
+  return clauses.some((pattern) => (text.match(pattern) ?? []).length > 1);
 }
 
 function makeId(normalizedPrompt) {
@@ -141,19 +153,21 @@ function parseEmaCross(text) {
 }
 
 function parseRsi(text) {
-  const m = text.match(/\brsi\s*(\d+)\s*(above|below)\s*(\d+(?:\.\d+)?)\b/i);
-  if (!m) return null;
+  const match = text.match(/\brsi\s*(\d+)\s*(above|below)\s*(-?\d+(?:\.\d+)?)/i);
+  if (!match) return null;
+  const threshold = Number(match[3]);
+  if (!Number.isFinite(threshold) || threshold <= 0 || threshold >= 100) return null;
   return {
     kind: "rsi",
-    period: Number(m[1]),
-    op: m[2].toLowerCase(),
-    threshold: Number(m[3]),
+    period: Number(match[1]),
+    op: match[2].toLowerCase(),
+    threshold,
   };
 }
 
 function parseFunding(text) {
   const m = text.match(
-    /\bfunding\s*rate\s*(above|below)\s*(-?\d+(?:\.\d+)?)(%?)\b/i,
+    /\bfunding\s*rate\s*(above|below)\s*(-?\d+(?:\.\d+)?)(%?)(?=\s|,|$)/i,
   );
   if (!m) return null;
   let thr = Number(m[2]);
@@ -165,12 +179,44 @@ function parseFunding(text) {
   };
 }
 
+function hasOnlySupportedGrammar(text, spec) {
+  let rest = text.replace(/^(long|short)\s+[A-Z][A-Z0-9]{1,11}\s+when\s+/i, "");
+  if (rest === text) return false;
+
+  if (spec.kind === "ema_cross") {
+    rest = rest.replace(/^ema\s*\d+\s*cross(?:es)?\s*(?:above|below)\s*ema\s*\d+\b/i, "");
+  } else if (spec.kind === "rsi") {
+    rest = rest.replace(/^rsi\s*\d+\s*(?:above|below)\s*\d+(?:\.\d+)?\b/i, "");
+  } else {
+    rest = rest.replace(/^funding\s*rate\s*(?:above|below)\s*-?\d+(?:\.\d+)?%?(?=\s|,|$)/i, "");
+  }
+
+  const optionalParts = [
+    /(?:,\s*)?\bon\s+(?:1m|3m|5m|15m|30m|1h|2h|4h|8h|12h|1d)\b/gi,
+    /(?:,\s*)?\bstop\s*loss\s*\d+(?:\.\d+)?\s*%?/gi,
+    /(?:,\s*)?\btake\s*profit\s*\d+(?:\.\d+)?\s*%?/gi,
+    /(?:,\s*)?\bleverage\s*\d+(?:\.\d+)?/gi,
+    /(?:,\s*)?\bposition\s*size\s*\d+(?:\.\d+)?\s*%?/gi,
+    /(?:,\s*)?\bmax\s*notional\s*(?:usd\s*)?\$?\s*\d+(?:\.\d+)?/gi,
+  ];
+  if (spec.kind === "ema_cross") {
+    optionalParts.push(/(?:,\s*)?\b(?:exit\s+on\s+reverse|reverse\s+exit)\b/gi);
+  }
+  for (const pattern of optionalParts) rest = rest.replace(pattern, "");
+  return rest.replace(/[\s,;]+/g, "") === "";
+}
+
+function periodParameter(value) {
+  const radius = Math.max(2, Math.floor(value / 2));
+  return {
+    value,
+    min: Math.max(2, value - radius),
+    max: Math.min(500, value + radius),
+    step: 1,
+  };
+}
+
 function buildEmaStrategy({ side, coin, interval, risk, expiresAt, id, name, spec }) {
-  const fastPeriod = Math.min(spec.fast, spec.slow);
-  const slowPeriod = Math.max(spec.fast, spec.slow);
-  // If user said EMA 21 crosses above EMA 9, preserve left/right as written
-  const leftPeriod = spec.fast;
-  const rightPeriod = spec.slow;
   const nodes = [
     { id: "c", type: "input", field: "close" },
     {
@@ -178,14 +224,14 @@ function buildEmaStrategy({ side, coin, interval, risk, expiresAt, id, name, spe
       type: "indicator",
       indicator: "ema",
       input: "c",
-      period: leftPeriod,
+      period: { param: "ema_left_period" },
     },
     {
       id: "emaRight",
       type: "indicator",
       indicator: "ema",
       input: "c",
-      period: rightPeriod,
+      period: { param: "ema_right_period" },
     },
     {
       id: "cross",
@@ -218,16 +264,16 @@ function buildEmaStrategy({ side, coin, interval, risk, expiresAt, id, name, spe
     if (side === "long") rules.exitLong = "crossRev";
     else rules.exitShort = "crossRev";
   }
-  // parameters empty - periods fixed from prompt
-  void fastPeriod;
-  void slowPeriod;
   return {
     version: 1,
     id,
     name,
     venue: "hyperliquid",
     market: { coin, interval },
-    parameters: {},
+    parameters: {
+      ema_left_period: periodParameter(spec.fast),
+      ema_right_period: periodParameter(spec.slow),
+    },
     nodes,
     rules,
     risk: { ...risk, expiresAt },
@@ -343,6 +389,9 @@ export function draftStrategyFromPrompt(prompt, options = {}) {
   if (!normalized) {
     throw new StrategyDraftError(`empty prompt. ${GRAMMAR_SUMMARY}`);
   }
+  if (hasDuplicateClauses(normalized)) {
+    throw new StrategyDraftError(`duplicate interval or risk clause. ${GRAMMAR_SUMMARY}`);
+  }
 
   const side = parseSide(normalized);
   const coin = parseCoin(normalized);
@@ -375,6 +424,9 @@ export function draftStrategyFromPrompt(prompt, options = {}) {
     throw new StrategyDraftError(
       `unsupported or ambiguous prompt. ${GRAMMAR_SUMMARY}`,
     );
+  }
+  if (!hasOnlySupportedGrammar(normalized, matched[0])) {
+    throw new StrategyDraftError(`unsupported or ambiguous prompt. ${GRAMMAR_SUMMARY}`);
   }
 
   let draft;

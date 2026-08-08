@@ -103,14 +103,18 @@ test("saved draft, shadowing, and live eligibility are separate states", () => {
 test("evidence card separates train and holdout and never fabricates zeros", () => {
   assert.match(evidence, /train/i);
   assert.match(evidence, /holdout/i);
-  assert.match(evidence, /netPnl/);
+  assert.match(evidence, /netPnlUsd/);
   assert.match(evidence, /maxDrawdownPct/);
+  assert.match(evidence, /sharpe/);
+  assert.match(evidence, /exposurePct/);
   assert.match(evidence, /tradeCount/);
   assert.match(evidence, /winRate/);
   assert.match(evidence, /profitFactor/);
   assert.match(evidence, /passRate|walkForward/);
   assert.match(evidence, /UNKNOWN/);
   assert.match(evidence, /does not arm or execute/i);
+  assert.match(pane, /\.metrics/);
+  assert.match(pane, /flag\.message|f\.message/);
   assert.doesNotMatch(evidence, /netPnl\s*\?\?\s*0|tradeCount\s*\?\?\s*0|winRate\s*\?\?\s*0/);
 });
 

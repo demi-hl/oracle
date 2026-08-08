@@ -1,5 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import {
   STRATEGY_COMPILER_HASH,
   STRATEGY_COMPILER_VERSION,
@@ -123,9 +125,9 @@ test("boolean entry/exit rules resolve correctly", () => {
   };
   const { evaluate } = compileStrategy(strategy);
   const bars = [
-    bar(1, 10, 11, 9, 9, 1),
-    bar(2, 9, 12, 8, 12, 1),
-    bar(3, 12, 12, 10, 10, 1),
+    bar(300_000, 10, 11, 9, 9, 1),
+    bar(600_000, 9, 12, 8, 12, 1),
+    bar(900_000, 12, 12, 10, 10, 1),
   ];
   const r0 = evaluate(bars, 0);
   assert.equal(r0.signals.entryLong, false); // 9 > 10
@@ -148,8 +150,8 @@ test("boolean entry/exit rules resolve correctly", () => {
 test("no signal on insufficient history", () => {
   const { evaluate } = compileStrategy(emaCrossStrategy);
   const bars = [
-    bar(1, 1, 2, 0.5, 1.5),
-    bar(2, 1.5, 2.5, 1, 2),
+    bar(60_000, 1, 2, 0.5, 1.5),
+    bar(120_000, 1.5, 2.5, 1, 2),
   ];
   const r = evaluate(bars, 1);
   assert.equal(r.signals.entryLong, false);
@@ -194,8 +196,8 @@ test("first possible crossing is false without prior evaluable values", () => {
   };
   const { evaluate } = compileStrategy(strategy);
   const bars = [
-    bar(1, 4, 5, 3, 4),
-    bar(2, 4, 7, 4, 6),
+    bar(60_000, 4, 5, 3, 4),
+    bar(120_000, 4, 7, 4, 6),
   ];
   // index 0: no prior bar => cross is false even if left>right conceptually
   assert.equal(evaluate(bars, 0).signals.entryLong, false);
@@ -220,6 +222,26 @@ test("malformed bars reject", () => {
   );
   assert.throws(() => evaluate([bar(1, 1, 0, 2, 1)], 0)); // high < low
   assert.throws(() => evaluate([{ t: 1, o: 1, h: 2, l: 0, c: NaN, v: 1 }], 0));
+});
+
+test("compiler rejects gaps in fixed-interval candle history", () => {
+  const compiled = compileStrategy(emaCrossStrategy);
+  const bars = emaCrossBars().map((item, index) =>
+    index >= 4 ? { ...item, t: item.t + 60_000 } : { ...item },
+  );
+  assert.throws(() => compiled.evaluateAll(bars), /interval|cadence/i);
+});
+
+test("standalone compiler evaluation rejects non-positive prices and negative volume", () => {
+  const { evaluate } = compileStrategy(emaCrossStrategy);
+  assert.throws(
+    () => evaluate([{ t: 1, o: 0, h: 2, l: 1, c: 1, v: 1 }], 0),
+    /positive|price|open/i,
+  );
+  assert.throws(
+    () => evaluate([{ t: 1, o: 1, h: 2, l: 0.5, c: 1, v: -1 }], 0),
+    /volume|non-negative/i,
+  );
 });
 
 test("parameter override changes only the referenced behavior", () => {
@@ -320,16 +342,42 @@ test("optional fundingRate and openInterest inputs", () => {
   assert.equal(r.values.fr, 0.01);
   assert.equal(r.values.oi, 100);
   assert.equal(r.signals.entryLong, true);
+  assert.throws(
+    () => evaluate([{ ...bars[0], openInterest: -1 }], 0),
+    /openInterest.*non-negative/i,
+  );
 });
 
 test("compiled strategy carries stable strategy and compiler identities", () => {
   const compiled = compileStrategy(emaCrossStrategy);
-  assert.equal(STRATEGY_COMPILER_VERSION, 1);
+  assert.equal(STRATEGY_COMPILER_VERSION, 2);
   assert.match(STRATEGY_COMPILER_HASH, /^[a-f0-9]{64}$/);
   assert.equal(compiled.compilerVersion, STRATEGY_COMPILER_VERSION);
   assert.equal(compiled.compilerHash, STRATEGY_COMPILER_HASH);
   assert.equal(compiled.strategyHash, strategyHash(emaCrossStrategy));
   assert.deepEqual(compiled.requiredSeries, ["close"]);
+});
+
+test("compiler identity is bound to exact compiler indicator and schema source bytes", () => {
+  const compilerSourceHash = createHash("sha256")
+    .update(readFileSync(new URL("../src/strategy/compiler.mjs", import.meta.url)))
+    .digest("hex");
+  const indicatorsSourceHash = createHash("sha256")
+    .update(readFileSync(new URL("../src/strategy/indicators.mjs", import.meta.url)))
+    .digest("hex");
+  const schemaSourceHash = createHash("sha256")
+    .update(readFileSync(new URL("../src/strategy/schema.mjs", import.meta.url)))
+    .digest("hex");
+  const expected = createHash("sha256")
+    .update(JSON.stringify({
+      version: STRATEGY_COMPILER_VERSION,
+      compilerSourceHash,
+      indicatorsSourceHash,
+      schemaSourceHash,
+    }))
+    .digest("hex");
+  assert.equal(STRATEGY_COMPILER_VERSION, 2);
+  assert.equal(STRATEGY_COMPILER_HASH, expected);
 });
 
 test("evaluateAll matches per-bar evaluation without future leakage", () => {
