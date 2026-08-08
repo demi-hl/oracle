@@ -88,6 +88,16 @@ export async function hlCandleSnapshot({ coin, interval = "1h", startTime, endTi
   return hlInfo(req, opts);
 }
 
+export async function hlFundingHistory({ coin, startTime, endTime }, opts = {}) {
+  if (!coin) throw new Error("hlFundingHistory requires coin");
+  return hlInfo({
+    type: "fundingHistory",
+    coin: String(coin),
+    startTime: startTime ?? Date.now() - 24 * 3600 * 1000,
+    endTime: endTime ?? Date.now(),
+  }, opts);
+}
+
 export async function hlOpenOrders(user, opts = {}) {
   if (!user) throw new Error("hlOpenOrders requires user");
   return hlInfo({ type: "openOrders", user }, opts);

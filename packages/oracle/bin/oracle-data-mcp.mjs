@@ -769,6 +769,138 @@ const tools = [
     },
   },
   {
+    name: "strategy_draft",
+    description:
+      "Draft a deterministic Hyperliquid strategy DSL from supported plain-English EMA, RSI, or funding rules. Fails closed on unsupported ambiguity. Never signs or broadcasts.",
+    inputSchema: {
+      type: "object",
+      required: ["prompt"],
+      properties: {
+        prompt: { type: "string" },
+        nowMs: { type: "number" },
+      },
+    },
+  },
+  {
+    name: "strategy_validate",
+    description: "Strictly compile and hash a Hyperliquid strategy DSL. No network or execution.",
+    inputSchema: {
+      type: "object",
+      required: ["strategy"],
+      properties: { strategy: { type: "object" }, nowMs: { type: "number" } },
+    },
+  },
+  {
+    name: "strategy_backtest",
+    description:
+      "Backtest a deterministic strategy with fees, builder fees, slippage, funding, latency, stops, take profit, and liquidation. Uses supplied bars or keyless Hyperliquid history.",
+    inputSchema: {
+      type: "object",
+      required: ["strategy"],
+      properties: {
+        strategy: { type: "object" },
+        bars: { type: "array", items: { type: "object" } },
+        count: { type: "number" },
+        backtestOptions: { type: "object" },
+      },
+    },
+  },
+  {
+    name: "strategy_optimize",
+    description:
+      "Run bounded deterministic parameter search on training bars, then separately evaluate out-of-sample evidence. Never uses holdout data during optimization.",
+    inputSchema: {
+      type: "object",
+      required: ["strategy"],
+      properties: {
+        strategy: { type: "object" },
+        bars: { type: "array", items: { type: "object" } },
+        count: { type: "number" },
+        maxTrials: { type: "number" },
+      },
+    },
+  },
+  {
+    name: "strategy_evidence",
+    description:
+      "Produce separate train, holdout, and walk-forward evidence with overfitting flags and a fail, paper-only, or live-eligible status. Live eligibility never arms execution.",
+    inputSchema: {
+      type: "object",
+      required: ["strategy"],
+      properties: {
+        strategy: { type: "object" },
+        bars: { type: "array", items: { type: "object" } },
+        count: { type: "number" },
+      },
+    },
+  },
+  {
+    name: "strategy_shadow_start",
+    description:
+      "Start a durable local shadow runner that records intended orders and theoretical fills only. Never signs or broadcasts.",
+    inputSchema: {
+      type: "object",
+      required: ["strategy"],
+      properties: {
+        strategy: { type: "object" },
+        evidenceId: { type: "string" },
+      },
+    },
+  },
+  {
+    name: "strategy_shadow_list",
+    description: "List durable local shadow runners. Read-only and secret-free.",
+    inputSchema: { type: "object", properties: {} },
+  },
+  {
+    name: "strategy_shadow_status",
+    description: "Inspect one durable local shadow runner. Read-only and secret-free.",
+    inputSchema: {
+      type: "object",
+      required: ["id"],
+      properties: { id: { type: "string" } },
+    },
+  },
+  {
+    name: "strategy_shadow_step",
+    description:
+      "Advance one durable shadow runner over supplied or keyless historical bars. Never signs or broadcasts.",
+    inputSchema: {
+      type: "object",
+      required: ["id"],
+      properties: {
+        id: { type: "string" },
+        bars: { type: "array", items: { type: "object" } },
+        count: { type: "number" },
+      },
+    },
+  },
+  {
+    name: "strategy_shadow_stop",
+    description: "Stop one durable local shadow runner. Does not submit or cancel exchange orders.",
+    inputSchema: {
+      type: "object",
+      required: ["id"],
+      properties: { id: { type: "string" } },
+    },
+  },
+  {
+    name: "strategy_prepare_live",
+    description:
+      "Create an integrity-bound prepare-only handoff after live-eligible evidence, HMAC-authenticated when local attestation is configured. All execution flags stay false. A separate local operator must revalidate, arm, sign, and broadcast.",
+    inputSchema: {
+      type: "object",
+      required: ["strategy", "evidence", "shadowId"],
+      properties: {
+        strategy: { type: "object" },
+        evidence: { type: "object" },
+        shadowId: { type: "string" },
+        caps: { type: "object" },
+        nowMs: { type: "number" },
+      },
+    },
+  },
+  {
     name: "twap_simulate",
     description:
       "Simulate a TWAP (time-weighted average price) DCA order. Splits a large " +
@@ -1000,6 +1132,27 @@ async function deskCall(provider, op, args = {}) {
 }
 
 async function callTool(name, args = {}) {
+  const strategyCall = {
+    strategy_draft: { operation: "draft" },
+    strategy_validate: { operation: "validate" },
+    strategy_backtest: { operation: "backtest" },
+    strategy_optimize: { operation: "optimize" },
+    strategy_evidence: { operation: "evidence" },
+    strategy_shadow_start: { operation: "shadow", action: "start" },
+    strategy_shadow_list: { operation: "shadow", action: "list" },
+    strategy_shadow_status: { operation: "shadow", action: "get" },
+    strategy_shadow_step: { operation: "shadow", action: "step" },
+    strategy_shadow_stop: { operation: "shadow", action: "stop" },
+    strategy_prepare_live: { operation: "prepare" },
+  }[name];
+  if (strategyCall) {
+    const { runStrategyOperation } = await import("../src/strategy/service.mjs");
+    return runStrategyOperation(strategyCall.operation, {
+      ...args,
+      ...(strategyCall.action ? { action: strategyCall.action } : {}),
+      nowMs: args.nowMs ?? Date.now(),
+    });
+  }
   if (name === "rfq_quote") {
     const { normalizeRfqIntent } = await import("../src/rfq/intent.mjs");
     const { requestRfqQuotes } = await import("../src/rfq/sources.mjs");
