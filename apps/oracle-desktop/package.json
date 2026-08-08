@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@oracle-agent/oracle": "0.16.0",
-    "electron-store": "^10.1.0"
+    "electron-store": "^11.0.2"
   },
   "devDependencies": {
     "electron": "39.8.10",
