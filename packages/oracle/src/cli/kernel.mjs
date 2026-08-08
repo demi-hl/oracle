@@ -30,6 +30,8 @@ const STATIC_HELP = `READ / RESEARCH (no keys, this package)
   oracle prepare              build an unsigned swap (alias of route prepare)
   oracle equities venues|quote|prepare
                               Crossbook: HIP-3 / Arcus / RH / Solana / TON best-ex
+  oracle strategy draft|validate|backtest|optimize|evidence|shadow|prepare
+                              deterministic Hyperliquid strategy lab; prepare-only
   oracle public serve         secret-free public HTTP surface
   oracle mcp install <t>      wire Oracle into claude-code|claude-desktop|codex|chatgpt
   oracle plugins install|list|remove|scan|setup
@@ -102,7 +104,7 @@ export function renderHelp(version, commands) {
   for (const cmd of commands.values()) {
     if (["help", "version"].includes(cmd.name)) continue;
     const known = new Set([
-      "init","doctor","chat","model","chain","setup","data","data-mcp","scan","route","prepare","swap","farm","follow","equities","public","mcp","plugins","harness","upgrade","bootstrap",
+      "init","doctor","chat","model","chain","setup","data","data-mcp","scan","route","prepare","swap","farm","follow","equities","strategy","public","mcp","plugins","harness","upgrade","bootstrap",
       "sign","vault","signer","runner","credential",
     ]);
     if (!known.has(cmd.name) && cmd.summary) {

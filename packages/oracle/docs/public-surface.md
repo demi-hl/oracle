@@ -19,6 +19,7 @@ file cannot silently drift from `package.json`.
 | `@oracle-agent/oracle/scanner` | token/contract scanner capabilities |
 | `@oracle-agent/oracle/router` | route sources and quote routing |
 | `@oracle-agent/oracle/equities` | cross-chain on-chain equities best execution (HIP-3 / Arcus / RH / Solana / TON), prepare-only |
+| `@oracle-agent/oracle/strategy` | deterministic Hyperliquid strategy drafting, validation, simulation, evidence, shadowing, and unsigned prepare-only handoff |
 | `@oracle-agent/oracle/action-semantics` | decoded-action semantics for review |
 | `@oracle-agent/oracle/address-book` | label store — refuses key material |
 | `@oracle-agent/oracle/agent-grants` | bounded, revocable, time-boxed agent permissions: `planConnection` builds the unsigned grant, `activateSession` accepts the owner's signature, `revokeSession` revokes, and `listActiveGrants`/`getGrant`/`classifyGrant` read it back. Reads are pure over an injected store with an explicit clock. Oracle prepares and validates; the user signs and Oracle never holds a key |

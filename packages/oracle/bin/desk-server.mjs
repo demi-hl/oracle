@@ -30,6 +30,15 @@ const MAX_BODY_BYTES = 64 * 1024;
 const CHALLENGE_TTL_SECONDS = 300;
 const MAX_CHALLENGES = 10_000;
 const walletChallenges = new Map();
+const STRATEGY_ROUTES = new Map([
+  ["/strategy/draft", "draft"],
+  ["/strategy/validate", "validate"],
+  ["/strategy/backtest", "backtest"],
+  ["/strategy/optimize", "optimize"],
+  ["/strategy/evidence", "evidence"],
+  ["/strategy/shadow", "shadow"],
+  ["/strategy/prepare-live", "prepare"],
+]);
 
 if (!LOOPBACK_HOSTS.has(String(HOST).toLowerCase())) {
   throw new Error("oracle data server only binds loopback; use 127.0.0.1 and do not expose it through a reverse proxy");
@@ -305,6 +314,28 @@ const server = createServer(async (req, res) => {
         providers: PUBLIC_API_MODE ? publicCallableProviders() : undefined,
       });
       return send(res, 200, report);
+    }
+
+    const strategyOperation = STRATEGY_ROUTES.get(path);
+    if (strategyOperation) {
+      let body;
+      if (req.method === "GET" && strategyOperation === "shadow") {
+        body = { action: "list" };
+      } else if (req.method === "POST") {
+        body = await readBody(req);
+      } else {
+        return send(res, 405, { error: "method not allowed" });
+      }
+      try {
+        const { runStrategyOperation } = await import("../src/strategy/service.mjs");
+        const result = await runStrategyOperation(strategyOperation, {
+          ...body,
+          nowMs: body.nowMs ?? Date.now(),
+        });
+        return send(res, 200, result);
+      } catch (err) {
+        return send(res, 400, { error: err?.message || "strategy request rejected" });
+      }
     }
 
     if (path === "/data/call") {
